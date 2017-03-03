@@ -235,7 +235,7 @@ class Tools:
     def load_payloads(self, cli_args):
         for x in range(1, 5):
             for name in glob.glob(join("Tools/Evasion/payloads/" + "*/" * x,'[!_]*.py')):
-                if name.endswith(".py") and ("__init__" not in name):
+                if name.endswith(".py") and ("__init__" not in name) and ("helper" not in name):
                     loaded_payloads = imp.load_source(
                         name.replace("/", ".").rstrip('.py'), name)
                     self.active_payloads[name.replace('Tools/Evasion/payloads/', '')] = loaded_payloads.PayloadModule(cli_args)
