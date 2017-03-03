@@ -1,6 +1,6 @@
 # Veil
 
-![Veil Logo](https://www.veil-framework.com/wp-content/uploads/2013/12/cropped-Veil-Symbol.png "Veil Logo")
+![Veil Logo](https://www.veil-framework.com/wp-content/uploads/2013/12/cropped-Veil-Symbol2.png "Veil Logo")
 
 Veil is a tool designed to generate metasploit payloads that bypass common anti-virus solutions.
 
