@@ -116,15 +116,17 @@ class PayloadModule:
         sandbox_checks, num_curlys = self.system_checks()
 
         payload_code = "package main\nimport (\n\"syscall\"\n\"unsafe\"\n\"fmt\"\n\"os\"\n"
-        if sandbox_checks != '':
-            payload_code += '\"runtime\"\n'
+        if self.required_options["PROCESSORS"][0].lower() != "x":
+            payload_code += "\"runtime\"\n"
 
         # Add in other imports based on checks being performed
         if self.required_options["USERNAME"][0].lower() != "x":
-            payload_code += "\"strings\"\n\"os/user\"\n"
+            payload_code += "\"strings\"\n\"os\"\n\"os/user\"\n"
         if self.required_options["HOSTNAME"][0].lower() != "x":
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
+            if "os" not in payload_code:
+                payload_code += "\"os\"\n"
 
         payload_code += ")\n"
 
