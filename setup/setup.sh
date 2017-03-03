@@ -207,10 +207,10 @@ func_package_deps(){
 
   # Clone down the required install files
   sudo -u "${trueuser}" git clone https://github.com/Veil-Framework/VeilDependencies.git
-  cd testrepo
+  cd VeilDependencies
   mv * ..
   cd ..
-  rm -rf testrepo
+  rm -rf VeilDependencies
 
   # Setup Wine prefices
   # Because Veil currently only supports Win32 binaries, we have to set the WINEARCH PREFIX
