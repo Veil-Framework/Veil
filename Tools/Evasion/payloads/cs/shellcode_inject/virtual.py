@@ -7,6 +7,7 @@ Adapated from code from:
     http://webstersprodigy.net/2012/08/31/av-evading-meterpreter-shell-from-a-net-service/
 
 Module built by @harmj0y
+Updated for Veil 3 by @evan_pena2003
 
 """
 

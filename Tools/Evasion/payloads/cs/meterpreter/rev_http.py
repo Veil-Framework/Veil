@@ -4,6 +4,7 @@ Custom-written pure c# meterpreter/reverse_http stager.
 Uses basic variable renaming obfuscation.
 
 Module built by @harmj0y
+Updated for Veil 3 by @evan_pena2003
 
 """
 
