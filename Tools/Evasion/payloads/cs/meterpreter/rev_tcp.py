@@ -4,7 +4,7 @@ Custom-written pure c# meterpreter/reverse_tcp stager.
 Uses basic variable renaming obfuscation.
 
 Module built by @harmj0y
-Updated by @ChrisTruncer
+Updated by @ChrisTruncer and @evan_pena2003
 
 """
 
