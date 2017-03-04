@@ -83,7 +83,7 @@ class PayloadModule:
 
         # Return
         self.payload_source_code = PayloadCode
-        return PayloadCode
+        return
 
     def formStr(self, varstr, instr):
         holder = []
