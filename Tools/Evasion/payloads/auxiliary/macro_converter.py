@@ -82,6 +82,7 @@ class PayloadModule:
         PayloadCode = top + "\r\n" + payL + "\r\n\r\n" + execStr + "\r\n\r\n" + shell + "\r\n\r\n" + bottom + "\r\n"
 
         # Return
+        self.payload_source_code = PayloadCode
         return PayloadCode
 
     def formStr(self, varstr, instr):
@@ -99,5 +100,4 @@ class PayloadModule:
 
         str2 = str2 + "\""
         str1 = str1 + "\r\n" + str2
-        self.payload_source_code = str1
-        return
+        return str1
