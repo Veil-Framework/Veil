@@ -312,7 +312,7 @@ class Tools:
                 print()
             show_evasion_menu = True
 
-            evasion_main_command = input('Veil-Evasion command: ')
+            evasion_main_command = input('Veil-Evasion command: ').strip()
 
             if evasion_main_command.lower() == "back":
                 evasion_main_command = ''
@@ -402,7 +402,7 @@ class Tools:
         evasion_helpers.print_dict_message(self.payload_option_commands, show_title=False)
 
         while True:
-            payload_options_cmd = input("\n[" + selected_payload.path + ">>] ")
+            payload_options_cmd = input("\n[" + selected_payload.path + ">>] ").strip()
 
             if payload_options_cmd.lower() == "back" or payload_options_cmd.lower() == "main":
                 payload_options_cmd = ""

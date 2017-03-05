@@ -12,7 +12,7 @@ Thanks again for your help!  #avlol
 There's a couple pieces of information that we will need if you create a Github issue.  Some of the
 primary information is:
 
-* Please provide the version of Veil-Evasion you are using
+* Please provide the version of Veil you are using
 * Please provide the OS that you are using (version included)
 * Please provide the error that you are receiving
   * Please post the error on Pastebin, or another similar site, an post the link in the issue

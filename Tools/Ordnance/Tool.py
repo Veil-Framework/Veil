@@ -186,7 +186,7 @@ class Tools:
                 print()
             show_ordnance_menu = True
 
-            ordnance_main_command = input('Veil-Ordnance command: ')
+            ordnance_main_command = input('Veil-Ordnance command: ').strip()
 
             # See if we're listing payloads or encoders
             if ordnance_main_command.lower().startswith('list'):
