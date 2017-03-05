@@ -91,7 +91,7 @@ class Conductor:
                         print("\t" + helpers.color(command) + '\t\t\t' + self.mainmenu_commands[command])
                     print()
 
-                main_menu_command = input('Main menu choice: ')
+                main_menu_command = input('Main menu choice: ').strip()
 
                 if main_menu_command.startswith('use'):
 
