@@ -41,7 +41,8 @@ class PayloadModule:
             "INJECT_METHOD"  : ["Virtual", "Virtual or Heap"],
             "HOSTNAME"       : ["X", "Optional: Required system hostname"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-            "USERNAME"       : ["X", "Optional: The required user account"]
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
     def generate(self):
@@ -94,6 +95,8 @@ class PayloadModule:
         if self.required_options["HOSTNAME"][0].lower() != "x":
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
+        if self.required_options["SLEEP"][0].lower() != "x":
+            payload_code += "\"net\"\n\"time\"\n\"encoding/binary\"\n"
 
         payload_code += ")\n"
 
