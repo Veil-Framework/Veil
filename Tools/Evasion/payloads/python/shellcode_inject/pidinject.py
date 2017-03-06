@@ -120,7 +120,7 @@ class PayloadModule:
             # Add a tab for this check
             num_tabs_required += 1
 
-       if self.required_options["SLEEP"][0].lower() != "x":
+        if self.required_options["SLEEP"][0].lower() != "x":
 
             rand_time_name = evasion_helpers.randomString()
 
