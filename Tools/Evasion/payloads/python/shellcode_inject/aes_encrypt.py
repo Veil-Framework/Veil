@@ -8,7 +8,7 @@ module by @christruncer
 """
 
 
-from Tools.Evasion.payloads.python.shellcode_inject import payload_generator_helper
+from Tools.Evasion.payloads.python import payload_generator_helper
 from datetime import date
 from datetime import timedelta
 from Tools.Evasion.evasion_common import encryption

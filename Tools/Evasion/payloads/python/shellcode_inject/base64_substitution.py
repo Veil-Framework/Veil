@@ -10,7 +10,7 @@ module by @christruncer
 
 import base64
 
-from Tools.Evasion.payloads.python.shellcode_inject import payload_generator_helper
+from Tools.Evasion.payloads.python import payload_generator_helper
 from datetime import date
 from datetime import timedelta
 

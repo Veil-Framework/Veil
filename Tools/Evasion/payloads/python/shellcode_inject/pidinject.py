@@ -13,7 +13,7 @@ module by @christruncer
 from datetime import date
 from datetime import timedelta
 
-from Tools.Evasion.payloads.python.shellcode_inject import payload_generator_helper
+from Tools.Evasion.payloads.python import payload_generator_helper
 from Tools.Evasion.evasion_common import evasion_helpers
 from Tools.Evasion.evasion_common import encryption
 from Tools.Evasion.evasion_common import shellcode_help
