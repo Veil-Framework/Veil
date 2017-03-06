@@ -7,6 +7,7 @@ Adapated from code from:
     http://webstersprodigy.net/2012/08/31/av-evading-meterpreter-shell-from-a-net-service/
 
 Module built by @harmj0y
+Updated for Veil 3 by @evan_pena2003
 
 """
 
@@ -46,8 +47,7 @@ class PayloadModule:
                                     "HOSTNAME"       : ["X", "Optional: Required system hostname"],
                                     "DOMAIN"         : ["X", "Optional: Required internal domain"],
                                     "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-                                    "USERNAME"       : ["X", "Optional: The required user account"],
-                                    "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
+                                    "USERNAME"       : ["X", "Optional: The required user account"]
                                 }
 
     def generate(self):
