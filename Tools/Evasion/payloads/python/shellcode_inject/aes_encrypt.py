@@ -103,7 +103,7 @@ class PayloadModule:
 
             payload_code += '\t' * num_tabs_required + 'import platform\n'
             payload_code += '\t' * num_tabs_required + rand_hostname + ' = platform.node()\n'
-            payload_code += '\t' * num_tabs_required + 'if ' + rand_hostname + ' in \"' + self.required_options["HOSTNAME"][0] + '\":\n'
+            payload_code += '\t' * num_tabs_required + 'if \"' + self.required_options["HOSTNAME"][0].lower() + '\" in ' + rand_hostname + '.lower():\n'
 
             # Add a tab for this check
             num_tabs_required += 1
@@ -114,7 +114,7 @@ class PayloadModule:
 
             payload_code += '\t' * num_tabs_required + 'import socket\n'
             payload_code += '\t' * num_tabs_required + rand_domain + ' = socket.getfqdn()\n'
-            payload_code += '\t' * num_tabs_required + 'if ' + rand_domain + ' in \"' + self.required_options["DOMAIN"][0] + '\":\n'
+            payload_code += '\t' * num_tabs_required + 'if \"' + self.required_options["DOMAIN"][0].lower() + '\" in ' + rand_domain + '.lower():\n'
 
             # Add a tab for this check
             num_tabs_required += 1
@@ -136,7 +136,7 @@ class PayloadModule:
 
             payload_code += '\t' * num_tabs_required + 'import getpass\n'
             payload_code += '\t' * num_tabs_required + rand_user_name + ' = getpass.getuser()\n'
-            payload_code += '\t' * num_tabs_required + 'if \'' + self.required_options["USERNAME"][0] + '\'.lower() in ' + rand_user_name + '.lower():\n'
+            payload_code += '\t' * num_tabs_required + 'if \'' + self.required_options["USERNAME"][0].lower() + '\' in ' + rand_user_name + '.lower():\n'
 
             # Add a tab for this check
             num_tabs_required += 1
