@@ -235,7 +235,7 @@ class Tools:
     def load_payloads(self, cli_args):
         for x in range(1, 5):
             for name in glob.glob(join("Tools/Evasion/payloads/" + "*/" * x,'[!_]*.py')):
-                if name.endswith(".py") and ("__init__" not in name) and ("helper" not in name):
+                if name.endswith(".py") and ("__init__" not in name):
                     loaded_payloads = imp.load_source(
                         name.replace("/", ".").rstrip('.py'), name)
                     self.active_payloads[name.replace('Tools/Evasion/payloads/', '')] = loaded_payloads.PayloadModule(cli_args)
@@ -312,7 +312,7 @@ class Tools:
                 print()
             show_evasion_menu = True
 
-            evasion_main_command = input('Veil-Evasion command: ')
+            evasion_main_command = input('Veil-Evasion command: ').strip()
 
             if evasion_main_command.lower() == "back":
                 evasion_main_command = ''
@@ -402,7 +402,7 @@ class Tools:
         evasion_helpers.print_dict_message(self.payload_option_commands, show_title=False)
 
         while True:
-            payload_options_cmd = input("\n[" + selected_payload.path + ">>] ")
+            payload_options_cmd = input("\n[" + selected_payload.path + ">>] ").strip()
 
             if payload_options_cmd.lower() == "back" or payload_options_cmd.lower() == "main":
                 payload_options_cmd = ""

