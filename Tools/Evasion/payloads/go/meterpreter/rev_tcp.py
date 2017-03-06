@@ -137,6 +137,8 @@ class PayloadModule:
                 payload_code += "\"strings\"\n"
             if "os" not in payload_code:
                 payload_code += "\"os\"\n"
+        if self.required_options["SLEEP"][0].lower() != "x":
+            payload_code += "\"net\"\n\"time\"\n\"encoding/binary\"\n"
 
         payload_code += ")\n"
 

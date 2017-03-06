@@ -132,6 +132,8 @@ class PayloadModule:
         payload_code = "package main\nimport (\n\"syscall\"\n\"unsafe\"\n\"fmt\"\n\"os\"\n"
         if self.required_options["PROCESSORS"][0].lower() != "x":
             payload_code += "\"runtime\"\n"
+        if self.required_options["SLEEP"][0].lower() != "x":
+            payload_code += "\"net\"\n\"time\"\n\"encoding/binary\"\n"
 
         # Add in other imports based on checks being performed
         if self.required_options["USERNAME"][0].lower() != "x":
