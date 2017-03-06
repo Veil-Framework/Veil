@@ -51,7 +51,7 @@ class PayloadModule:
     def generate(self):
 
         # imports and namespace setup
-        payload_code = "using System; using System.Net; using System.Net.Sockets; using System.Linq; using System.Runtime.InteropServices;\n"
+        payload_code = "using System; using System.Net; using System.Net.Sockets; using System.Linq; using System.Runtime.InteropServices; using System.Threading;\n"
         payload_code += "namespace %s { class %s {\n" % (evasion_helpers.randomString(), evasion_helpers.randomString())
 
         # code for the randomString() function
