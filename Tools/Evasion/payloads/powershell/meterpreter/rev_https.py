@@ -47,19 +47,19 @@ class PayloadModule:
         num_ends_required = 0
 
         if self.required_options["HOSTNAME"][0].lower() != "x":
-            check_code += "if($env:computername -eq \"" + self.required_options["HOSTNAME"][0].lower() + "\"{\n"
+            check_code += "if($env:computername -eq \"" + self.required_options["HOSTNAME"][0].lower() + "\") {\n"
             num_ends_required += 1
 
         if self.required_options["DOMAIN"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + self.required_options["DOMAIN"][0].lower() + "\"{\n"
+            check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + self.required_options["DOMAIN"][0].lower() + "\") {\n"
             num_ends_required += 1
 
         if self.required_options["USERNAME"][0].lower() != "x":
-            check_code += "if($env:username -eq \"" + self.required_options["USERNAME"][0].lower() + "\"{\n"
+            check_code += "if($env:username -eq \"" + self.required_options["USERNAME"][0].lower() + "\") {\n"
             num_ends_required += 1
 
         if self.required_options["PROCESSORS"][0].lower() != "x":
-            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + self.required_options["PROCESSORS"][0].lower() + "{\n"
+            check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + self.required_options["PROCESSORS"][0].lower() + ") {\n"
             num_ends_required += 1
 
         return check_code, num_ends_required
