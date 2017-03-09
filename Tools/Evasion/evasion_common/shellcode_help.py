@@ -351,7 +351,7 @@ class Shellcode:
 
                                     # otherwise assume we've been passed a domain name
                                     else:
-                                        if not evasion_helpers.validate_hostname(value):
+                                        if not helpers.validate_hostname(value):
                                             if 'LHOST' in self.required_options:
                                                 self.required_options['LHOST'][0] = ''
                                             print(helpers.color("\n [!] ERROR: Bad hostname specified.\n", warning=True))
