@@ -42,7 +42,6 @@ class PayloadModule:
             "HOSTNAME"       : ["X", "Optional: Only run on specified hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "USERNAME"       : ["X", "Optional: The required user account"],
-            "SLEEP"          : ["X", "Sleep"]
         }
 
     def generate(self):
