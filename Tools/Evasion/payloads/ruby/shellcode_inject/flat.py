@@ -72,7 +72,8 @@ class PayloadModule:
         else:
             Shellcode = self.cli_shellcode
 
-        payload_code, num_ends_required = gamemaker.senecas_games(self)
+        payload_code2, num_ends_required = gamemaker.senecas_games(self)
+        payload_code = payload_code + payload_code2
 
         # randomly generate out variable names
         payloadName = evasion_helpers.randomString()
