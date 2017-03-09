@@ -41,7 +41,8 @@ class PayloadModule:
             "EXPIRE_PAYLOAD" : ["X", "Optional: Payloads expire after \"Y\" days"],
             "HOSTNAME"       : ["X", "Optional: Only run on specified hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
-            "USERNAME"       : ["X", "Optional: The required user account"]
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Sleep"]
         }
 
     def generate(self):
@@ -71,7 +72,8 @@ class PayloadModule:
         else:
             Shellcode = self.cli_shellcode
 
-        payload_code, num_ends_required = gamemaker.senecas_games(self)
+        payload_code2, num_ends_required = gamemaker.senecas_games(self)
+        payload_code = payload_code + payload_code2
 
         # randomly generate out variable names
         payloadName = evasion_helpers.randomString()
