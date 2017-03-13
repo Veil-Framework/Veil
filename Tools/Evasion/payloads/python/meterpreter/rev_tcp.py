@@ -43,7 +43,8 @@ class PayloadModule:
             "HOSTNAME"       : ["X", "Optional: Required system hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
-            "USERNAME"       : ["X", "Optional: The required user account"]
+            "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
     def generate(self):

