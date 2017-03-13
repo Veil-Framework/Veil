@@ -3,7 +3,6 @@ Ruby inline shellcode injector
 TODO: better randomization
 """
 
-from datetime import date
 from Tools.Evasion.evasion_common import evasion_helpers
 from Tools.Evasion.evasion_common import gamemaker
 from Tools.Evasion.evasion_common import shellcode_help
@@ -34,7 +33,6 @@ class PayloadModule:
         self.required_options = {
             "COMPILE_TO_EXE" : ["Y", "Compile to an executable"],
             "INJECT_METHOD"  : ["Virtual", "Virtual, Void, or Heap"],
-            "EXPIRE_PAYLOAD" : ["X", "Optional: Payloads expire after \"Y\" days"],
             "HOSTNAME"       : ["X", "Optional: Only run on specified hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "USERNAME"       : ["X", "Optional: The required user account"],
@@ -49,7 +47,7 @@ class PayloadModule:
 
         # Add logic for adding this line, stupid bug and I have no idea
         # why this is even a problem, but ruby is dumb
-        if self.required_options["EXPIRE_PAYLOAD"][0] != "X" or self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X" or self.required_options["SLEEP"][0] != "X":
+        if self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X" or self.required_options["SLEEP"][0] != "X":
             pass
         else:
             payload_code += "exit if Object.const_defined?(:Ocra)\n"

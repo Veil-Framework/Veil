@@ -409,13 +409,17 @@ class Tools:
                 break
 
             elif payload_options_cmd.lower() == "generate":
-                # Add in function to validate all commands are entered
-                selected_payload.generate()
-                if not outfile.compiler(selected_payload):
+                # Checking for Ruby specific payloads because of dumbass sleep check
+                if selected_payload.language == 'ruby' and selected_payload.required_options["SLEEP"][0] != "X" and selected_payload.required_options["USERNAME"][0] == "X" and selected_payload.required_options["DOMAIN"][0] == "X" and selected_payload.required_options["HOSTNAME"][0] == "X":
+                    print(helpers.color("[*] If using SLEEP check with Ruby, you must also provide on additional check (like HOSTNAME)!", warning=True))
                     payload_options_cmd = ""
                 else:
-                    payload_options_cmd = ""
-                    break
+                    selected_payload.generate()
+                    if not outfile.compiler(selected_payload):
+                        payload_options_cmd = ""
+                    else:
+                        payload_options_cmd = ""
+                        break
 
             elif payload_options_cmd.lower() == "exit":
                 sys.exit(0)
