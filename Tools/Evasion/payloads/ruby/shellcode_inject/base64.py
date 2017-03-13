@@ -86,8 +86,7 @@ class PayloadModule:
         # Base64 Encode Shellcode
         Shellcode = base64.b64encode(bytes(Shellcode, 'latin-1')).decode('ascii')
 
-        payload_code2, num_ends_required = gamemaker.senecas_games(self)
-        payload_code = payload_code + payload_code2
+        payload_code, num_ends_required = gamemaker.senecas_games(self)
 
         # randomly generate out variable names
         payloadName = evasion_helpers.randomString()
