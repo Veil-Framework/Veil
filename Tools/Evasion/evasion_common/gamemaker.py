@@ -103,18 +103,6 @@ def senecas_games(evasion_payload):
         return check_code, num_tabs_required
 
     elif evasion_payload.language == 'ruby':
-        if evasion_payload.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":
-
-            year = date.today().year
-            month = date.today().month
-            day = date.today().day
-
-            # Create Payload code
-            check_code += 'require \'date\'\n'
-            check_code += 'if Date.today < Date.parse(\'' + year + '-' + month + '-' + day + '\').next_day(' + evasion_payload.required_options["EXPIRE_PAYLOAD"][0] + ')\n'
-
-            # Add a tab for this check
-            num_tabs_required += 1
 
         if evasion_payload.required_options["HOSTNAME"][0].lower() != "x":
 
