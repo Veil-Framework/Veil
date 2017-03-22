@@ -206,7 +206,7 @@ func_package_deps(){
   fi
 
   # Clone down the required install files
-  sudo -u "${trueuser}" git clone https://github.com/Veil-Framework/VeilDependencies.git
+  git clone https://github.com/Veil-Framework/VeilDependencies.git
   cd VeilDependencies
   mv * ..
   cd ..
