@@ -315,6 +315,7 @@ class Tools:
                         elif shellcode_command == "back":
                             # Go back to shellcode selection
                             shellcode_command = ''
+                            breakout = True
                             break
                         elif shellcode_command == "generate":
                             lport_out = ''
@@ -377,6 +378,14 @@ class Tools:
                             self.print_options_screen(payload)
 
                     if breakout:
+                        ordnance_helpers.title_screen()
+                        print("Veil-Ordnance Menu")
+                        print("\n\t" + helpers.color(len(self.active_shellcode)) + " payloads loaded")
+                        print("\t" + helpers.color(len(self.active_encoders)) + " encoders loaded\n")
+                        print("Available Commands:\n")
+                        for command in sorted(self.ordnance_main_menu_commands.keys()):
+                            print("\t" + helpers.color(command) + '\t\t\t' + self.ordnance_main_menu_commands[command])
+                        print()
                         break
 
         if not shellcode_found:
