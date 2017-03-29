@@ -444,8 +444,7 @@ func_go_deps(){
   popd >/dev/null
 }
 
-func_
-_deps(){
+func_autoit_deps(){
   echo -e "\n [*] ${YELLOW}Initializing AutoIT installation...${RESET}\n"
   [ "${silent}" == "true" ] && arg=" /S"
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${rootdir}/setup/autoit-v3-setup.exe" ${arg}
