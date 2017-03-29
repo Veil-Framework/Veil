@@ -256,8 +256,8 @@ def senecas_games(evasion_payload):
 
         if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
 
-            check_code += '\t' * num_tabs_required + 'if (System.Environment.MachineName.ToLower() != System.Environment.UserDomainName.ToLower()) {\n'                        
-
+            check_code += '\t' * num_tabs_required + 'if (string.Equals("' + evasion_payload.required_options["DOMAIN"][0] + '", System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName, StringComparison.CurrentCultureIgnoreCase)) {\n'
+            
             # Add a tab for this check
             num_tabs_required += 1
 
