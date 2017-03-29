@@ -444,9 +444,11 @@ func_go_deps(){
   popd >/dev/null
 }
 
-func_autoit_deps(){
+func_
+_deps(){
   echo -e "\n [*] ${YELLOW}Initializing AutoIT installation...${RESET}\n"
-  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${rootdir}/setup/autoit-v3-setup.exe /S"
+  [ "${silent}" == "true" ] && arg=" /S"
+  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${rootdir}/setup/autoit-v3-setup.exe" ${arg}
 }
 
 # Install (Wine) Ruby dependencies
