@@ -263,7 +263,7 @@ def senecas_games(evasion_payload):
 
         if evasion_payload.required_options["PROCESSORS"][0].lower() != "x":
 
-            check_code += '\t' * num_tabs_required + 'if (System.Environment.ProcessorCount > {}) {{\n'.format(evasion_payload.required_options["PROCESSORS"][0])
+            check_code += '\t' * num_tabs_required + 'if (System.Environment.ProcessorCount >= {}) {{\n'.format(evasion_payload.required_options["PROCESSORS"][0])
 
             # Add a tab for this check
             num_tabs_required += 1
