@@ -201,8 +201,9 @@ class Shellcode:
             filePath = input(" [>] Please enter the path to your raw shellcode file: ")
 
             try:
-                with open(filePath, 'rb') as shellcode_file:
+                with open(filePath, 'r') as shellcode_file:
                     file_shellcode = shellcode_file.read()
+                    file_shellcode = file_shellcode.strip()
             except:
                 print(helpers.color(" [!] WARNING: path not found, defaulting to msfvenom!", warning=True))
                 return None

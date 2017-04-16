@@ -1,3 +1,7 @@
+[04.16.2017]
+     Released.: 3.0.2
+     Modified.: PowerShell payloads no longer have -Exec bypass and fixed read format from binary to non-binary when reading a file containing shellcode.
+
 [04.04.2017]
      Released.: 3.0.1
      Modified.: Python rev_https and rev_tcp modified to fix a small bug and formatting issue
