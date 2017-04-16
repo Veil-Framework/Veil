@@ -411,7 +411,7 @@ class Tools:
             elif payload_options_cmd.lower() == "generate":
                 # Checking for Ruby specific payloads because of dumbass sleep check
                 if selected_payload.language == 'ruby' and selected_payload.required_options["SLEEP"][0] != "X" and selected_payload.required_options["USERNAME"][0] == "X" and selected_payload.required_options["DOMAIN"][0] == "X" and selected_payload.required_options["HOSTNAME"][0] == "X":
-                    print(helpers.color("[*] If using SLEEP check with Ruby, you must also provide on additional check (like HOSTNAME)!", warning=True))
+                    print(helpers.color("[*] If using SLEEP check with Ruby, you must also provide an additional check (like HOSTNAME)!", warning=True))
                     payload_options_cmd = ""
                 else:
                     selected_payload.generate()
