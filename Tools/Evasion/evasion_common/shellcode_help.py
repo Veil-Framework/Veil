@@ -13,12 +13,21 @@ import binascii
 import sys
 
 from lib.common import helpers
-from Tools.Ordnance import Tool as Ordnance_Import
 from Tools.Evasion.evasion_common import evasion_helpers
 from lib.common import completer
 
+# try to find and import the settings.py config file
+if os.path.exists("/etc/veil/settings.py"):
+    try:
+        sys.path.append("/etc/veil/")
+        import settings
 
-import settings
+    except ImportError:
+        print("\n [!] ERROR #1: run %s manually\n" % (os.path.abspath("./config/update.py")))
+        sys.exit()
+
+sys.path.insert(0, settings.VEIL_EVASION_PATH + 'Tools/Ordnance')
+import Tool as Ordnance_Import
 
 
 class Shellcode:
