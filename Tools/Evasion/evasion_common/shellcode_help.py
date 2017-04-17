@@ -13,12 +13,21 @@ import binascii
 import sys
 
 from lib.common import helpers
-from Tools.Ordnance import Tool as Ordnance_Import
 from Tools.Evasion.evasion_common import evasion_helpers
 from lib.common import completer
 
+# try to find and import the settings.py config file
+if os.path.exists("/etc/veil/settings.py"):
+    try:
+        sys.path.append("/etc/veil/")
+        import settings
 
-import settings
+    except ImportError:
+        print("\n [!] ERROR #1: run %s manually\n" % (os.path.abspath("./config/update.py")))
+        sys.exit()
+
+sys.path.insert(0, settings.VEIL_EVASION_PATH + 'Tools/Ordnance')
+import Tool as Ordnance_Import
 
 
 class Shellcode:
@@ -180,7 +189,8 @@ class Shellcode:
         print('     %s - Ordnance %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
         print('     %s - MSFVenom' % (helpers.color('2')))
         print('     %s - custom shellcode string' % (helpers.color('3')))
-        print('     %s - file with shellcode (raw)\n' % (helpers.color('4')))
+        print('     %s - file with shellcode (\\x41\\x42..)' % (helpers.color('4')))
+        print('     %s - binary file with shellcode\n' % helpers.color('5'))
 
         try:
             choice = self.required_options['SHELLCODE'][0].lower().strip()
@@ -198,7 +208,7 @@ class Shellcode:
             readline.set_completer(comp.complete)
 
             # if the shellcode is specicified as a raw file
-            filePath = input(" [>] Please enter the path to your raw shellcode file: ")
+            filePath = input(" [>] Please enter the path to your shellcode file: ")
 
             try:
                 with open(filePath, 'r') as shellcode_file:
@@ -223,6 +233,36 @@ class Shellcode:
 
             # remove the completer
             readline.set_completer(None)
+
+        elif choice == '5':
+            # instantiate our completer object for path completion
+            comp = completer.PathCompleter()
+
+            # we want to treat '/' as part of a word, so override the delimiters
+            readline.set_completer_delims(' \t\n;')
+            readline.parse_and_bind("tab: complete")
+            readline.set_completer(comp.complete)
+
+            # if the shellcode is specicified as a raw file
+            filePath = input(" [>] Please enter the path to your binary file: ")
+
+            try:
+                with open(filePath, 'rb') as shellcode_file:
+                    file_shellcode = shellcode_file.read()
+
+            except:
+                print(helpers.color(" [!] WARNING: path not found, defaulting to msfvenom!", warning=True))
+                return None
+
+            if len(file_shellcode) == 0:
+                print(helpers.color(" [!] WARNING: no custom shellcode restrieved, defaulting to msfvenom!", warning=True))
+                return None
+
+            binary_code = ''
+            # Convert from binary to shellcode
+            for byte in file_shellcode:
+                binary_code += "\\x" + hex(byte)[2:].zfill(2)
+            return binary_code
 
         elif choice == '3' or choice == 'string':
             # if the shellcode is specified as a string
