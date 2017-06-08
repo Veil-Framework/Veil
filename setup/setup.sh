@@ -158,7 +158,7 @@ func_package_deps(){
       if [ "${os}" != "ubuntu" ]; then
         sudo ${arg} apt-get -y -qq install wine wine64 wine32
       else # Special snowflakes... urghbuntu
-        sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386
+        sudo ${arg} apt-get -y -qq install wine-stable wine1.6 wine1.6-i386
       fi
       tmp="$?"
       if [ "${tmp}" -ne "0" ]; then
