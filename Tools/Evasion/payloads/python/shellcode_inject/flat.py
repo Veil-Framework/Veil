@@ -57,7 +57,10 @@ class PayloadModule:
             "USERNAME"       : ["X", "Optional: The required user account"],
             "CLICKTRACK"     : ["X", "Optional: Minimum number of clicks to execute payload"],
             "UTCCHECK"       : ["FALSE", "Optional: Validates system does not use UTC timezone"],
-            "VIRTUALFILES"   : ["FALSE", "Optional: Check if VM supporting files exist"],    
+            "VIRTUALFILES"   : ["FALSE", "Optional: Check if VM supporting files exist"],
+            "CURSORMOVEMENT" : ["FALSE", "Check if cursor is in same position after 30 seconds"],
+            "USERPROMPT"     : ["FALSE", "Make user click prompt prior to execution"],
+            "SANDBOXPROCESS" : ["FALSE", "Check for common sandbox processes"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 

