@@ -60,6 +60,7 @@ class PayloadModule:
             "VIRTUALFILES"   : ["FALSE", "Optional: Check if VM supporting files exist"],
             "CURSORMOVEMENT" : ["FALSE", "Check if cursor is in same position after 30 seconds"],
             "USERPROMPT"     : ["FALSE", "Make user click prompt prior to execution"],
+            "MINRAM"         : ["FALSE", "Check for at least 3 gigs of RAM"],
             "SANDBOXPROCESS" : ["FALSE", "Check for common sandbox processes"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }

