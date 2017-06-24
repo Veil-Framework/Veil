@@ -84,7 +84,7 @@ def senecas_games(evasion_payload):
 
             check_code += '\t' * num_tabs_required + 'import ctypes\n'
             check_code += '\t' * num_tabs_required + 'class ' + class_name + ' (ctypes.Structure):\n'
-            check_code += '\t' * num_tabs_required + '\t_' + field_name + '_ = [\n'
+            check_code += '\t' * num_tabs_required + '\t_fields_ = [\n'
             check_code += '\t' * num_tabs_required + '\t\t("dwLength", ctypes.c_ulong),\n'
             check_code += '\t' * num_tabs_required + '\t\t("dwMemoryLoad", ctypes.c_ulong),\n'
             check_code += '\t' * num_tabs_required + '\t\t("ullTotalPhys", ctypes.c_ulonglong),\n'
