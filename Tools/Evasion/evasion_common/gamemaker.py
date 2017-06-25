@@ -110,7 +110,7 @@ def senecas_games(evasion_payload):
             check_code += '\t' * num_tabs_required + '\t\t' + hProcess + ' = win32api.OpenProcess(0x0410, 0, ' + pid + ')\n'
             check_code += '\t' * num_tabs_required + '\t\ttry:\n'
             check_code += '\t' * num_tabs_required + '\t\t\t' + curProcessDLLs + '= win32process.EnumProcessModules(' + hProcess + ')\n'
-            check_code += '\t' * num_tabs_required + '\t\t\tfor ' + dll + 'in ' + curProcessDLLs + ':\n'
+            check_code += '\t' * num_tabs_required + '\t\t\tfor ' + dll + ' in ' + curProcessDLLs + ':\n'
             check_code += '\t' * num_tabs_required + '\t\t\t\t' + dll_name + '= str(win32process.GetModuleFileNameEx(' + hProcess + ', ' + dll + ')).lower()\n'
             check_code += '\t' * num_tabs_required + '\t\t\t\tfor ' + sandbox_dll + ' in '+ sandbox_dlls + ':\n'
             check_code += '\t' * num_tabs_required + '\t\t\t\t\tif ' + sandbox_dll + ' in ' + dll_name + ':\n'
