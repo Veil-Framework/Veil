@@ -45,6 +45,15 @@ class PayloadModule:
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "CLICKTRACK"     : ["X", "Optional: Minimum number of clicks to execute payload"],
+            "UTCCHECK"       : ["FALSE", "Optional: Validates system does not use UTC timezone"],
+            "VIRTUALFILES"   : ["FALSE", "Optional: Check if VM supporting files exist"],
+            "VIRTUALDLLS"    : ["FALSE", "Check for dlls loaded in memory"],
+            "CURSORMOVEMENT" : ["FALSE", "Check if cursor is in same position after 30 seconds"],
+            "USERPROMPT"     : ["FALSE", "Make user click prompt prior to execution"],
+            "MINRAM"         : ["FALSE", "Check for at least 3 gigs of RAM"],
+            "SANDBOXPROCESS" : ["FALSE", "Check for common sandbox processes"],
+            "DETECTDEBUG"    : ["FALSE", "Check if debugger is present"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
