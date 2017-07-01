@@ -47,6 +47,7 @@ class PayloadModule:
             "RAMCHECK"       : ["FALSE", "Check for at least 3 gigs of RAM"],
             "PROCCHECK"      : ["FALSE", "Check for active VM processes"],
             "MINPROCS"       : ["X", "Minimum number of running processes"],
+            "BADMACS"        : ["FALSE", "Check for VM based MAC addresses"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
@@ -104,6 +105,11 @@ class PayloadModule:
                 payload_code += "\"strings\"\n"
         if self.required_options["SLEEP"][0].lower() != "x":
             payload_code += "\"net\"\n\"time\"\n\"encoding/binary\"\n"
+        if self.required_options["BADMACS"][0].lower() != 'false':
+            if "net" not in payload_code:
+                payload_code += "\"net\"\n"
+            if "strings" not in payload_code:
+                payload_code += "\"strings\"\n"
         if self.required_options["UTCCHECK"][0].lower() != 'false':
             payload_code += "\"time\"\n"
 
