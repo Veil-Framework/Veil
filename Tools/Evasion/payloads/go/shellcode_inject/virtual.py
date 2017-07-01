@@ -46,6 +46,7 @@ class PayloadModule:
             "USERPROMPT"     : ["FALSE", "Prompt user prior to injection"],
             "RAMCHECK"       : ["FALSE", "Check for at least 3 gigs of RAM"],
             "PROCCHECK"      : ["FALSE", "Check for active VM processes"],
+            "MINPROCS"       : ["X", "Minimum number of running processes"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 

