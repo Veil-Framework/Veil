@@ -50,6 +50,7 @@ class PayloadModule:
             "BADMACS"        : ["FALSE", "Check for VM based MAC addresses"],
             "CLICKTRACK"     : ["X", "Require X number of clicks before execution"],
             "CURSORCHECK"    : ["FALSE", "Check for mouse movements"],
+            "DISKSIZE"       : ["X", "Check for a minimum number of gigs for hard disk"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
