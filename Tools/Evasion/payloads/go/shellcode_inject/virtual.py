@@ -48,6 +48,8 @@ class PayloadModule:
             "PROCCHECK"      : ["FALSE", "Check for active VM processes"],
             "MINPROCS"       : ["X", "Minimum number of running processes"],
             "BADMACS"        : ["FALSE", "Check for VM based MAC addresses"],
+            "CLICKTRACK"     : ["X", "Require X number of clicks before execution"],
+            "CURSORCHECK"    : ["FALSE", "Check for mouse movements"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
@@ -111,7 +113,11 @@ class PayloadModule:
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
         if self.required_options["UTCCHECK"][0].lower() != 'false':
-            payload_code += "\"time\"\n"
+            if "time" not in payload_code:
+                payload_code += "\"time\"\n"
+        if self.required_options["CURSORCHECK"][0].lower() != 'false':
+            if "time" not in payload_code:
+                payload_code += "\"time\"\n"
 
         payload_code += ")\n"
 
