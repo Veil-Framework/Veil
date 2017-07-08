@@ -286,16 +286,16 @@ func_package_deps(){
   echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}"
   if [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "ubuntu" ]; then
     sudo ${arg} apt-get -y install mingw-w64 monodoc-browser monodevelop mono-mcs wine unzip ruby golang wget git \
-      python python-crypto python-pefile python-pip ca-certificates python3-pip #ttf-mscorefonts-installer
+      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind #ttf-mscorefonts-installer
 
   elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "centos" ]; then
     sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
       monodevelop mono-tools mono-core wine unzip ruby golang wget git python python-crypto python-pefile \
-      python-pip ca-certificates msttcore-fonts-installer python3-pip
+      python-pip ca-certificates msttcore-fonts-installer python3-pip winbind
 
   elif [ "${os}" ==  "arch" ]; then
     sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
-      mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python3-pip
+      mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python3-pip winbind
     # Install pefile for python2 using pip, rather than via AUR as the package is currently broken.
     sudo pip2 install pefile
   fi

