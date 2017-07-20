@@ -36,6 +36,9 @@ class PayloadModule:
             "HOSTNAME"       : ["X", "Optional: Only run on specified hostname"],
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            #"MINRAM"         : ["X", "Optional: Minimum amount of ram on target"],
+            #"USERPROMPT"     : ["X", "Optional: Prompt user prior to execution"],
+            #"DISKSIZE"       : ["X", "Optional: Set minimum disk size"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 

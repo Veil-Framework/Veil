@@ -42,6 +42,8 @@ class PayloadModule:
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "USERPROMPT"     : ["X", "Optional: Prompt for user activity"],
+            "RAMSIZE"        : ["X", "Optional: Check RAM size of target"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 

