@@ -431,8 +431,8 @@ def senecas_games(evasion_payload):
             total_procs = evasion_helpers.randomString()
 
             check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
-            check_code += '\t' * num_tabs_required + 'my $' + min_procs + ' = ' + evasion_payload.require["MINPROCS"][0] + ';\n'
-            check_code += '\t' * num_tabs_required + 'my $' + wmi_var + ' = Win32::OLE->GetObject("winmgmts:\\\\localhost\\root\\CIMV2") or die;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + min_procs + ' = ' + evasion_payload.required_options["NUMPROCS"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + wmi_var + ' = Win32::OLE->GetObject("winmgmts:\\\\\\\\localhost\\\\root\\\\CIMV2") or die;\n'
             check_code += '\t' * num_tabs_required + 'my $' + total_procs + ' = $' + wmi_var + '->ExecQuery("SELECT * FROM Win32_Process")->{Count} or die;\n'
             check_code += '\t' * num_tabs_required + 'if ($' + total_procs + ' > $' + min_procs + ') {\n'
 
