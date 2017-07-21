@@ -47,6 +47,8 @@ class PayloadModule:
             "NUMPROCS"       : ["X", "Optional: Minimum number of running processes"],
             "FILENAME"       : ["X", "Optional: File name check"],
             "DISKSIZE"       : ["X", "Optional: Minimum disk size on target"],
+            "NUMCLICKS"      : ["X", "Optional: Minimum number of mouse clicks"],
+            "REGSIZE"        : ["X", "Optional: Minimum size of system registry"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
