@@ -45,6 +45,8 @@ class PayloadModule:
                                     "DOMAIN"         : ["X", "Optional: Required internal domain"],
                                     "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
                                     "USERNAME"       : ["X", "Optional: The required user account"],
+                                    "TIMEZONE"       : ["X", "Optional: Check to validate not in UTC"],
+                                    "DEBUGGER"       : ["X", "Optional: Check if debugger is attached"],
                                     "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
                                 }
 

