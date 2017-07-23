@@ -466,8 +466,8 @@ def senecas_games(evasion_payload):
             check_code += '\t' * num_tabs_required + 'my $' + perl_key_state + ' = new Win32::API("user32", "GetAsyncKeyState", +"I", "N");\n'
             check_code += '\t' * num_tabs_required + 'my $' + click_count + ' = 0;\n'
             check_code += '\t' * num_tabs_required + 'while ($' + click_count + ' < $' + perl_min_clicks + ') {\n'
-            check_code += '\t' * num_tabs_required + '\tmy $' + perl_leftclick + ' = $getAsyncKeyState->Call(1);\n'
-            check_code += '\t' * num_tabs_required + '\tmy $' + perl_rightclick + ' = $getAsyncKeyState->Call(2);\n'
+            check_code += '\t' * num_tabs_required + '\tmy $' + perl_leftclick + ' = $' + perl_key_state + '->Call(1);\n'
+            check_code += '\t' * num_tabs_required + '\tmy $' + perl_rightclick + ' = $' + perl_key_state + '->Call(2);\n'
             check_code += '\t' * num_tabs_required + '\tif ($' + perl_leftclick + ') {\n'
             check_code += '\t' * num_tabs_required + '\t\t++$' + click_count + ';\n'
             check_code += '\t' * num_tabs_required + '\t}\n'
@@ -475,6 +475,7 @@ def senecas_games(evasion_payload):
             check_code += '\t' * num_tabs_required + '\t\t++$' + click_count + ';\n'
             check_code += '\t' * num_tabs_required + '\t}\n'
             check_code += '\t' * num_tabs_required + '\tsleep(2);\n'
+            check_code += '\t' * num_tabs_required + '}\n'
             check_code += '\t' * num_tabs_required + 'if (1) {\n'
 
             # Add a tab for this check
