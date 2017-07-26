@@ -12,6 +12,16 @@ import readline
 import subprocess
 import re
 import os
+import sys
+
+# try to find and import the settings.py config file
+if os.path.exists("/etc/veil/settings.py"):
+    try:
+        sys.path.append("/etc/veil/")
+        import settings
+    except:
+        print("Error importing Veil Settings!")
+        sys.exit(1)
 
 
 class none(object):
@@ -189,6 +199,8 @@ class PayloadCompleter(object):
             if args[0] != "":
                 if args[0].strip() == "LHOST":
                     # autocomplete the IP for LHOST
+                    if settings.DISTRO == 'Debian':
+                        ip_output = subprocess.getoutput("ip a").split("\n")[8][9:].split('/')[0]
                     ip_output = subprocess.getoutput("/sbin/ifconfig eth0").split("\n")[1].split()[1]
                     if 'addr' in ip_output:
                         ip_output = ip_output[5:]
@@ -340,9 +352,12 @@ class IPCompleter(object):
         line = readline.get_line_buffer().split()
 
         if not line:
-            ip = [subprocess.getoutput("/sbin/ifconfig eth0").split("\n")[1].split()[1]] + [None]
-            if 'addr' in ip[state]:
-                ip[state] = ip[state][5:]
+            if settings.DISTRO == 'Debian':
+                ip[state] = subprocess.getoutput("ip a").split("\n")[8][9:].split('/')[0]
+            else:
+                ip = [subprocess.getoutput("/sbin/ifconfig eth0").split("\n")[1].split()[1]] + [None]
+                if 'addr' in ip[state]:
+                    ip[state] = ip[state][5:]
             return ip[state]
         else:
             return text[state]
@@ -476,10 +491,13 @@ class OrdnanceCompleter(object):
 
             if args[0] != "":
                 if args[0].strip() == "LHOST":
+                    if settings.DISTRO == 'Debian':
+                        ip_output = subprocess.getoutput("ip a").split("\n")[8][9:].split('/')[0]
                     # autocomplete the IP for LHOST
-                    ip_output = subprocess.getoutput("/sbin/ifconfig eth0").split("\n")[1].split()[1]
-                    if 'addr' in ip_output:
-                        ip_output = ip_output[5:]
+                    else:
+                        ip_output = subprocess.getoutput("/sbin/ifconfig eth0").split("\n")[1].split()[1]
+                        if 'addr' in ip_output:
+                            ip_output = ip_output[5:]
                     res = [ip_output] + [None]
                 elif args[0].strip() == "LPORT":
                     # autocomplete the common MSF port of 4444 for LPORT

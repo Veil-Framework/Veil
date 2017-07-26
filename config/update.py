@@ -34,6 +34,14 @@ def generateConfig(options):
     config += 'OPERATING_SYSTEM="' + options['OPERATING_SYSTEM'] + '"\n\n'
     print "\n [*] OPERATING_SYSTEM = " + options['OPERATING_SYSTEM']
 
+    config += '# Specific Linux distro\n'
+    # check /etc/issue for the exact linux distro
+    issue = open("/etc/issue").read()
+    if issue.startswith("Debian"):
+        config += 'DISTRO="Debian"\n\n'
+    else:
+        config += 'DISTRO="Linux"\n\n'
+
     config += '# Terminal clearing method to use (use "false" to disable it)\n'
     config += 'TERMINAL_CLEAR="' + options['TERMINAL_CLEAR'] + '"\n\n'
     print " [*] TERMINAL_CLEAR = " + options['TERMINAL_CLEAR']

