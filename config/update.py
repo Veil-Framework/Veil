@@ -58,7 +58,7 @@ def generateConfig(options):
     config += 'MSFVENOM_OPTIONS="' + options['MSFVENOM_OPTIONS'] + '"\n\n'
     print " [*] MSFVENOM_OPTIONS = " + options['MSFVENOM_OPTIONS']
 
-    config += '# The path to the metasploit framework, for example: /usr/share/metasploit-framework/\n\tArch Linux based distributions: /opt/metasploit\n'
+    config += '# The path to the metasploit framework, for example: /usr/share/metasploit-framework/\n'
     config += 'METASPLOIT_PATH="' + options['METASPLOIT_PATH'] + '"\n\n'
     print " [*] METASPLOIT_PATH = " + options['METASPLOIT_PATH']
 
