@@ -708,9 +708,9 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
-        if evasion_payload.required_options["BADMACS"][0].lower() != 'x':
-            pass
+
+        #if evasion_payload.required_options["BADMACS"][0].lower() != 'x':
+        #    pass
 
         if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
 

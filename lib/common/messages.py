@@ -19,7 +19,7 @@ if os.path.exists("/etc/veil/settings.py"):
         sys.exit(1)
 
 # Current version of Veil
-veil_version = "3.1.2"
+veil_version = "3.1.3"
 
 
 def title_screen():
