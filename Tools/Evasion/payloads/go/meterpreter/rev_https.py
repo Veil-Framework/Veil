@@ -111,7 +111,7 @@ class PayloadModule:
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
         if self.required_options["SLEEP"][0].lower() != "x":
-            payload_code += "\"net\"\n\"time\"\n\"encoding/binary\"\n"
+            payload_code += "\"net\"\n\"encoding/binary\"\n"
         if self.required_options["BADMACS"][0].lower() != 'false':
             if "net" not in payload_code:
                 payload_code += "\"net\"\n"
