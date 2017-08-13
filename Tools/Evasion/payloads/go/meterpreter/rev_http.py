@@ -106,18 +106,12 @@ class PayloadModule:
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
         if self.required_options["SLEEP"][0].lower() != "x":
-            payload_code += "\"net\"\n\"time\"\n\"encoding/binary\"\n"
+            payload_code += "\"net\"\n\"encoding/binary\"\n"
         if self.required_options["BADMACS"][0].lower() != 'false':
             if "net" not in payload_code:
                 payload_code += "\"net\"\n"
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
-        if self.required_options["UTCCHECK"][0].lower() != 'false':
-            if "time" not in payload_code:
-                payload_code += "\"time\"\n"
-        if self.required_options["CURSORCHECK"][0].lower() != 'false':
-            if "time" not in payload_code:
-                payload_code += "\"time\"\n"
 
         payload_code += ")\n"
 
