@@ -312,7 +312,7 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         #if evasion_payload.required_options["DISKSIZE"][0].lower() != "x":
 
         #    check_code += "require 'win32api'\n"
@@ -325,16 +325,16 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
         #    num_tabs_required += 1
-        
+
         #if evasion_payload.required_options["NUMPROCS"][0].lower() != "x":
         #    check_code += "require 'win32ole'\n"
         #    check_code += 'if (WIN32OLE.connect("winmgmts://").ExecQuery("SELECT NumberOfCores FROM Win32_Processor").to_enum.first.NumberOfCores >= ' + evasion_payload.required_options["NUMPROCS"][0] + ')\n'
 
             # Add a tab for this check
         #    num_tabs_required += 1
-        
+
         #if evasion_payload.required_options["MINRAM"][0].lower() != 'x':
-        
+
         #if evasion_payload.required_options["USERPROMPT"][0].lower() != "x":
 
         ##    title_bar = evasion_helpers.randomString()
@@ -377,7 +377,7 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["USERPROMPT"][0].lower() != 'x':
 
             flags = evasion_helpers.randomString()
@@ -423,7 +423,7 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["NUMPROCS"][0].lower() != 'x':
 
             min_procs = evasion_helpers.randomString()
@@ -438,7 +438,7 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["DISKSIZE"][0].lower() != 'x':
 
             min_disksize = evasion_helpers.randomString()
@@ -453,7 +453,7 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["NUMCLICKS"][0].lower() != 'x':
 
             perl_min_clicks = evasion_helpers.randomString()
@@ -480,7 +480,7 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["REGSIZE"][0].lower() != 'x':
 
             reg_mb_size = evasion_helpers.randomString()
@@ -559,7 +559,7 @@ def senecas_games(evasion_payload):
 
             check_code += "$" + standard_time_zone + ' = [System.TimeZone]::CurrentTimeZone.StandardName\n'
             check_code += "$" + daylight_time_zone + ' = [System.TimeZone]::CurrentTimeZone.DaylightName\n'
-            check_code += "if ($" + standard_time_zone + ' -eq "Coordinated Universal Time" -or $' + daylight_time_zone + ' -eq "Coordinated Universal Time") {\n'
+            check_code += "if ($" + standard_time_zone + ' -ne "Coordinated Universal Time" -or $' + daylight_time_zone + ' -eq "Coordinated Universal Time") {\n'
             num_tabs_required += 1
 
         if evasion_payload.required_options["MINRAM"][0].lower() != "false":
