@@ -549,6 +549,8 @@ elif [ "${os}" == "ubuntu" ]; then
     echo -e " ${RED}[ERROR]: Veil-Evasion is only supported On Ubuntu 15.10 or higher!${RESET}\n"
     exit 1
   fi
+elif [ "${os}" == '"elementary"' ]; then
+	echo -e " [I] ${YELLOW}Elementary OS ${version} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "debian" ]; then
   version="$(awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1)"
   if [ "${version}" -lt 8 ]; then
