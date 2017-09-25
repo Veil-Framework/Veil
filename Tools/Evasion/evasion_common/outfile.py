@@ -67,16 +67,16 @@ def compiler(payload_object, invoked=False, cli_object=None):
                         # if we have a linux distro, continue...
                         # Determine if the user wants Pyinstaller, Pwnstaller, or Py2Exe.
                         print('\n [?] How would you like to create your payload executable?\n')
-                        print('     %s - Pyinstaller %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
-                        print('     %s - Py2Exe\n' % (helpers.color('2')))
+                        print('     %s - Py2Exe %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
+                        print('     %s - Pyinstaller\n' % (helpers.color('2')))
 
                         user_compile_choice = input(" [>] Please enter the number of your choice: ")
                         if user_compile_choice == "1" or user_compile_choice == "":
-                            compile_method = "pyinstaller"
-                        elif user_compile_choice == "2":
                             compile_method = "py2exe"
-                        else:
+                        elif user_compile_choice == "2":
                             compile_method = "pyinstaller"
+                        else:
+                            compile_method = "py2exe"
 
                 if compile_method == 'py2exe' and payload_object.required_options['COMPILE_TO_EXE'][0].lower() == 'y':
                     # Generate setup.py File for Py2Exe
