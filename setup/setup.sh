@@ -297,11 +297,11 @@ func_package_deps(){
   # Start dependency install
   echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}"
   if [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "ubuntu" ]; then
-    sudo ${arg} apt-get -y install mingw-w64 monodoc-browser monodevelop mono-mcs wine unzip ruby golang wget git \
+    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind #ttf-mscorefonts-installer
 
   elif [ "${os}" == '"elementary"' ]; then
-    sudo ${arg} apt-get -y install mingw-w64 monodoc-browser monodevelop mono-mcs wine  unzip ruby golang wget git \
+    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto
 
   elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "centos" ]; then
