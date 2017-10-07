@@ -18,7 +18,11 @@ Veil is current under support by @ChrisTruncer
 
 Run `./setup.sh -c` on Linux.
 
-Install Python 2.7, Py2Exe, PyCrypto, and PyWin32 on a Windows computer (for Py2Exe).
+### For Py2Exe
+
+> NOTE: Using Py2Exe is recommended over Pyinstaller for lower detection rate.
+
+Install [Python 3.3](https://www.python.org/downloads/release/python-335/), [Py2Exe](https://pypi.python.org/pypi/py2exe/), [PyCrypto](http://www.voidspace.org.uk/python/modules.shtml#pycrypto), and [PyWin32](https://sourceforge.net/projects/pywin32/files/pywin32/Build%20221/) on a Windows computer.
 
 ### Quick Install
 
