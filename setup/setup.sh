@@ -143,7 +143,7 @@ func_package_deps(){
   # Always install 32-bit support for 64-bit architectures
 
   # Debian based distributions
-  if [ "${os}" == "ubuntu" ] || [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == '"elementary"' ] || [ "${os}" == "deepin" ]; then
+  if [ "${os}" == "ubuntu" ] || [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "deepin" ]; then
     if [ "${silent}" == "true" ]; then
       echo -e "\n\n [*] ${YELLOW}Silent Mode${RESET}: ${GREEN}Enabled${RESET}\n"
       arg=" DEBIAN_FRONTEND=noninteractive"
@@ -181,6 +181,18 @@ func_package_deps(){
       echo -e "${RED}[ERROR]: Architecture ${arch} is not supported!\n${RESET}"
       exit 1
     fi
+  
+  #Elementary OS x86_64
+  elif [ "${os}" == '"elementary"' ]; then
+    echo -e "\n\n [*] ${YELLOW}Installing Wine on Elementary OS${RESET}\n"
+    sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-amd64
+    tmp="$?"
+    if [ "${tmp}" -ne "0" ]; then
+      msg="Failed to install Wine in Elementary OS... Exit code: ${tmp}"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+    
   # Red Hat based distributions
   elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "centos" ]; then
     echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System${RESET}"
@@ -284,9 +296,13 @@ func_package_deps(){
 
   # Start dependency install
   echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}"
-  if [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "ubuntu" ] || [ "${os}" == '"elementary"' ] || [ "${os}" == "deepin" ]; then
+  if [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "ubuntu" ] || [ "${os}" == "deepin" ]; then
     sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind #ttf-mscorefonts-installer
+
+  elif [ "${os}" == '"elementary"' ]; then
+    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
+      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto
 
   elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "centos" ]; then
     sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
