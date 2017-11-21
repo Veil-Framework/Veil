@@ -155,9 +155,9 @@ func_package_deps(){
       sudo apt-get -qq update
 
       echo -e " [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries${RESET}"
-      if [ "${os}" == "ubuntu" ] || [ "${os}" == "linuxmint" ]; then
+      if [ "${os}" == "ubuntu" ] || [ "${os}" == "linuxmint" ]; then  #Special urghbuntu derivative snowflakes
         sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386
-      else # Special snowflakes... urghbuntu
+      else # anything that isn't ubuntu or ubuntu-derived
         sudo ${arg} apt-get -y -qq install wine wine64 wine32
       fi
       tmp="$?"
