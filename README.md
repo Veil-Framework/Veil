@@ -18,6 +18,8 @@ Veil is current under support by @ChrisTruncer
 
 Run `./setup.sh -c` on Linux.
 
+Install by cloning from git, not via apt!
+
 ### For Py2Exe
 
 > NOTE: Using Py2Exe is recommended over Pyinstaller for lower detection rate.
