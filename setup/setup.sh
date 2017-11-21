@@ -12,7 +12,7 @@ arg=""
 errors=""
 outputfolder="/usr/share/veil-output"
 runuser="$(whoami)"
-if [ "${os}" == "ubuntu" ] || [ "${os}" == "arch" ] || [ "${os}" == "blackarch" ] || [ "${os}" == "debian" ] || [ "${os}" == '"elementary"' ] || [ "${os}" == "deepin" ]; then
+if [ "${os}" == "ubuntu" ] || [ "${os}" == "arch" ] || [ "${os}" == "blackarch" ] || [ "${os}" == "debian" ] || [ "${os}" == '"elementary"' ] || [ "${os}" == "deepin" ] || [ "${os}" == "linuxmint" ] ; then
   trueuser="$(who | tr -d '\n' | cut -d' ' -f1)"
 else
   trueuser="$(who am i | cut -d' ' -f1)" # If this is blank, we're actually root (kali)
@@ -143,7 +143,7 @@ func_package_deps(){
   # Always install 32-bit support for 64-bit architectures
 
   # Debian based distributions
-  if [ "${os}" == "ubuntu" ] || [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "deepin" ]; then
+  if [ "${os}" == "ubuntu" ] || [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "deepin" ] || [ "${os}" == "linuxmint" ]; then
     if [ "${silent}" == "true" ]; then
       echo -e "\n\n [*] ${YELLOW}Silent Mode${RESET}: ${GREEN}Enabled${RESET}\n"
       arg=" DEBIAN_FRONTEND=noninteractive"
@@ -155,10 +155,10 @@ func_package_deps(){
       sudo apt-get -qq update
 
       echo -e " [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries${RESET}"
-      if [ "${os}" != "ubuntu" ]; then
-        sudo ${arg} apt-get -y -qq install wine wine64 wine32
-      else # Special snowflakes... urghbuntu
+      if [ "${os}" == "ubuntu" ] || [ "${os}" == "linuxmint" ]; then
         sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386
+      else # Special snowflakes... urghbuntu
+        sudo ${arg} apt-get -y -qq install wine wine64 wine32
       fi
       tmp="$?"
       if [ "${tmp}" -ne "0" ]; then
@@ -296,7 +296,7 @@ func_package_deps(){
 
   # Start dependency install
   echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}"
-  if [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "ubuntu" ] || [ "${os}" == "deepin" ]; then
+  if [ "${os}" == "debian" ] || [ "${os}" == "kali" ] || [ "${os}" == "parrot" ] || [ "${os}" == "ubuntu" ] || [ "${os}" == "deepin" ] || [ "${os}" == "linuxmint" ]; then
     sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind #ttf-mscorefonts-installer
 
@@ -561,6 +561,9 @@ elif [ "${os}" == "parrot" ]; then
 elif [ "${os}" == "ubuntu" ]; then
   version="$(awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1)"
   echo -e " [I] ${YELLOW}Ubuntu ${version} ${arch} detected...${RESET}\n"
+elif [ "${os}" == "linuxmint" ]; then
+  version="$(awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1)"
+  echo -e " [I] ${YELLOW}Linux Mint ${version} ${arch} detected...${RESET}\n"
   if [[ "${version}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil-Evasion is only supported On Ubuntu 15.10 or higher!${RESET}\n"
     exit 1
