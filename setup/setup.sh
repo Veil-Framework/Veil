@@ -82,7 +82,7 @@ func_check_env(){
     echo -e "\n ${BOLD}[!] NON-KALI Users: Before you begin the install, make sure that you have"
     echo -e "     the Metasploit-Framework installed before you proceed!${RESET}\n"
     read -p 'Continue? ([Y]/[n]o): ' installveil
-    if [ "${installveil}" != 'y' ] || [ "${installveil}" != 'Y' ]; then
+    if [ "${installveil}" == 'n' ] || [ "${installveil}" == 'N' ]; then
       echo -e "\n ${RED}[ERROR]: Installation aborted by user.${RESET}\n"
       exit 1
     fi
