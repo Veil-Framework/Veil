@@ -1,9 +1,7 @@
 """
-
-Custom-written pure powershell meterpreter/reverse_tcp stager.
+Custom-written pure powershell meterpreter/reverse_tcp stager
 
 Module @harmj0y
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

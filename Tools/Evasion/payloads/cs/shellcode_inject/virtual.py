@@ -1,5 +1,4 @@
 """
-
 C# inline shellcode injector using the VirtualAlloc()/CreateThread() pattern.
 Uses basic variable renaming obfuscation.
 
@@ -8,7 +7,6 @@ Adapated from code from:
 
 Module built by @harmj0y
 Updated for Veil 3 by @evan_pena2003
-
 """
 
 from Tools.Evasion.evasion_common import encryption

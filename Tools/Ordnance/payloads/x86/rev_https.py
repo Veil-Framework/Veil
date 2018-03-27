@@ -1,6 +1,8 @@
-# This is a class for the rev_https payload
-# Completely ported from the Metasploit Framework
-# https://github.com/rapid7/metasploit-framework/blob/master/modules/payloads/stagers/windows/reverse_https.rb
+"""
+rev_https payload
+Completely ported from Metasploit Framework:
+    https://github.com/rapid7/metasploit-framework/blob/master/modules/payloads/stagers/windows/reverse_https.rb
+"""
 
 import binascii
 import codecs

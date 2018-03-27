@@ -1,7 +1,6 @@
-'''
+"""
 This is the object used to hold payload options for Ordnance to leverage
-'''
-
+"""
 
 class Payload_Details:
 

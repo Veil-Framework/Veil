@@ -1,11 +1,8 @@
 """
-
-AutoIT wrapper for shellcode injection.
-
+AutoIT wrapper for shellcode injection
 
 Module built by @harmj0y
 Updated by @ChrisTruncer
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

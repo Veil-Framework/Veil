@@ -1,10 +1,8 @@
 """
-
 Simple auxiliary module that will take a specified python source
 file and compile it to an executable using Pyinstaller.
 
-by @harmj0y
-
+Module built by @harmj0y
 """
 
 from lib.common import helpers

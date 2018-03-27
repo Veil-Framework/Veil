@@ -1,9 +1,6 @@
-'''
-
-This file is used for messages that will be displayed to the user at some
-point
-
-'''
+"""
+This file is used for messages that will be displayed to the user at some point
+"""
 
 import os
 import sys

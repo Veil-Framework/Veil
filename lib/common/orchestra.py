@@ -1,8 +1,6 @@
-'''
-
+"""
 This is the conductor which controls everything
-
-'''
+"""
 
 import glob
 import imp
@@ -201,7 +199,7 @@ class Conductor:
                     main_menu_command = ''
 
                 elif main_menu_command.startswith('exit'):
-                    print('\n' + helpers.color('You rage quit Veil!', warning=True) + '\n')
+                    print('\n' + helpers.color('Quitting Veil', warning=True) + '\n')
                     sys.exit()
 
                 else:
@@ -209,7 +207,7 @@ class Conductor:
                     main_menu_command = ''
 
         except KeyboardInterrupt:
-            print("\n\n" + helpers.color("You rage quit Veil!", warning=True))
+            print("\n\n" + helpers.color("Rage quit!", warning=True))
             sys.exit()
 
     def update_veil(self):

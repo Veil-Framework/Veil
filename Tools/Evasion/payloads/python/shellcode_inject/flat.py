@@ -1,19 +1,17 @@
 """
-
-Inline shellcode injection.
+Inline shellcode injection
 
 Uses VirtualAlloc() to allocate space for shellcode, RtlMoveMemory() to
-copy the shellcode in, then calls CreateThread() to invoke.
+copy the shellcode in, then calls CreateThread() to invoke
 
-Inspiration from
-http://www.debasish.in/2012/04/execute-shellcode-using-python.html
+Inspiration from:
+    http://www.debasish.in/2012/04/execute-shellcode-using-python.html
 
  - or -
 
 Very basic void pointer reference, similar to the c payload
 
-module by @christruncer
-
+Module built by @christruncer
 """
 
 from datetime import date

@@ -1,10 +1,7 @@
 """
-
-Custom-written pure go meterpreter/reverse_http stager.
-
+Custom-written pure go meterpreter/reverse_http stager
 
 Module built by @b00stfr3ak44
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

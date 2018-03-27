@@ -1,15 +1,13 @@
 """
-
 Payload which injects shellcode into another process (similar to metasploit migrate functionality)
 
 This obviously assumes you have the ability to write into the different process
 
-Help with the injection code came from here - http://noobys-journey.blogspot.com/2010/11/injecting-shellcode-into-xpvista7.html
+Help with the injection code came from here:
+    http://noobys-journey.blogspot.com/2010/11/injecting-shellcode-into-xpvista7.html
 
-module by @christruncer
-
+Module built by @christruncer
 """
-
 
 from datetime import date
 from datetime import timedelta

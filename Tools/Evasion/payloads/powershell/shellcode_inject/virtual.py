@@ -1,12 +1,11 @@
 """
+Powershell method to inject inline shellcode
 
-Powershell method to inject inline shellcode.
+Original concept from Matthew Graeber:
+    http://www.exploit-monday.com/2011/10/exploiting-powershells-features-not.html
 
-Original concept from Matthew Graeber: http://www.exploit-monday.com/2011/10/exploiting-powershells-features-not.html
-
-Note: the architecture independent invoker was developed independently from
+Note: the architecture independent invoker was developed independently from:
     https://www.trustedsec.com/may-2013/native-powershell-x86-shellcode-injection-on-64-bit-platforms/
-
 
 Module built by @harmj0y
 Updated by @ChrisTruncer

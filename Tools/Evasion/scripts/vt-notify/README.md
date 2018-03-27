@@ -8,4 +8,3 @@ Modifications from the original:
 	-Gmail gem utilization added in (gem install gmail)
 	-hash list can be hash:exename
 	-t 0 defaults to a single run
-

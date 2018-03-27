@@ -1,17 +1,14 @@
 """
-
 Currently, this code takes normal shellcode, and replaces the a hex character
 with a random non hex letter.  At runtime,
 the executables reverses the letter substitution and executes the shellcode
 
 Letter substitution code was adapted from:
-http://www.tutorialspoint.com/python/string_maketrans.htm
+    http://www.tutorialspoint.com/python/string_maketrans.htm
 
-module by @christruncer
-contributed to by @EdvardHolst
-
+Module built by @christruncer
+Contributed to by @EdvardHolst
 """
-
 
 import random
 import string

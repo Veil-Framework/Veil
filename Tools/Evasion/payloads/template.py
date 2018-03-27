@@ -1,13 +1,9 @@
 """
+Description of the payload
 
-Description of the payload.
+Additional notes, sources, links, etc
 
-
-Addtional notes, sources, links, etc.
-
-
-Author of the module.
-
+Module built by @<author>
 """
 
 # framework import to access shellcode generation

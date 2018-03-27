@@ -1,7 +1,6 @@
 """
 Contains main Shellcode class as well as the Completer class used
 for tab completion of metasploit payload selection.
-
 """
 
 # Import Modules
@@ -74,11 +73,11 @@ class Shellcode:
     def LoadModules(self):
         """
         Crawls the metasploit install tree and extracts available payloads
-        and their associated required options for langauges specified.
+        and their associated required options for languages specified.
 
         """
 
-        # Variable changed for compatibility with  non-root and non-Kali users
+        # Variable changed for compatibility with non-root and non-Kali users
         # Thanks to Tim Medin for the patch
         msfFolder = settings.METASPLOIT_PATH
 
@@ -386,7 +385,7 @@ class Shellcode:
                                         # do a IP validation check
                                         if not helpers.validate_ip(value):
                                             if 'LHOST' in self.required_options:
-                                                self.required_options['LHOST'][0] = '' 
+                                                self.required_options['LHOST'][0] = ''
                                             print(helpers.color("\n [!] ERROR: Bad IP address specified.\n", warning=True))
                                             value = ""
 
@@ -523,7 +522,7 @@ class Shellcode:
                 return None
             else:
                 # Stript out extra characters, new lines, etc., just leave the shellcode.
-                # Tim Medin's patch for non-root non-kali users
+                # Tim Medin's patch for non-root non-Kali users
 
                 msfvenom_shellcode = subprocess.check_output(settings.MSFVENOM_PATH + self.msfvenomCommand, shell=True)
                 self.shellcode_options = self.msfvenomCommand
@@ -534,7 +533,7 @@ class Shellcode:
 
 
 def cli_msf_shellcode_gen(command_line_args):
-    # set variables for values for easier readibility
+    # set variables for values for easier readability
     msf_payload = command_line_args.msfvenom
     ip = command_line_args.ip
     port = command_line_args.port

@@ -1,9 +1,7 @@
 """
+Custom-written pure python meterpreter/reverse_tcp stager
 
-Custom-written pure python meterpreter/reverse_tcp stager.
-
-By @harmj0y
-
+Module built by @harmj0y
 """
 
 from datetime import date

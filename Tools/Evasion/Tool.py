@@ -1,6 +1,6 @@
-'''
+"""
 This is the Veil-Evasion module
-'''
+"""
 
 import glob
 import imp

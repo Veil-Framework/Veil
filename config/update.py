@@ -1,12 +1,11 @@
 #!/usr/bin/python
 
+"""
+Take an options dictionary and update /etc/veil/settings.py
+"""
+
 import platform, os, sys, pwd
 
-"""
-
-Take an options dictionary and update /etc/veil/settings.py
-
-"""
 def generateConfig(options):
 
     config = """#!/usr/bin/python

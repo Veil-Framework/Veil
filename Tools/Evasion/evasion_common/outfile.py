@@ -1,4 +1,6 @@
-# This file helps "compilation" of source code
+"""
+This file helps "compilation" of source code
+"""
 
 import hashlib
 import os
@@ -108,7 +110,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                 else:
                     if payload_object.required_options['COMPILE_TO_EXE'][0].lower() == 'y':
                         # Used for PyInstaller standard
-                        # copy the pyinstaller runw to maintain its integrity in the event 
+                        # copy the pyinstaller runw to maintain its integrity in the event
                         # pwnstaller is added in for python3 - this will future proof it
                         runw_path = settings.VEIL_EVASION_PATH + 'Tools/Evasion/evasion_common/tools/runw.orig.exe'
                         os.system("cp " + runw_path + " " + settings.PYINSTALLER_PATH + "/PyInstaller/bootloader/Windows-32bit/runw.exe")

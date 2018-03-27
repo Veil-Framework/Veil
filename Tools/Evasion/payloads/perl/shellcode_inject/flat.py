@@ -1,10 +1,8 @@
 """
-
-Custom-written perl inline shellcode injector.
+Custom-written perl inline shellcode injector
 
 Approach by @the_grayhound and @christruncer
 Updated by @ChrisTruncer
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

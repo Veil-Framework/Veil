@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-# This xor encoder was developed completely by Justin Warner (@sixdub)
-# Thanks a lot for letting us add this in!
-# http://stackoverflow.com/questions/4020539/process-escape-sequences-in-a-string-in-python
+"""
+This xor encoder was developed completely by Justin Warner (@sixdub)
+Thanks a lot for letting us add this in!
+    http://stackoverflow.com/questions/4020539/process-escape-sequences-in-a-string-in-python
+"""
 
 import codecs
 import re

@@ -1,7 +1,5 @@
 """
-
-Custom-written pure python meterpreter/bind_tcp stager.
-
+Custom-written pure python meterpreter/bind_tcp stager
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

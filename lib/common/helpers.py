@@ -1,8 +1,6 @@
-'''
-
+"""
 This file contains miscellaneous functions used by the framework
-
-'''
+"""
 
 import ipaddress
 import os

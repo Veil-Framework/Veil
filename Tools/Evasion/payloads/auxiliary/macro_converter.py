@@ -1,12 +1,10 @@
 """
-
 This module is designed to take a windows powershell batch script made by
 Veil-Evasion powershell/virtual module and convert it to a macro
 
-module by @christruncer but original conversion code was developed by
-khr040sh.  Blog post available at:
-https://khr0x40sh.wordpress.com/2014/06/02/embedding-veil-powershell-payloads-into-office-documents/
-
+Module built by @christruncer but original conversion code was developed by khr040sh.
+Blog post available at:
+    https://khr0x40sh.wordpress.com/2014/06/02/embedding-veil-powershell-payloads-into-office-documents/
 """
 
 from lib.common import helpers
@@ -69,7 +67,7 @@ class PayloadModule:
         # insert '\r\n' and 'str = str +' every 48 chars after the first 54.
         payL = self.formStr("str", str(cut[1]))
 
-        # double up double quotes, add the rest of the exec string 
+        # double up double quotes, add the rest of the exec string
         idx = cut[0].index('"')
         cut[0] = cut[0][:idx] + '"' + cut[0][idx:]
         cut[0] = cut[0] + "\\\"\" \" & str & \" \\\"\" " + cut[2] +"\""

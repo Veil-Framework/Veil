@@ -1,6 +1,8 @@
-# This is the reverse_tcp payload, completely ported from the Metasploit
-# Framework.
-# https://github.com/rapid7/metasploit-framework/blob/master/modules/payloads/stagers/windows/reverse_tcp.rb
+"""
+reverse_tcp all ports payload
+Completely ported from Metasploit Framework:
+    https://github.com/rapid7/metasploit-framework/blob/master/modules/payloads/stagers/windows/reverse_tcp.rb
+"""
 
 import binascii
 import codecs

@@ -1,10 +1,8 @@
 """
-
-Custom-written lua inline shellcode injector.
+Custom-written lua inline shellcode injector
 
 Module built by @the_grayhound
 Updated by @ChrisTruncer
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers
@@ -54,7 +52,7 @@ class PayloadModule:
         raw = shellcode.encode('latin-1')
         raw = raw.decode('unicode_escape')
 
-        # get the shellcode into the stupid-ass lua because 
+        # get the shellcode into the stupid-ass lua because
         # stupid-ass lua doesn't do string hex escapes
         shellcode = "".join(["\\" + str(ord(c)).zfill(3) for c in raw])
 

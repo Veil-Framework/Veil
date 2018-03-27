@@ -1,16 +1,12 @@
 """
-
 This payload has DES encrypted shellcode stored within itself.  At runtime, the executable
 uses the key within the file to decrypt the shellcode, injects it into memory, and executes it.
 
-Great examples and code adapted from
-http://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/
+Great examples and code adapted from:
+    http://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/
 
-
-module by @christruncer
-
+Module built by @christruncer
 """
-
 
 from datetime import date
 from datetime import timedelta

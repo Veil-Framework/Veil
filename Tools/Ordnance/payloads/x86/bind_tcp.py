@@ -1,5 +1,8 @@
-# Bind TCP Payload - Completely ported from Metasploit Framework
-# https://github.com/rapid7/metasploit-framework/blob/master/modules/payloads/stagers/windows/bind_tcp.rb
+"""
+Bind TCP Payload
+Completely ported from Metasploit Framework:
+    https://github.com/rapid7/metasploit-framework/blob/master/modules/payloads/stagers/windows/bind_tcp.rb
+"""
 
 import codecs
 from lib.common import helpers

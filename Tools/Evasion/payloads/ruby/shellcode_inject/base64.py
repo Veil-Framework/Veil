@@ -1,12 +1,9 @@
 """
-
 Ruby inline base64 decoding of shellcode and injector
 
 TODO: better randomization
 
-
 Module built by @ChrisTruncer
-
 """
 
 import base64
@@ -121,4 +118,3 @@ class PayloadModule:
 
         self.payload_source_code = payload_code
         return
-        

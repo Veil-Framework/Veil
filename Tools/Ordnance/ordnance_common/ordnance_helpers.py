@@ -1,8 +1,6 @@
-'''
-
+"""
 This file contains random helper functions for Veil-Ordnance
-
-'''
+"""
 
 import os
 import random

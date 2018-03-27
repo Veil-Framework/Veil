@@ -1,12 +1,9 @@
 """
-
 This payload has AES encrypted shellcode stored within itself.  At runtime, the executable
 uses the key within the file to decrypt the shellcode, injects it into memory, and executes it.
 
-module by @christruncer
-
+Module built by @christruncer
 """
-
 
 from datetime import date
 from datetime import timedelta

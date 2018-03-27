@@ -1,11 +1,8 @@
 """
-
-Custom-written pure go meterpreter/reverse_tcp stager.
-
+Custom-written pure go meterpreter/reverse_tcp stager
 
 Module built by @b00stfr3ak44
 Updated by @ChrisTruncer
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

@@ -1,12 +1,10 @@
 """
-
 Auxiliary module that takes an executable file (.exe) and converts
 it into a .war file, specifically for deploying against Tomcat.
 
 99% of the code came from the metasploit project and their war payload creation techniques
 
-by @christruncer
-
+Module built by @christruncer
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

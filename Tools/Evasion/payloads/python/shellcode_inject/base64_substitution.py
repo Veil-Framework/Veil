@@ -1,11 +1,8 @@
 """
-
 This payload receives the msfvenom shellcode, base64 encodes it, and stores it within the payload.
 At runtime, the executable decodes the shellcode and executes it in memory.
 
-
-module by @christruncer
-
+Module built by @christruncer
 """
 
 import base64

@@ -1,9 +1,7 @@
 """
+Custom-written pure python meterpreter/reverse_https stager
 
-Custom-written pure python meterpreter/reverse_https stager.
-
-Module by @harmj0y
-
+Module built by @harmj0y
 """
 
 from datetime import date

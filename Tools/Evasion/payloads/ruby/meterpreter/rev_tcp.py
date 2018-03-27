@@ -1,12 +1,10 @@
 """
-
-Custom-written pure ruby meterpreter/reverse_tcp stager.
+Custom-written pure ruby meterpreter/reverse_tcp stager
 
 TODO: better randomization
 
 Module built by @harmj0y
 Updated by @ChrisTruncer
-
 """
 
 from datetime import date
@@ -115,4 +113,3 @@ class PayloadModule:
 
         self.payload_source_code = payload_code
         return
-        

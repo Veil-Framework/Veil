@@ -1,12 +1,9 @@
 """
-
-Go inline shellcode injector using the VirtualAlloc().
-Uses basic variable renaming obfuscation.
-
+Go inline shellcode injector using the VirtualAlloc()
+Uses basic variable renaming obfuscation
 
 Module built by @b00stfr3ak44
 Updated by @ChrisTruncer
-
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers

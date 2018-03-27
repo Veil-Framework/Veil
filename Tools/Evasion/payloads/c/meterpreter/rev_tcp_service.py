@@ -1,5 +1,4 @@
 """
-
 Obfuscated, pure C windows/meterpreter/reverse_tcp service
 
 Compatible with psexec
@@ -7,10 +6,10 @@ Compatible with psexec
 Implements various randomized string processing functions in an
 attempt to obfuscate the call tree.
 
-Inspiration from https://github.com/rsmudge/metasploit-loader
+Inspiration from:
+    https://github.com/rsmudge/metasploit-loader
 
 Module built by @harmj0y
-
 """
 
 import random

