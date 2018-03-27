@@ -21,6 +21,10 @@ if __name__ == "__main__":
     veilframework.add_argument(
         '--update', action='store_true', help='Update the Veil framework.')
     veilframework.add_argument(
+        '--setup', action='store_true', help='Run\'s the Veil framework setup file & regenerates the configuration.')
+    veilframework.add_argument(
+        '--config', action='store_true', help='Regenerate the Veil framework configuration file.')
+    veilframework.add_argument(
         '--version', action="store_true", help='Displays version and quits.')
     veilframework.add_argument(
         '--list-tools', action="store_true", default=False,
@@ -96,6 +100,14 @@ if __name__ == "__main__":
 
     if args.update:
         the_conductor.update_veil()
+        sys.exit()
+
+    if args.setup:
+        the_conductor.setup_veil()
+        sys.exit()
+
+    if args.config:
+        the_conductor.config_veil()
         sys.exit()
 
     if args.list_tools:
