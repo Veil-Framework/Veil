@@ -1,27 +1,27 @@
-[09.04.2017]
+[2017-09-04]
      Released.: 3.1.4
      Modified.: Updated PowerShell check for UTC time and removed extra whitespace
 
-[06.06.2017]
+[2017-06-06]
      Released.: 3.1.2
      Modified.: Fixed golang payloads when using virtualprotect
 
-[05.27.2017]
+[2017-05-27]
      Released.: 3.1.1
      Modified.: Autoit payload now auto-parses and supports large shellcode input that is > 4000
 
-[05.16.2017]
+[2017-05-16]
      Released.: 3.1
      Modified.: Most "shellcode_inject" payloads now utilize VirtualProtect to never have RWX memory. Not all do (C, AutoIt, Lua)
 
-[04.16.2017]
+[2017-04-16]
      Released.: 3.0.2
      Modified.: PowerShell payloads no longer have -Exec bypass and fixed read format from binary to non-binary when reading a file containing shellcode.
 
-[04.04.2017]
+[2017-04-04]
      Released.: 3.0.1
      Modified.: Python rev_https and rev_tcp modified to fix a small bug and formatting issue
 
-[03.07.2017]
+[2017-03-07]
      Released.: 3.0
      Modified.: This is Veil 3.0's initial release (with minor bug patches post-release). Ideally everything is working well! All mods (hopefully) will be tracked in this file so you know of any changes.
