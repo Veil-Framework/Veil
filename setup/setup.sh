@@ -805,7 +805,7 @@ fi
 
 
 file="./Veil.py --setup"
-echo -e "\n\n [I] ${BOLD}If you have any errors${RESET} running Veil, delete the Veil Wine profile (${BOLD}'rm -rf ${winedir}'${RESET}) and re-run: '${BOLD}${file}'${RESET}\n"
+echo -e "\n\n [I] ${BOLD}If you have any errors${RESET} running Veil, run: '${BOLD}${file}'${RESET}\n"
 
 
 echo -e "\n\n [I] ${GREEN}Done!${RESET}\n"
