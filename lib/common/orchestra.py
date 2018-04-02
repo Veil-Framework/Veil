@@ -219,7 +219,7 @@ class Conductor:
         return
 
     def setup_veil(self):
-        if settings.OPERATING_SYSTEM == "Kali":
+        if settings.OPERATING_SYSTEM == "Kali" and os.path.exists("/usr/share/veil/setup/setup.sh"):
             os.system('/usr/share/veil/setup/setup.sh -f')
         else:
             os.system('./setup/setup.sh -f')
