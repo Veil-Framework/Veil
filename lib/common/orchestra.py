@@ -67,7 +67,7 @@ class Conductor:
     def load_tools(self, command_line_object):
         # Load all tools within the Tools folder
         # (Evasion, Ordnance, Pillage, etc.)
-        for name in glob.glob('Tools/*/Tool.py'):
+        for name in glob.glob('tools/*/tool.py'):
             if name.endswith(".py") and ("__init__" not in name):
                 loaded_tool = imp.load_source(
                     name.replace("/", ".").rstrip('.py'), name)
@@ -218,8 +218,12 @@ class Conductor:
         return
 
     def setup_veil(self):
-        if settings.OPERATING_SYSTEM == "Kali" and os.path.exists("/usr/share/veil/config/setup.sh"):
-            os.system('/usr/share/veil/config/setup.sh -f')
+        if settings.OPERATING_SYSTEM == "Kali":
+            if os.path.exists("/usr/share/veil/config/setup.sh"):
+                os.system('/usr/share/veil/config/setup.sh -f')
+            else:
+                print("\n [!] ERROR: Missing %s\n" % ("/usr/share/veil/config/setup.sh"))
+                os.system('./config/setup.sh -f')
         else:
             os.system('./config/setup.sh -f')
         input('\n\nVeil has ran setup.sh, press enter to continue')
@@ -227,7 +231,11 @@ class Conductor:
 
     def config_veil(self):
         if settings.OPERATING_SYSTEM == "Kali":
-            os.system('cd /usr/share/veil/config/; ./update-config.py')
+            if os.path.exists("/usr/share/veil/config/update-config.py"):
+                os.system('cd /usr/share/veil/config/; ./update-config.py')
+            else:
+                print("\n [!] ERROR: Missing %s\n" % ("/usr/share/veil/config/update-config.py"))
+                os.system('cd ./config/; ./update-config.py')
         else:
             os.system('cd ./config/; ./update-config.py')
         input('\n\nVeil has reconfigured, press enter to continue')
