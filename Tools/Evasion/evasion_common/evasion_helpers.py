@@ -11,15 +11,15 @@ import textwrap
 import zlib
 from lib.common import helpers
 
-# try to find and import the settings.py config file
-if os.path.exists("/etc/veil/settings.py"):
-    try:
-        sys.path.append("/etc/veil/")
-        import settings
 
-    except ImportError:
-        print("\n [!] ERROR #1: run %s manually\n" % (os.path.abspath("./config/update.py")))
-        sys.exit()
+# Try to find and import the settings.py config file
+try:
+    sys.path.append("/etc/veil/")
+    import settings
+
+except ImportError:
+    print("\n [!] ERROR #1: Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    sys.exit()
 
 
 def deflate(string_val):

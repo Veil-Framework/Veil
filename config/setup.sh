@@ -650,18 +650,18 @@ func_update_config(){
 
   ## SUDOINCEPTION! (There is method behind the, at first glance, madness)
   ## The SUDO_USER environment variable of the actual user doesn't get passed on to the python interpreter properly,
-  ## so when we call "sudo python update.py", it thinks the user calling it, it's interpretation of SUDO_USER is root,
+  ## so when we call "sudo python update-config.py", it thinks the user calling it, it's interpretation of SUDO_USER is root,
   ## and that's not what we want. Look at this fake process tree with what the env variables would be...
   ##    - |_ sudo setup.sh (${USER}=root ${SUDO_USER}=yourname)
-  ##      - | sudo -u yourname sudo python update.py (${USER}=root ${SUDO_USER}=yourname)
+  ##      - | sudo -u yourname sudo python update-config.py (${USER}=root ${SUDO_USER}=yourname)
   ## snip 8<-  -  -  -  -  -  -  -  -  -  -  -  -  - The alternative below without "sudo -u username"...
-  ##      - | sudo python update.py (${USER}=root ${SUDO_USER}=root)
+  ##      - | sudo python update-config.py (${USER}=root ${SUDO_USER}=root)
   ## snip 8<-  -  -  -  -  -  -  -  -  -  -  -  -  - And thus it would have screwed up the ${winedir} dir for the user.
   if [ -f /etc/veil/settings.py ]; then
     echo -e "\n\n [*] ${YELLOW}Detected current Veil settings file. Removing...${RESET}\n"
     sudo rm -f /etc/veil/settings.py
   fi
-  sudo -u "${trueuser}" sudo python2 update.py
+  sudo -u "${trueuser}" sudo python2 update-config.py
 
   mkdir -p "${outputdir}"
 
@@ -805,7 +805,7 @@ fi
 
 
 file="./Veil.py --setup"
-echo -e "\n\n [I] ${BOLD}If you have any errors${RESET} running Veil, run: '${BOLD}${file}'${RESET}\n"
+echo -e "\n\n [I] ${BOLD}If you have any errors${RESET} running Veil, run: '${BOLD}${file}' and select the nuke the wine folder option${RESET}\n"
 
 
 echo -e "\n\n [I] ${GREEN}Done!${RESET}\n"

@@ -16,15 +16,15 @@ from Tools.Evasion.evasion_common import outfile
 from Tools.Evasion.evasion_common import shellcode_help
 
 
-# try to find and import the settings.py config file
-if os.path.exists("/etc/veil/settings.py"):
-    try:
-        sys.path.append("/etc/veil/")
-        import settings
+# Try to find and import the settings.py config file
+try:
+    sys.path.append("/etc/veil/")
+    import settings
 
-    except ImportError:
-        print("\n [!] ERROR #1: run %s manually\n" % (os.path.abspath("./config/update.py")))
-        sys.exit()
+except ImportError:
+    print("\n [!] ERROR #1: Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    sys.exit()
+
 
 sys.path.insert(0, settings.VEIL_EVASION_PATH + 'Tools/Ordnance')
 import Tool as Ordnance_Import

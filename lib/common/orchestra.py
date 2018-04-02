@@ -11,16 +11,15 @@ from lib.common import completer
 from lib.common import helpers
 from lib.common import messages
 
-# try to find and import the settings.py config file
-if os.path.exists("/etc/veil/settings.py"):
-    try:
-        sys.path.append("/etc/veil/")
-        import settings
 
-    except ImportError:
-        print("\n [!] ERROR #1: run %s manually\n" % (os.path.abspath("./config/update.py")))
-        sys.exit()
+# Try to find and import the settings.py config file
+try:
+    sys.path.append("/etc/veil/")
+    import settings
 
+except ImportError:
+    print("\n [!] ERROR #1: Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    sys.exit()
 
 
 class Conductor:
@@ -219,17 +218,17 @@ class Conductor:
         return
 
     def setup_veil(self):
-        if settings.OPERATING_SYSTEM == "Kali" and os.path.exists("/usr/share/veil/setup/setup.sh"):
-            os.system('/usr/share/veil/setup/setup.sh -f')
+        if settings.OPERATING_SYSTEM == "Kali" and os.path.exists("/usr/share/veil/config/setup.sh"):
+            os.system('/usr/share/veil/config/setup.sh -f')
         else:
-            os.system('./setup/setup.sh -f')
+            os.system('./config/setup.sh -f')
         input('\n\nVeil has ran setup.sh, press enter to continue')
         return
 
     def config_veil(self):
         if settings.OPERATING_SYSTEM == "Kali":
-            os.system('cd /usr/share/veil/config/; ./update.py')
+            os.system('cd /usr/share/veil/config/; ./update-config.py')
         else:
-            os.system('cd ./config/; ./update.py')
+            os.system('cd ./config/; ./update-config.py')
         input('\n\nVeil has reconfigured, press enter to continue')
         return
