@@ -20,74 +20,76 @@ if __name__ == "__main__":
         '-h', '-?', '--h', '-help', '--help', action="store_true",
         help=argparse.SUPPRESS)
 
-    veilframework = parser.add_argument_group('Veil Options')
-    veilframework.add_argument(
-        '--update', action='store_true', help='Update the Veil framework.')
-    veilframework.add_argument(
-        '--setup', action='store_true', help='Run\'s the Veil framework setup file & regenerates the configuration.')
-    veilframework.add_argument(
-        '--config', action='store_true', help='Regenerate the Veil framework configuration file.')
-    veilframework.add_argument(
-        '--version', action="store_true", help='Displays version and quits.')
+    veilframework = parser.add_argument_group('[*] Veil Options')
     veilframework.add_argument(
         '--list-tools', action="store_true", default=False,
         help='List Veil\'s tools')
     veilframework.add_argument(
-        '-t', '--tool', metavar='Veil-Framework', default=False,
-        help='Specify Veil tool to use')
+        '-t', '--tool', metavar='TOOL', default=False,
+        help='Specify Veil tool to use (Evasion, Ordnance etc.)')
+    veilframework.add_argument(
+        '--update', action='store_true', help='Update the Veil framework')
+    veilframework.add_argument(
+        '--setup', action='store_true', help='Run the Veil framework setup file & regenerate the configuration')
+    veilframework.add_argument(
+        '--config', action='store_true', help='Regenerate the Veil framework configuration file')
+    veilframework.add_argument(
+        '--version', action="store_true", help='Displays version and quits')
 
-    callback_args = parser.add_argument_group('Callback Settings')
+    callback_args = parser.add_argument_group('[*] Callback Settings')
     callback_args.add_argument(
-        "--ip", "--domain", metavar="IP Address", default=None,
-        help="IP Address to connect back to")
+        "--ip", "--domain", metavar="IP", default=None,
+        help='IP address to connect back to')
     callback_args.add_argument(
-        '--port', metavar="Port Number", default=8675, type=int,
-        help="Port number to connect to.")
+        '--port', metavar="PORT", default=8675, type=int,
+        help='Port number to connect to')
 
-    veilevasion = parser.add_argument_group('Veil-Evasion Options')
-    veilevasion.add_argument(
-        '-c', metavar='OPTION1=value OPTION2=value', nargs='*',
-        default=None, help='Custom payload module options.')
-    veilevasion.add_argument(
-        '-o', metavar="OUTPUT NAME", default="payload",
-        help='Output file base name for source and compiled binaries.')
+    payload_args = parser.add_argument_group('[*] Payload Settings')
+    payload_args.add_argument(
+        '--list-payloads', default=False, action='store_true',
+        help='Lists all available payloads for that tool')
+
+    veilevasion = parser.add_argument_group('[*] Veil-Evasion Options')
     veilevasion.add_argument(
         '-p', metavar="PAYLOAD", nargs='?', const="list",
-        help='Payload to generate. Lists payloads if none specified.')
+        help='Payload to generate')
     veilevasion.add_argument(
-        '--clean', action='store_true',
-        help='Clean out payload folders.')
+        '-o', metavar="OUTPUT-NAME", default="payload",
+        help='Output file base name for source and compiled binaries')
+    veilevasion.add_argument(
+        '-c', metavar='OPTION=value', nargs='*',
+        default=None, help='Custom payload module options')
     veilevasion.add_argument(
         '--msfoptions', metavar="OPTION=value", nargs='*',
-        help='Options for the specified metasploit payload.')
+        help='Options for the specified metasploit payload')
     veilevasion.add_argument(
-        '--msfvenom', metavar="windows/meterpreter/reverse_tcp", nargs='?',
-        default='windows/meterpreter/reverse_tcp', help='Metasploit shellcode to generate.')
+        '--msfvenom', metavar="", nargs='?',
+        default='windows/meterpreter/reverse_tcp', help='Metasploit shellcode to generate (e.g. windows/meterpreter/reverse_tcp etc.)')
     veilevasion.add_argument(
         '--compiler', metavar="pyinstaller", default='pyinstaller',
         help='Compiler option for payload (currently only needed for Python)')
+    veilevasion.add_argument(
+        '--clean', action='store_true',
+        help='Clean out payload folders')
 
-    ordnance_shellcode = parser.add_argument_group('Veil-Ordnance Shellcode Options')
+    ordnance_shellcode = parser.add_argument_group('[*] Veil-Ordnance Shellcode Options')
     ordnance_shellcode.add_argument(
         "--ordnance-payload", metavar="rev_tcp", default=None,
-        help="Payload type (bind_tcp, rev_tcp, etc.)")
-    ordnance_shellcode.add_argument(
-        '--list-payloads', default=False, action='store_true',
-        help="Lists all available payloads.")
+        help='Payload type (bind_tcp, rev_tcp, etc.)')
 
-    ordnance_encoder = parser.add_argument_group('Veil-Ordnance Encoder Options')
-    ordnance_encoder.add_argument(
-        "-e", "--encoder", metavar="Encoder Name", default=None,
-        help="Name of Shellcode Encoder to use")
-    ordnance_encoder.add_argument(
-        "-b", "--bad-chars", metavar="\\\\x00\\\\x0a..", default=None,
-        help="Bad characters to avoid")
+    ordnance_encoder = parser.add_argument_group('[*] Veil-Ordnance Encoder Options')
     ordnance_encoder.add_argument(
         '--list-encoders', default=False, action='store_true',
-        help="Lists all available encoders.")
+        help='Lists all available encoders')
+    ordnance_encoder.add_argument(
+        "-e", "--encoder", metavar="ENCODER", default=None,
+        help='Name of shellcode encoder to use')
+    ordnance_encoder.add_argument(
+        "-b", "--bad-chars", metavar="\\\\x00\\\\x0a..", default=None,
+        help='Bad characters to avoid')
     ordnance_encoder.add_argument(
         '--print-stats', default=False, action='store_true',
-        help="Print information about the encoded shellcode.")
+        help='Print information about the encoded shellcode')
 
     args = parser.parse_args()
 

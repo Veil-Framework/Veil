@@ -34,7 +34,7 @@ class Tools:
 
     def __init__(self, cli_options=None):
         self.cli_name = "Evasion"
-        self.description = "Generates antivirus avoiding executables #avlol"
+        self.description = "Generates Anti-Virus avoiding executables #avlol"
         # Payloads currently within the payload directories
         self.active_payloads = {}
         # Load all payload modules

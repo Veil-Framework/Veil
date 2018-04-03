@@ -172,7 +172,7 @@ def generateConfig(options):
             # os.makedirs("/etc/veil/")
             os.system("sudo mkdir /etc/veil/")
             os.system("sudo touch /etc/veil/settings.py")
-            os.system("sudo chmod 0777 /etc/veil/settings.py")
+            os.system("sudo chmod 0755 /etc/veil/settings.py")
             print " [I] Path '/etc/veil/' Created"
         f = open("/etc/veil/settings.py", 'w')
         f.write(config)
@@ -222,15 +222,7 @@ if __name__ == '__main__':
         options["PYINSTALLER_PATH"] = "/opt/veil/PyInstaller-3.2.1/"
         options["TEMP_DIR"] = "/tmp/"
         options["MSFVENOM_OPTIONS"] = ""
-
-        # Get the real user if we're being ran under sudo
-        wineprefix = ""
-        user = os.environ.get("SUDO_USER", pwd.getpwuid(os.getuid()).pw_name)
-        if user == 'root':
-            wineprefix = "/root/.config/wine/veil/"
-        else:
-            wineprefix = "/home/" + user + "/.config/wine/veil/"
-        options["WINEPREFIX"] = wineprefix
+        options["WINEPREFIX"] = "/opt/veil/wine/veil/"
 
         # Veil-Evasion specific options
         veil_evasion_path = "/".join(os.getcwd().split("/")[:-1]) + "/"

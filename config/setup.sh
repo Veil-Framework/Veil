@@ -3,19 +3,21 @@
 ## Global variables
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
 
-if [ "${os}" == "ubuntu" ] \
-|| [ "${os}" == "arch" ] \
+if [ "${os}" == "arch" ] \
 || [ "${os}" == "blackarch" ] \
 || [ "${os}" == "debian" ] \
-|| [ "${os}" == '"elementary"' ] \
 || [ "${os}" == "deepin" ] \
-|| [ "${os}" == "linuxmint" ] ; then
+|| [ "${os}" == "elementary" ] \
+|| [ "${os}" == "kali" ] \
+|| [ "${os}" == "linuxmint" ] \
+|| [ "${os}" == "ubuntu" ]; then
   trueuser="$( who | tr -d '\n' | cut -d' ' -f1 )"
 else
-  ## If this is blank, we're actually root (kali)
+  ## If this is blank, we're actually root
   trueuser="$( who am i | cut -d' ' -f1 )"
 fi
 
+## If this is blank, we're actually root
 if [ "${trueuser}" == "" ]; then
   trueuser="root"
 fi
@@ -39,8 +41,13 @@ dependenciesdir="${veildir}/setup-dependencies"
 runuser="$( whoami )"
 userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 rootdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )
-winedir="${userhomedir}/.config/wine/veil"
+winedir="${veildir}/wine/veil"
 winedrive="${winedir}/drive_c"
+gempath="${winedir}\drive_c\Ruby187\bin\gem"
+replace="\\"
+prefix="Z:"
+gempath=${gempath////$replace}
+gempath=${prefix}${gempath}
 
 BOLD="\033[01;01m"     # Highlight
 RED="\033[01;31m"      # Issues/Errors
@@ -108,9 +115,14 @@ func_check_env(){
     echo -e "${GREEN}S${RESET}\n"
   else
     read -p '' install
-    if [ "${install}" == 's' ]; then
+    install=$(echo "${install}" | tr '[:upper:]' '[:lower:]')
+    echo
+
+    if [ "${install}" == 's' ] \
+    || [ "${install}" == 'silent' ]; then
       silent=true
-    elif [ "${install}" != 'y' ]; then
+    elif [ "${install}" != 'y' ] \
+    && [ "${install}" != 'yes' ]; then
       echo -e "\n\n ${RED}[ERROR]: Installation aborted by user${RESET}\n"
       exit 1
     fi
@@ -124,9 +136,13 @@ func_check_env(){
     echo -e "\n\n ${BOLD}[!] NON-KALI Users: Before you begin the install, make sure that you have"
     echo -e "     the Metasploit-Framework installed before you proceed!${RESET}\n"
     echo -en "     Continue with installation? ([${BOLD}Y${RESET}]es/[${BOLD}n${RESET}]o): "
+
     read -p '' install
+    install=$(echo "${install}" | tr '[:upper:]' '[:lower:]')
+    echo
+
     if [ "${install}" == 'n' ] \
-    || [ "${install}" == 'N' ]; then
+    || [ "${install}" == 'no' ]; then
       echo -e "\n\n ${RED}[ERROR]: Installation aborted by user${RESET}\n"
       exit 1
     fi
@@ -203,12 +219,15 @@ func_package_deps(){
     echo -e " [*] ${YELLOW}Already detected folder: ${BOLD}${dependenciesdir}${RESET}\n"
     echo -e " [*] ${YELLOW}Trying to git pull${RESET}\n"
     pushd "${dependenciesdir}" >/dev/null
+    sudo git reset --hard HEAD >/dev/null
+    sudo git clean -fd >/dev/null
     sudo git pull \
       || echo -e "${RED}[ERROR]: Failed with git pull (1)\n${RESET}\n"
     popd >/dev/null
   else
     echo -e " [*] ${YELLOW}Empty folder... git cloning${RESET}\n"
-    sudo mkdir -p "${dependenciesdir}"; sudo rm -rf "${dependenciesdir}"
+    sudo mkdir -p "${dependenciesdir}"
+    sudo rm -rf "${dependenciesdir}"
     sudo git clone https://github.com/Veil-Framework/VeilDependencies.git "${dependenciesdir}" \
       || echo -e "${RED}[ERROR]: Failed with git clone (1)\n${RESET}\n"
   fi
@@ -218,6 +237,8 @@ func_package_deps(){
   ## Always install 32-bit support for 64-bit architectures
   ## <wine>
   echo -e "\n\n [*] ${YELLOW}Installing Wine${RESET}\n"
+
+
   ## Debian based distributions
   if [ "${os}" == "ubuntu" ] \
   || [ "${os}" == "debian" ] \
@@ -225,7 +246,9 @@ func_package_deps(){
   || [ "${os}" == "parrot" ] \
   || [ "${os}" == "deepin" ] \
   || [ "${os}" == "linuxmint" ]; then
-    [ "${silent}" == "true" ] && arg=" DEBIAN_FRONTEND=noninteractive"
+    [ "${silent}" == "true" ] \
+      && arg=" DEBIAN_FRONTEND=noninteractive" \
+      || arg=""
 
     if [ "${arch}" == "x86_64" ]; then
       echo -e "\n\n [*] ${YELLOW}Adding x86 architecture to x86_64 system for Wine${RESET}\n"
@@ -233,7 +256,7 @@ func_package_deps(){
       sudo apt-get -qq update \
         || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
 
-      echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries${RESET}\n"
+      echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries (via APT)${RESET}\n"
       if [ "${os}" == "ubuntu" ] \
       || [ "${os}" == "linuxmint" ]; then
         ## Special urghbuntu derivative snowflakes
@@ -270,7 +293,7 @@ func_package_deps(){
 
   ## Elementary OS x86_64
   elif [ "${os}" == '"elementary"' ]; then
-    echo -e "\n\n [*] ${YELLOW}Installing Wine on Elementary OS${RESET}\n"
+    echo -e "\n\n [*] ${YELLOW}Installing Wine on Elementary OS (via APT)${RESET}\n"
     sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-amd64 \
       || echo -e "${RED}[ERROR]: Failed with apt-get install wine (4)\n${RESET}\n"
     tmp="$?"
@@ -284,7 +307,7 @@ func_package_deps(){
   elif [ "${os}" == "fedora" ] \
   || [ "${os}" == "rhel" ] \
   || [ "${os}" == "centos" ]; then
-    echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System${RESET}\n"
+    echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via DNF)${RESET}\n"
     sudo dnf install -y wine.i686 wine
     tmp="$?"
     if [ "${tmp}" -ne "0" ]; then
@@ -294,6 +317,7 @@ func_package_deps(){
     fi
   elif [ "${os}" == "arch" ] \
   || [ "${os}" == "blackarch" ]; then
+    echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via PACMAN)${RESET}\n"
     if grep -Fxq "#[multilib]" /etc/pacman.conf; then
       echo "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
     fi
@@ -322,13 +346,15 @@ func_package_deps(){
       echo -e "${GREEN}Y${RESET}\n"
     else
       read -p '' nukewinedir
+      nukewinedir=$(echo "${nukewinedir}" | tr '[:upper:]' '[:lower:]')
+      echo
     fi
 
     if [ "${nukewinedir}" == 'y' ] \
-    || [ "${nukewinedir}" == 'Y' ] \
-    || [ "${silent}" == 'true' ] ; then
+    || [ "${nukewinedir}" == 'yes' ] \
+    || [ "${silent}" == 'true' ]; then
       echo -e " [*] ${YELLOW}Deleting existing Veil Wine environment...${RESET}\n"
-      rm -rf "${winedir}"
+      sudo rm -rf "${winedir}"
     else
       echo -e " [*] ${YELLOW}Maintaining current Veil Wine environment...${RESET}\n"
     fi
@@ -338,7 +364,8 @@ func_package_deps(){
   ## For creating wine environment on newer distros
   if [ -f "/usr/bin/wineboot" ]; then
     winebootexists=true
-    sudo -u "${trueuser}" mkdir -p "${winedrive}/"
+    sudo mkdir -p "${winedrive}/"
+    sudo chown -R "${trueuser}:" "${winedir}"
   else
     winebootexists=false
   fi
@@ -346,7 +373,8 @@ func_package_deps(){
 
   if [ ! -d "${winedir}" ] \
   || [ "${nukewinedir}" == 'y' ] \
-  || [ "${nukewinedir}" == 'Y' ]; then
+  || [ "${nukewinedir}" == 'yes' ] \
+  || [ "${silent}" == 'true' ]; then
     echo -e " [*] ${YELLOW}Creating new Veil Wine environment in: ${BOLD}${winedir}${RESET}\n"
 
     echo -e " [*] ${YELLOW}Initializing Veil's Wine environment...${RESET}\n"
@@ -447,10 +475,12 @@ func_python_deps(){
 
   ## Install (Wine) Python main setup file
   echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python...${RESET}\n"
-  echo -e "${BOLD} [*] Next -> Next -> Next -> Finished! ...Overwrite if prompt. Use default values${RESET}\n"
+  echo -e " [*] ${BOLD} Next -> Next -> Next -> Finished! ...Overwrite if prompt (use default values)${RESET}\n"
   sleep 1s
 
-  [ "${silent}" == "true" ] && arg=" TARGETDIR=C:\Python34 ALLUSERS=1 /q /norestart"
+  [ "${silent}" == "true" ] \
+    && arg=" TARGETDIR=C:\Python34 ALLUSERS=1 /q /norestart" \
+    || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine msiexec /i "${dependenciesdir}/python-3.4.4.msi" ${arg}
   tmp="$?"
   if [ "${tmp}" -ne "0" ]; then
@@ -462,6 +492,7 @@ func_python_deps(){
   ## If not kali or parrot, use pip to install
   if [ "${os}" != "kali" ] \
   && [ "${os}" != "parrot" ]; then
+    echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via PIP3)...${RESET}\n"
     pip3 install pycrypto
   fi
 
@@ -475,15 +506,16 @@ func_python_deps(){
   ## Install (Wine) Python extra setup files (PyWin32 & PyCrypto)
   for FILE in pywin32-220.win32-py3.4.exe pycrypto-2.6.1.win32-py3.4.exe; do
     echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's ${FILE}...${RESET}\n"
+    echo -e " [*] ${BOLD} Next -> Next -> Next -> Finished! ...Overwrite if prompt (use default values)${RESET}\n"
+    sleep 1s
+
     if [ "${silent}" == "true" ]; then
       sudo -u "${trueuser}" unzip -q -o "${FILE}"
-      sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/"
+      [ -e "PLATLIB" ] && sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/"
       [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/"
+      [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null
       rm -rf "PLATLIB/" "SCRIPTS/"
     else
-      echo -e " [*] ${BOLD}Next -> Next -> Next -> Finished! ...Overwrite if prompt. Use default values${RESET}\n"
-      sleep 1s
-
       sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${FILE}"
       tmp="$?"
       if [ "${tmp}" -ne "0" ]; then
@@ -497,7 +529,7 @@ func_python_deps(){
   popd >/dev/null
 
   ## Install Python (OS) extra setup files (PyInstaller)
-  echo -e "\n\n [*] ${YELLOW}Installing Python's PyInstaller${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Installing Python's PyInstaller (via TAR)${RESET}\n"
   if [ "${force}" == "false" ] \
   && [ -f "${veildir}/PyInstaller-3.2.1/pyinstaller.py" ]; then
     echo -e "\n\n [*] ${YELLOW}PyInstaller v3.2 is already installed... Skipping...${RESET}\n"
@@ -517,7 +549,7 @@ func_python_deps(){
   fi
 
   ## Use wine based pip to install dependencies
-  echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's pip pefile${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's PIP pefile${RESET}\n"
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "--upgrade" "pip"
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "future"
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "pefile"
@@ -587,8 +619,13 @@ func_go_deps(){
 func_autoit_deps(){
   echo -e "\n\n [*] ${YELLOW}Initializing AutoIT installation...${RESET}\n"
 
+  echo -e "\n\n [*] ${YELLOW}Installing (Wine) AutoIT${RESET}\n"
+  echo -e " [*] ${BOLD} Next -> Next -> Next -> Finished! ...Overwrite if prompt (use default values)${RESET}\n"
+  sleep 1s
 
-  [ "${silent}" == "true" ] && arg=" /S"
+  [ "${silent}" == "true" ] \
+    && arg=" /S" \
+    || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${dependenciesdir}/autoit-v3-setup.exe" ${arg}
 
 
@@ -605,12 +642,14 @@ func_ruby_deps(){
 
   ## Install Ruby under Wine
   echo -e "\n\n [*] ${YELLOW}Installing (Wine) Ruby & dependencies${RESET}\n"
-  echo -e " [*] ${BOLD}Next -> Next -> Next -> Finished! ...Overwrite if prompt. Use default values${RESET}\n"
+  echo -e " [*] ${BOLD} Next -> Next -> Next -> Finished! ...Overwrite if prompt (use default values)${RESET}\n"
   sleep 1s
 
   sudo -u "${trueuser}" mkdir -p "${winedrive}/Ruby187/lib/ruby/gems/1.8/"
 
-  [ "${silent}" == "true" ] && arg=" /silent"
+  [ "${silent}" == "true" ] \
+    && arg=" /silent" \
+    || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${dependenciesdir}/rubyinstaller-1.8.7-p371.exe" ${arg}
   tmp="$?"
   if [ "${tmp}" -ne "0" ]; then
@@ -622,14 +661,8 @@ func_ruby_deps(){
   ## Install the OCRA Gem under Wine
   echo -e "\n\n [*] ${YELLOW}Installing (Wine) Ruby OCRA gem...${RESET}\n"
   ## Write batch script to disk
-  winedir="${userhomedir}/.config/wine/veil"
-  gempath="$winedir\drive_c\Ruby187\bin\gem"
-  replace="\\"
-  prefix="Z:"
-  gempath=${gempath////$replace}
-  gempath=$prefix$gempath
-  echo "$gempath install --force --local ocra-1.3.6.gem" > ocrainstall.bat
-  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine cmd /c ocrainstall.bat
+  echo "${gempath} install --force --local ocra-1.3.6.gem" > /tmp/ocrainstall.bat
+  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine cmd /c /tmp/ocrainstall.bat
 
   ## Unzip the Ruby dependencies
   echo -e "\n\n [*] ${YELLOW}Extracting (Wine) Ruby dependencies...${RESET}\n"
@@ -663,7 +696,7 @@ func_update_config(){
   fi
   sudo -u "${trueuser}" sudo python2 update-config.py
 
-  mkdir -p "${outputdir}"
+  sudo mkdir -p "${outputdir}"
 
   ## Chown output directory
   if [ -d "${outputdir}" ]; then
@@ -675,7 +708,7 @@ func_update_config(){
 
   ## Ensure that user completely owns the wine directory
   echo -e " [*] ${YELLOW}Ensuring this account (${trueuser}) has correct ownership of ${winedir}${RESET}\n"
-  chown -R "${trueuser}":"${userprimarygroup}" "${winedir}"
+  sudo chown -R "${trueuser}":"${userprimarygroup}" "${winedir}"
 
 
   ## Function done
