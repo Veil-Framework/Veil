@@ -13,14 +13,14 @@ The following OSs are officially supported:
 
 - Arch Linux
 - BlackArch Linux
-- Debian +8
-- Deepin +15
+- Debian 8+
+- Deepin 15+
 - Elementary
-- Fedora +22
-- Kali Linux Rolling
+- Fedora 22+
+- Kali Linux Rolling 2018.1+
 - Linux Mint
 - Parrot Security
-- Ubuntu +15.10
+- Ubuntu 15.10+
 
 ## Setup
 
@@ -41,7 +41,7 @@ veil --setup
 sudo apt-get -y install git
 git clone https://github.com/Veil-Framework/Veil.git
 cd Veil/
-sudo ./config/setup.sh -f -s
+./Veil.py --setup
 ```
 
 ### Py2Exe
@@ -67,7 +67,7 @@ It is important that you are in the `config`/ directory before executing `update
             0 payloads loaded
 ```
 
-Don't panic. Enter the `./config/` directory and re-run `./update-config.py`.
+Don't panic. Run: `./Veil.py --config`.
 
 - - -
 
