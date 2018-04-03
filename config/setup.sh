@@ -510,11 +510,17 @@ func_python_deps(){
     sleep 1s
 
     if [ "${silent}" == "true" ]; then
-      sudo -u "${trueuser}" unzip -q -o "${FILE}"
+      ## Start fresh
+      sudo rm -rf "PLATLIB/" "SCRIPTS/"
+      ## Extract
+      sudo unzip -q -o "${FILE}"
+      ## Copy files to right location
       [ -e "PLATLIB" ] && sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/"
       [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/"
+      ## Run post install file
       [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null
-      rm -rf "PLATLIB/" "SCRIPTS/"
+      ## Clean up
+      sudo rm -rf "PLATLIB/" "SCRIPTS/"
     else
       sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${FILE}"
       tmp="$?"
