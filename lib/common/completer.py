@@ -1,10 +1,8 @@
 """
-
 Contains any classes used for tab completion.
 
-
-Reference - http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
-
+Reference:
+    http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
 """
 
 # Import Modules
