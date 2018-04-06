@@ -11,13 +11,16 @@ Veil is current under support by @ChrisTruncer
 
 The following OSs are officially supported:
 
+- Debian 8+
+- Kali Linux Rolling 2018.1+
+
+The following OSs are likely able to run Veil:
+
 - Arch Linux
 - BlackArch Linux
-- Debian 8+
 - Deepin 15+
 - Elementary
 - Fedora 22+
-- Kali Linux Rolling 2018.1+
 - Linux Mint
 - Parrot Security
 - Ubuntu 15.10+
