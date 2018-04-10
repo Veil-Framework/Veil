@@ -35,7 +35,7 @@ force=false
 osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- )"
 arg=""
 errors=""
-veildir="/opt/veil"
+veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
 runuser="$( whoami )"
@@ -196,7 +196,7 @@ func_check_env(){
   if [ "${force}" == "false" ] \
   && [ -f "/etc/veil/settings.py" ] \
   && [ -d "${outputdir}" ]; then
-    echo -e "\n\n [*] ${YELLOW}Setttings already detected... Skipping...${RESET}\n"
+    echo -e "\n\n [*] ${YELLOW}Settings already detected... Skipping...${RESET}\n"
   else
     func_update_config
   fi
