@@ -44,7 +44,7 @@ veil --setup
 sudo apt-get -y install git
 git clone https://github.com/Veil-Framework/Veil.git
 cd Veil/
-./Veil.py --setup
+bash config/setup.sh --force --silent
 ```
 
 ### Py2Exe

@@ -216,11 +216,21 @@ func_package_deps(){
   ## Start dependency install
   echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}\n"
   if [ "${os}" == "debian" ] \
-  || [ "${os}" == "kali" ] \
-  || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ] \
   || [ "${os}" == "deepin" ] \
-  || [ "${os}" == "linuxmint" ]; then
+  || [ "${os}" == "kali" ] \
+  || [ "${os}" == "linuxmint" ] \
+  || [ "${os}" == "parrot" ] \
+  || [ "${os}" == "ubuntu" ]; then
+    ## Silent mode?
+    [ "${silent}" == "true" ] \
+      && arg=" DEBIAN_FRONTEND=noninteractive" \
+      || arg=""
+
+    ## Update APT
+    echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
+    sudo apt-get -qq update \
+      || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
+
     #ttf-mscorefonts-installer
     sudo ${arg} apt-get -y install wine   unzip   winbind   wget   git  ca-certificates \
       mingw-w64   monodevelop mono-mcs \
@@ -229,13 +239,23 @@ func_package_deps(){
         || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (1)\n${RESET}\n"
 
   elif [ "${os}" == '"elementary"' ]; then
+    ## Silent mode?
+    [ "${silent}" == "true" ] \
+      && arg=" DEBIAN_FRONTEND=noninteractive" \
+      || arg=""
+
+    ## Update APT
+    echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
+    sudo apt-get -qq update \
+      || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
+
     sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto \
         || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (2)\n${RESET}\n"
 
-  elif [ "${os}" == "fedora" ] \
-  || [ "${os}" == "rhel" ] \
-  || [ "${os}" == "centos" ]; then
+  elif [ "${os}" == "centos" ] \
+  || [ "${os}" == "fedora" ] \
+  || [ "${os}" == "rhel" ]; then
     sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
       monodevelop mono-tools mono-core wine unzip ruby golang wget git python python-crypto python-pefile \
       python-pip ca-certificates msttcore-fonts-installer python3-pip winbind \
@@ -258,6 +278,7 @@ func_package_deps(){
   fi
 
 
+  ## Couple of extras for other OSs
   if [ "${os}" == "kali" ] \
   || [ "${os}" == "parrot" ]; then
     sudo ${arg} apt-get -y install metasploit-framework python2.7 python3 python3-pycryptodome \
@@ -299,12 +320,13 @@ func_package_deps(){
 
 
   ## Debian based distributions
-  if [ "${os}" == "ubuntu" ] \
-  || [ "${os}" == "debian" ] \
-  || [ "${os}" == "kali" ] \
-  || [ "${os}" == "parrot" ] \
+  if [ "${os}" == "debian" ] \
   || [ "${os}" == "deepin" ] \
-  || [ "${os}" == "linuxmint" ]; then
+  || [ "${os}" == "kali" ] \
+  || [ "${os}" == "linuxmint" ] \
+  || [ "${os}" == "parrot" ] \
+  || [ "${os}" == "ubuntu" ]; then
+    ## Silent mode?
     [ "${silent}" == "true" ] \
       && arg=" DEBIAN_FRONTEND=noninteractive" \
       || arg=""
@@ -312,6 +334,7 @@ func_package_deps(){
     if [ "${arch}" == "x86_64" ]; then
       echo -e "\n\n [*] ${YELLOW}Adding x86 architecture to x86_64 system for Wine${RESET}\n"
       sudo dpkg --add-architecture i386
+
       echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
       sudo apt-get -qq update \
         || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
