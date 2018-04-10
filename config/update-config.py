@@ -2,6 +2,8 @@
 
 """
 Take an options dictionary and update /etc/veil/settings.py
+
+Able to call this by doing: Veil.py --config
 """
 
 import platform, os, sys, pwd
@@ -216,7 +218,7 @@ if __name__ == '__main__':
         options["PAYLOAD_SOURCE_PATH"] = "/var/lib/veil/output/source/"
 
         # Veil-Catapult specific options
-        veil_catapult_path = "/".join( os.getcwd().split( "/" )[:-2] ) + "/Veil-Catapult/"
+        veil_catapult_path = "/".join( os.getcwd().split( "/" )[:-2] ) + "/veil-catapult/"
         options["VEIL_CATAPULT_PATH"] = veil_catapult_path
         options["CATAPULT_RESOURCE_PATH"] = "/var/lib/veil/output/catapult/"
 
@@ -242,6 +244,10 @@ if __name__ == '__main__':
             msfpath = raw_input( " [>] Please enter the directory of msfvenom (e.g. /usr/bin/): " )
             options["MSFVENOM_PATH"] = msfpath
 
+        # Check the paths are correct (PYINSTALLER_PATH)
+        while not os.path.isdir( options["PYINSTALLER_PATH"] ):
+            pypath = raw_input( " [>] Please enter the directory of PyInstaller (e.g. /var/lib/veil/PyInstaller/): " )
+            options["PYINSTALLER_PATH"] = pypath
     # Unsupported platform...
     else:
         print( " [!] ERROR: PLATFORM NOT CURRENTLY SUPPORTED" )

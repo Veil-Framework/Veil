@@ -1,4 +1,5 @@
 #!/bin/bash
+## Best not to call this directly, but rather: Veil.py --setup
 
 ## Global variables
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
@@ -63,22 +64,22 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                  Veil (Setup Script) | [Updated]: 2018-04-02"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-10"
   echo " =========================================================================="
   echo "  [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
   echo ""
-  #echo "Debug:          winedir = ${winedir}"
-  #echo "Debug:        winedrive = ${winedrive}"
-  #echo "Debug:      userhomedir = ${HOME}"
-  #echo "Debug:          rootdir = ${rootdir}"
-  #echo "Debug:          veildir = ${veildir}"
-  #echo "Debug:  dependenciesdir = ${dependenciesdir}"
-  #echo "Debug:         trueuser = ${trueuser}"
-  #echo "Debug: userprimarygroup = ${userprimarygroup}"
-  #echo "Debug:               os = ${os}"
-  #echo "Debug:        osversion = ${osversion}"
-  #echo ""
+  echo "            winedir = ${winedir}"
+  echo "          winedrive = ${winedrive}"
+  echo "        userhomedir = ${HOME}"
+  echo "            rootdir = ${rootdir}"
+  echo "            veildir = ${veildir}"
+  echo "    dependenciesdir = ${dependenciesdir}"
+  echo "           trueuser = ${trueuser}"
+  echo "   userprimarygroup = ${userprimarygroup}"
+  echo "                 os = ${os}"
+  echo "          osversion = ${osversion}"
+  echo ""
 }
 
 
@@ -176,7 +177,7 @@ func_check_env(){
 
   ## Check if go is installed
   if [ "${force}" == "false" ] \
-  && [ -f "/usr/src/go/bin/windows_386/go.exe" ]; then
+  && [ -f "/var/lib/veil-evasion/go/bin/go" ]; then
     echo -e "\n\n [*] ${YELLOW}Go is already installed... Skipping...${RESET}\n"
   else
     func_go_deps
@@ -210,6 +211,64 @@ func_check_env(){
 ## Install architecture dependent dependencies
 func_package_deps(){
   echo -e "\n\n [*] ${YELLOW}Initializing package installation${RESET}\n"
+
+
+  ## Start dependency install
+  echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}\n"
+  if [ "${os}" == "debian" ] \
+  || [ "${os}" == "kali" ] \
+  || [ "${os}" == "parrot" ] \
+  || [ "${os}" == "ubuntu" ] \
+  || [ "${os}" == "deepin" ] \
+  || [ "${os}" == "linuxmint" ]; then
+    #ttf-mscorefonts-installer
+    sudo ${arg} apt-get -y install wine   unzip   winbind   wget   git  ca-certificates \
+      mingw-w64   monodevelop mono-mcs \
+      ruby   golang \
+      python python-crypto python-pefile python-pip python3-pip  \
+        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (1)\n${RESET}\n"
+
+  elif [ "${os}" == '"elementary"' ]; then
+    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
+      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto \
+        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (2)\n${RESET}\n"
+
+  elif [ "${os}" == "fedora" ] \
+  || [ "${os}" == "rhel" ] \
+  || [ "${os}" == "centos" ]; then
+    sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
+      monodevelop mono-tools mono-core wine unzip ruby golang wget git python python-crypto python-pefile \
+      python-pip ca-certificates msttcore-fonts-installer python3-pip winbind \
+        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (3)\n${RESET}\n"
+
+  elif [ "${os}" ==  "arch" ] \
+  || [ "${os}" == "blackarch" ]; then
+    sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
+      mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python-pip krb5 samba \
+        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (4)\n${RESET}\n"
+    ## Install pefile for python2 using pip, rather than via AUR as the package is currently broken.
+    sudo pip2 install pefile \
+        || echo -e "${RED}[ERROR]: Failed with pip2 install (1)\n${RESET}\n"
+  fi
+  tmp="$?"
+  if [ "${tmp}" -ne "0" ]; then
+    msg="Failed to install dependencies... Exit code: ${tmp}"
+    errors="${errors}\n${msg}"
+    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+  fi
+
+
+  if [ "${os}" == "kali" ] \
+  || [ "${os}" == "parrot" ]; then
+    sudo ${arg} apt-get -y install metasploit-framework python2.7 python3 python3-pycryptodome \
+        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (5)\n${RESET}\n"
+    tmp="$?"
+    if [ "${tmp}" -ne "0" ]; then
+      msg="Failed to install dependencies (Metasploit-Framework/python2.7/python3/python3-pycryptodome)... Exit code: ${tmp}"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+  fi
 
 
   ## Clone down the required install files
@@ -253,6 +312,7 @@ func_package_deps(){
     if [ "${arch}" == "x86_64" ]; then
       echo -e "\n\n [*] ${YELLOW}Adding x86 architecture to x86_64 system for Wine${RESET}\n"
       sudo dpkg --add-architecture i386
+      echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
       sudo apt-get -qq update \
         || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
 
@@ -263,7 +323,7 @@ func_package_deps(){
         sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386 \
           || echo -e "${RED}[ERROR]: Failed with apt-get install wine (1)\n${RESET}\n"
       else
-        ## anything that isn't ubuntu or ubuntu-derived
+        ## Anything that isn't ubuntu or ubuntu-derived
         sudo ${arg} apt-get -y -qq install wine wine64 wine32 \
           || echo -e "${RED}[ERROR]: Failed with apt-get install wine (2)\n${RESET}\n"
       fi
@@ -404,61 +464,6 @@ func_package_deps(){
   fi
 
 
-  ## Start dependency install
-  echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}\n"
-  if [ "${os}" == "debian" ] \
-  || [ "${os}" == "kali" ] \
-  || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ] \
-  || [ "${os}" == "deepin" ] \
-  || [ "${os}" == "linuxmint" ]; then
-    #ttf-mscorefonts-installer
-    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
-      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (1)\n${RESET}\n"
-
-  elif [ "${os}" == '"elementary"' ]; then
-    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
-      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (2)\n${RESET}\n"
-
-  elif [ "${os}" == "fedora" ] \
-  || [ "${os}" == "rhel" ] \
-  || [ "${os}" == "centos" ]; then
-    sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
-      monodevelop mono-tools mono-core wine unzip ruby golang wget git python python-crypto python-pefile \
-      python-pip ca-certificates msttcore-fonts-installer python3-pip winbind \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (3)\n${RESET}\n"
-
-  elif [ "${os}" ==  "arch" ] \
-  || [ "${os}" == "blackarch" ]; then
-    sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
-      mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python-pip krb5 samba \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (4)\n${RESET}\n"
-    ## Install pefile for python2 using pip, rather than via AUR as the package is currently broken.
-    sudo pip2 install pefile \
-        || echo -e "${RED}[ERROR]: Failed with pip2 install (1)\n${RESET}\n"
-  fi
-  tmp="$?"
-  if [ "${tmp}" -ne "0" ]; then
-    msg="Failed to install dependencies... Exit code: ${tmp}"
-    errors="${errors}\n${msg}"
-    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-  fi
-
-
-  if [ "${os}" == "kali" ] \
-  || [ "${os}" == "parrot" ]; then
-    sudo ${arg} apt-get -y install metasploit-framework python2.7 python3 python3-pycryptodome \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (5)\n${RESET}\n"
-    tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
-      msg="Failed to install dependencies (Metasploit-Framework/python2.7/python3/python3-pycryptodome)... Exit code: ${tmp}"
-      errors="${errors}\n${msg}"
-      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-    fi
-  fi
-
   ## Function done
   echo -e "\n\n [*] ${YELLOW}Finished package installation${RESET}\n"
 }
@@ -576,14 +581,16 @@ func_go_deps(){
 
   sudo mkdir -p /usr/src/go/
 
-  if [ ! -f "/usr/src/go/bin/windows_386/go.exe" ]; then
+  if [ ! -f "/var/lib/veil-evasion/go/bin/go" ]; then
     if [ "${arch}" == "x86_64" ]; then
       echo -e "\n\n [*] ${YELLOW}Installing Go x86_64 (via TAR)${RESET}\n"
 
       file="${dependenciesdir}/go1.7.5.linux-amd64.tar.gz"
       shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
       if [ "${shasum}" == "2e4dd6c44f0693bef4e7b46cc701513d74c3cc44f2419bf519d7868b12931ac3" ]; then
-        sudo tar -C /usr/local -xf "${file}"
+        sudo rm -rf "${veildir}/go/"
+        sudo mkdir -p "${veildir}"
+        sudo tar -C "${veildir}" -xf "${file}"
       else
         if [ "${tmp}" -ne "0" ]; then
           msg="Bad hash for go153x64.tar.gz!"
@@ -598,7 +605,9 @@ func_go_deps(){
       file="${dependenciesdir}/go1.7.5.linux-386.tar.gz"
       shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
       if [ "${shasum}" == "432cb92ae656f6fe1fa96a981782ef5948438b6da6691423aae900918b1eb955" ]; then
-        sudo tar -C /usr/local -xf "${file}"
+        sudo rm -rf "${veildir}/go/"
+        sudo mkdir -p "${veildir}"
+        sudo tar -C "${veildir}" -xf "${file}"
       else
         if [ "${tmp}" -ne "0" ]; then
           msg="Bad hash for go153x86.tar.gz!"
@@ -608,9 +617,9 @@ func_go_deps(){
       fi
     fi
 
-    export GOROOT=/usr/local/go
-    sudo rm -f /usr/bin/go
-    sudo ln -s /usr/local/go/bin/go /usr/bin/go
+    #export GOROOT=$( echo "${veildir}/go" )
+    #sudo rm -f /usr/bin/go
+    #sudo ln -s /usr/local/go/bin/go /usr/bin/go
   fi
 
   ## Done
