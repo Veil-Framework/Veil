@@ -23,7 +23,9 @@ def title_screen():
     """
     Print the framework title, with version.
     """
-    os.system('clear')
+    if settings.TERMINAL_CLEAR != "false":
+        os.system('clear')
+
     print('=' * 79)
     print(' ' * 29 + helpers.color('Veil', status=False, bold=True) + ' | [Version]: ' + veil_version)
     print('=' * 79)
