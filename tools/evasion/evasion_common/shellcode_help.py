@@ -22,7 +22,7 @@ try:
     import settings
 
 except ImportError:
-    print( "\n [!] ERROR #1-4: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py" ) ) )
+    print( "\n [!] ERROR #1-4: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
     sys.exit()
 
 
@@ -188,9 +188,9 @@ class Shellcode:
         print(' [?] Generate or supply custom shellcode?\n')
         print('     %s - Ordnance %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
         print('     %s - MSFVenom' % (helpers.color('2')))
-        print('     %s - custom shellcode string' % (helpers.color('3')))
-        print('     %s - file with shellcode (\\x41\\x42..)' % (helpers.color('4')))
-        print('     %s - binary file with shellcode\n' % helpers.color('5'))
+        print('     %s - Custom shellcode string' % (helpers.color('3')))
+        print('     %s - File with shellcode (\\x41\\x42..)' % (helpers.color('4')))
+        print('     %s - Binary file with shellcode\n' % helpers.color('5'))
 
         try:
             choice = self.required_options['SHELLCODE'][0].lower().strip()

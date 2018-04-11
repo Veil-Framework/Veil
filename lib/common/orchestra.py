@@ -18,7 +18,7 @@ try:
     import settings
 
 except ImportError:
-    print( "\n [!] ERROR #1-2: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py" ) ) )
+    print( "\n [!] ERROR #1-2: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
     sys.exit()
 
 
@@ -33,6 +33,7 @@ class Conductor:
             "list": "List available tools",
             "use": "Use a specific tool",
             "info": "Information on a specific tool",
+            "options": "Show Veil configuration",
             "update": "Update Veil",
             "exit": "Exit Veil"}
         self.number_of_tools = len(self.imported_tools)
@@ -109,7 +110,6 @@ class Conductor:
                 main_menu_command = input('Main menu choice: ').strip()
 
                 if main_menu_command.startswith('use'):
-
                     # Check to make sure a tool is provided with use command
                     if len(main_menu_command.split()) == 1:
 
@@ -154,14 +154,12 @@ class Conductor:
                         main_menu_command = ''
 
                 elif main_menu_command.startswith('list'):
-
                     # List tools, don't show header, loop back in main menu
                     self.list_tools()
                     show_header = False
                     main_menu_command = ''
 
                 elif main_menu_command.startswith('info'):
-
                     if len(main_menu_command.split()) == 1:
                         show_header = True
                         main_menu_command = ''
@@ -199,8 +197,19 @@ class Conductor:
                         main_menu_command = ''
                         show_header = True
 
-                elif main_menu_command.startswith('update'):
+                elif main_menu_command.startswith('option'):
+                    self.options_veil()
+                    main_menu_command = ''
 
+                elif main_menu_command.startswith('config'):
+                    self.config_veil()
+                    main_menu_command = ''
+
+                elif main_menu_command.startswith('setup'):
+                    self.setup_veil()
+                    main_menu_command = ''
+
+                elif main_menu_command.startswith('update'):
                     self.update_veil()
                     main_menu_command = ''
 
@@ -215,6 +224,14 @@ class Conductor:
         except KeyboardInterrupt:
             print("\n\n" + helpers.color("Rage quit!", warning=True))
             sys.exit()
+
+    # Show options
+    def options_veil(self):
+        for i in dir(settings):
+            if i.startswith('_'): continue
+            print( " [i] {0}: {1}".format( i , exec( "print ( settings." + i + " )" ) ), end='', flush=True)
+        input( '\n\nOptions shown. Press enter to continue' )
+        return
 
     # Self update framework
     def update_veil(self):
@@ -231,7 +248,7 @@ class Conductor:
             if os.path.exists("/usr/share/veil/config/setup.sh"):
                 os.system('/usr/share/veil/config/setup.sh -f -s')
             else:
-                print("\n [!] ERROR: Missing %s\n" % ("/usr/share/veil/config/setup.sh"))
+                print("\n [!] ERROR: Kali is missing %s\n" % ("/usr/share/veil/config/setup.sh"))
                 os.system('./config/setup.sh -f -s')
         else:
             os.system('./config/setup.sh -f -s')
@@ -244,7 +261,7 @@ class Conductor:
             if os.path.exists("/usr/share/veil/config/update-config.py"):
                 os.system('cd /usr/share/veil/config/; ./update-config.py')
             else:
-                print("\n [!] ERROR: Missing %s\n" % ("/usr/share/veil/config/update-config.py"))
+                print("\n [!] ERROR: Kali is missing %s\n" % ("/usr/share/veil/config/update-config.py"))
                 os.system('cd ./config/; ./update-config.py')
         else:
             os.system('cd ./config/; ./update-config.py')

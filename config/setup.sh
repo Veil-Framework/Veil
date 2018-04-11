@@ -31,12 +31,12 @@ fi
 
 userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
-osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- )"
+osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
 veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
 rootdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )
-winedir="${veildir}/wine/veil"
+winedir="${veildir}/wine"
 winedrive="${winedir}/drive_c"
 gempath="${winedir}\drive_c\Ruby187\bin\gem"
 replace="\\"
@@ -273,7 +273,7 @@ func_package_deps(){
         || echo -e "${RED}[ERROR]: Failed with pip2 install (1)\n${RESET}\n"
   fi
   tmp="$?"
-  if [ "${tmp}" -ne "0" ]; then
+  if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to install dependencies... Exit code: ${tmp}"
     errors="${errors}\n${msg}"
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -286,7 +286,7 @@ func_package_deps(){
     sudo ${arg} apt-get -y install metasploit-framework python2.7 python3 python3-pycryptodome \
         || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (5)\n${RESET}\n"
     tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
+    if [[ "${tmp}" -ne "0" ]]; then
       msg="Failed to install dependencies (Metasploit-Framework/python2.7/python3/python3-pycryptodome)... Exit code: ${tmp}"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -333,13 +333,22 @@ func_package_deps(){
       && arg=" DEBIAN_FRONTEND=noninteractive" \
       || arg=""
 
-    if [ "${arch}" == "x86_64" ]; then
-      echo -e "\n\n [*] ${YELLOW}Adding x86 architecture to x86_64 system for Wine${RESET}\n"
-      sudo dpkg --add-architecture i386
+      if [ "${arch}" == "x86_64" ]; then
+        ## Check to see if we already have i386
+        tmp="$( dpkg --print-foreign-architectures | grep '^i386$' )"
 
-      echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
-      sudo apt-get -qq update \
-        || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
+        ## If we do NOT have it, add it
+        if [[ "${tmp}" == "" ]]; then
+          echo -e "\n\n [*] ${YELLOW}Adding i386 architecture to x86_64 system for Wine${RESET}\n"
+          sudo dpkg --add-architecture i386
+
+          echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
+          sudo apt-get -qq update \
+            || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
+        ## Already have i386 added
+        else
+          echo -e " [*] ${YELLOW}Already have x86 architecture added...${RESET}\n"
+        fi
 
       echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries (via APT)${RESET}\n"
       if [ "${os}" == "ubuntu" ] \
@@ -353,7 +362,7 @@ func_package_deps(){
           || echo -e "${RED}[ERROR]: Failed with apt-get install wine (2)\n${RESET}\n"
       fi
       tmp="$?"
-      if [ "${tmp}" -ne "0" ]; then
+      if [[ "${tmp}" -ne "0" ]]; then
         msg="Failed to install Wine... Exit code: ${tmp}"
         errors="${errors}\n${msg}"
         echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -365,7 +374,7 @@ func_package_deps(){
       sudo ${arg} apt-get -y -qq install wine32 \
         || echo -e "${RED}[ERROR]: Failed with apt-get install wine (3)\n${RESET}\n"
       tmp="$?"
-      if [ "${tmp}" -ne "0" ]; then
+      if [[ "${tmp}" -ne "0" ]]; then
         msg="Failed to install Wine... Exit code: ${tmp}"
         errors="${errors}\n${msg}"
         echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -382,7 +391,7 @@ func_package_deps(){
     sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-amd64 \
       || echo -e "${RED}[ERROR]: Failed with apt-get install wine (4)\n${RESET}\n"
     tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
+    if [[ "${tmp}" -ne "0" ]]; then
       msg="Failed to install Wine in Elementary OS... Exit code: ${tmp}"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -395,7 +404,7 @@ func_package_deps(){
     echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via DNF)${RESET}\n"
     sudo dnf install -y wine.i686 wine
     tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
+    if [[ "${tmp}" -ne "0" ]]; then
       msg="Failed to install Wine x86_64... Exit code: ${tmp}"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -409,7 +418,7 @@ func_package_deps(){
 
     sudo pacman -Syu ${args} --needed --noconfirm wine wine-mono wine_gecko git
     tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
+    if [[ "${tmp}" -ne "0" ]]; then
       msg="Failed to install Wine x86_64... Exit code: ${tmp}"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -513,7 +522,7 @@ func_python_deps(){
     || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine msiexec /i "${dependenciesdir}/python-3.4.4.msi" ${arg}
   tmp="$?"
-  if [ "${tmp}" -ne "0" ]; then
+  if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to install (Wine) Python 3.4.4... Exit code: ${tmp}"
     errors="${errors}\n${msg}"
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -554,7 +563,7 @@ func_python_deps(){
     else
       sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${FILE}"
       tmp="$?"
-      if [ "${tmp}" -ne "0" ]; then
+      if [[ "${tmp}" -ne "0" ]]; then
         msg="Failed to install ${FILE}... Exit code: ${tmp}"
         errors="${errors}\n${msg}"
         echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -630,7 +639,7 @@ func_go_deps(){
       sudo mkdir -p "${veildir}"
       sudo tar -C "${veildir}" -xf "${file}"
     else
-      if [ "${tmp}" -ne "0" ]; then
+      if [[ "${tmp}" -ne "0" ]]; then
         msg="Bad hash for ${file}!"
         errors="${errors}\n${msg}"
         echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -687,7 +696,7 @@ func_ruby_deps(){
     || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${dependenciesdir}/rubyinstaller-1.8.7-p371.exe" ${arg}
   tmp="$?"
-  if [ "${tmp}" -ne "0" ]; then
+  if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to install (Wine) Ruby.exe... Exit code: ${tmp}"
     errors="${errors}\n${msg}"
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -726,7 +735,7 @@ func_update_config(){
   ##      - | sudo python update-config.py (${USER}=root ${SUDO_USER}=root)
   ## snip 8<-  -  -  -  -  -  -  -  -  -  -  -  -  - And thus it would have screwed up the ${winedir} dir for the user.
   if [ -e /etc/veil/ ]; then
-    echo -e "\n\n [*] ${YELLOW}Detected current Veil settings. Removing...${RESET}\n"
+    echo -e " [*] ${YELLOW}Detected current Veil settings. Removing...${RESET}\n"
     sudo rm -rf /etc/veil/
   fi
   sudo -u "${trueuser}" sudo python update-config.py

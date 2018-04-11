@@ -216,7 +216,7 @@ if __name__ == '__main__':
         options["GOLANG_PATH"] = "/var/lib/veil/go/" # via /config/setup.sh
         options["TEMP_PATH"] = "/tmp/"
         options["TERMINAL_CLEAR"] = "clear"
-        options["WINEPREFIX"] = "/var/lib/veil/wine/veil/"
+        options["WINEPREFIX"] = "/var/lib/veil/wine/"
 
         # Veil-Evasion specific options
         veil_evasion_path = "/".join( os.getcwd().split( "/" )[:-1] ) + "/"
