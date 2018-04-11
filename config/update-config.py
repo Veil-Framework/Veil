@@ -56,8 +56,8 @@ def generateConfig(options):
 
     # Temp folder
     config += '# Path to temporary directory\n'
-    config += 'TEMP_DIR="' + options["TEMP_DIR"] + '"\n\n'
-    print( " [*] TEMP_DIR = " + options["TEMP_DIR"] )
+    config += 'TEMP_PATH="' + options["TEMP_PATH"] + '"\n\n'
+    print( " [*] TEMP_PATH = " + options["TEMP_PATH"] )
 
     # Metasploit-Framework
     config += '# The path to the metasploit framework, for example: /usr/share/metasploit-framework/\n'
@@ -75,10 +75,17 @@ def generateConfig(options):
     print( " [*] MSFVENOM_OPTIONS = " + options['MSFVENOM_OPTIONS'] )
 
     # PyInstaller Path
-    config += '# The path to pyinstaller, for example: /opt/pyinstaller-2.0/\n'
+    config += '# The path to pyinstaller, for example: /var/lib/veil/PyInstaller/\n'
     config += 'PYINSTALLER_PATH="' + options['PYINSTALLER_PATH'] + '"\n\n'
-    print( " [*] PYINSTALLER_PATH = " + options['PYINSTALLER_PATH'] + "\n" )
+    print( " [*] PYINSTALLER_PATH = " + options['PYINSTALLER_PATH'] )
 
+    # GoLang Path
+    config += '# The path to pyinstaller, for example: /var/lib/veil/go/\n'
+    config += 'GOLANG_PATH="' + options['GOLANG_PATH'] + '"\n\n'
+    print( " [*] GOLANG_PATH = " + options['GOLANG_PATH'])
+
+    # Padding between sections
+    print ( "\n" )
 
     # Veil-Evasion
     config += """
@@ -120,8 +127,10 @@ def generateConfig(options):
     hash_path = os.path.expanduser( options["HASH_LIST"] )
     config += '# Running hash list of all payloads generated\n'
     config += 'HASH_LIST="' + hash_path + '"\n\n'
-    print( " [*] HASH_LIST = " + hash_path + "\n" )
+    print( " [*] HASH_LIST = " + hash_path )
 
+    # Padding between sections
+    print ( "\n" )
 
     # Veil-Catapult
     config += """
@@ -189,7 +198,7 @@ if __name__ == '__main__':
 
     # Check for root access
     if os.geteuid() != 0:
-        print( " [!] ERROR: Not root. Requesting..." )
+        print( "\n [!] ERROR: Not root. Requesting...\n" )
         os.execvp( "sudo", ["sudo"] + ["python"] + sys.argv )
         sys.exit()
 
@@ -203,8 +212,9 @@ if __name__ == '__main__':
         options["MSFVENOM_OPTIONS"] = ""
         options["MSFVENOM_PATH"] = "/usr/local/bin/"
         options["OPERATING_SYSTEM"] = "Linux"
-        options["PYINSTALLER_PATH"] = "/var/lib/veil/PyInstaller-3.2.1/"
-        options["TEMP_DIR"] = "/tmp/"
+        options["PYINSTALLER_PATH"] = "/var/lib/veil/PyInstaller-3.2.1/" # via /config/setup.sh
+        options["GOLANG_PATH"] = "/var/lib/veil/go/" # via /config/setup.sh
+        options["TEMP_PATH"] = "/tmp/"
         options["TERMINAL_CLEAR"] = "clear"
         options["WINEPREFIX"] = "/var/lib/veil/wine/veil/"
 
@@ -246,9 +256,15 @@ if __name__ == '__main__':
 
         # Check the paths are correct (PYINSTALLER_PATH)
         while not os.path.isdir( options["PYINSTALLER_PATH"] ):
+            print( "\n [i] Can't find PyInstaller?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
             pypath = raw_input( " [>] Please enter the directory of PyInstaller (e.g. /var/lib/veil/PyInstaller/): " )
-            print( " [i] Can't find PyInstaller?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
             options["PYINSTALLER_PATH"] = pypath
+
+        # Check the paths are correct (GOLANG_PATH)
+        while not os.path.isdir( options["GOLANG_PATH"] ):
+            print( "\n [i] Can't find GoLang?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
+            gopath = raw_input( " [>] Please enter the directory of GoLang (e.g. /var/lib/veil/go/): " )
+            options["GOLANG_PATH"] = gopath
     # Unsupported platform...
     else:
         print( " [!] ERROR: PLATFORM NOT CURRENTLY SUPPORTED" )

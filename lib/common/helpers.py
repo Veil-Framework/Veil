@@ -16,8 +16,27 @@ try:
     import settings
 
 except ImportError:
-    print("\n [!] ERROR #1-3: Can't import /etc/veil/settings.py.   Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-3: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py" ) ) )
     sys.exit()
+
+
+# See if ./config/setup.sh has been executed
+if not os.path.exists( settings.GOLANG_PATH ):
+    print( "\n [!] ERROR #2-3: Can't find Go (%s).   Run: %s --setup\n" % ( settings.GOLANG_PATH, sys.argv[0] ) )
+    sys.exit()
+
+if not os.path.exists( settings.PYINSTALLER_PATH ):
+    print( "\n [!] ERROR #2-3: Can't find PyInstaller (%s).   Run: %s --setup\n" % ( settings.PYINSTALLER_PATH, sys.argv[0] ) )
+    sys.exit()
+
+if not os.path.exists( settings.METASPLOIT_PATH ):
+    print( "\n [!] ERROR #2-3: Can't find the Metasploit Framework (%s).   Run: %s --setup\n" % ( settings.METASPLOIT_PATH, sys.argv[0] ) )
+    sys.exit()
+
+if not os.path.exists( settings.WINEPREFIX ):
+    print( "\n [!] ERROR #2-3: Can't find the WINE profile (%s).   Run: %s --setup\n" % ( settings.WINEPREFIX, sys.argv[0] ) )
+    sys.exit()
+
 
 
 def clean_payloads():

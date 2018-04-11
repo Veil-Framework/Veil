@@ -15,7 +15,7 @@ try:
     import settings
 
 except ImportError:
-    print("\n [!] ERROR #1-5: Can't import /etc/veil/settings.py.   Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-5: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py" ) ) )
     sys.exit()
 
 
@@ -203,7 +203,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
         elif payload_object.language == 'go':
             if payload_object.required_options['COMPILE_TO_EXE'][0].lower() == 'y':
                 # Compile go payload
-                os.system('env GOROOT=/var/lib/veil/go GOOS=windows GOARCH=386 /var/lib/veil/go/bin/go build -ldflags "-s -w -H=windowsgui" -v -o ' + executable_filepath + ' ' + source_code_filepath)
+                os.system( 'env GOROOT={0} GOOS=windows GOARCH=386 {0}/bin/go build -ldflags "-s -w -H=windowsgui" -v -o {1} {2}'.format(settings.GOLANG_PATH, executable_filepath, source_code_filepath) )
 
                 evasion_helpers.title_screen()
 

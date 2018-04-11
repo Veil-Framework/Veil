@@ -18,7 +18,7 @@ try:
     import settings
 
 except ImportError:
-    print("\n [!] ERROR #1-6: Can't import /etc/veil/settings.py.   Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-6: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py" ) ) )
     sys.exit()
 
 
@@ -38,11 +38,11 @@ def compileToTemp(language, payloadSource):
     """
     if language == "cs":
 
-        tempExeName = settings.TEMP_DIR + "temp.exe"
-        tempSourceName = settings.TEMP_DIR + "temp.cs"
+        tempExeName = settings.TEMP_PATH + "temp.exe"
+        tempSourceName = settings.TEMP_PATH + "temp.cs"
 
         # write out the payload source to the temporary location
-        with open(settings.TEMP_DIR + "temp.cs", 'w') as f:
+        with open(settings.TEMP_PATH + "temp.cs", 'w') as f:
             f.write(payloadSource)
 
         # Compile our CS code into an executable and pass a compiler flag to prevent it from opening a command prompt when run

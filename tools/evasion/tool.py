@@ -22,7 +22,7 @@ try:
     import settings
 
 except ImportError:
-    print("\n [!] ERROR #1-1: Can't import /etc/veil/settings.py.   Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-1: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py" ) ) )
     sys.exit()
 
 
