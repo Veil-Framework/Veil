@@ -247,6 +247,7 @@ if __name__ == '__main__':
         # Check the paths are correct (PYINSTALLER_PATH)
         while not os.path.isdir( options["PYINSTALLER_PATH"] ):
             pypath = raw_input( " [>] Please enter the directory of PyInstaller (e.g. /var/lib/veil/PyInstaller/): " )
+            print( " [i] Can't find PyInstaller?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
             options["PYINSTALLER_PATH"] = pypath
     # Unsupported platform...
     else:

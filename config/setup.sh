@@ -1,5 +1,5 @@
 #!/bin/bash
-## Best not to call this directly, but rather: Veil.py --setup
+## Can be called by doing: "Veil.py --setup"
 
 ## Global variables
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
@@ -29,26 +29,25 @@ else
   userhomedir="${HOME}"
 fi
 
+userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
-nukewinedir=""
-silent=false
-force=false
 osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- )"
-arg=""
-errors=""
 veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
-runuser="$( whoami )"
-userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 rootdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )
 winedir="${veildir}/wine/veil"
 winedrive="${winedir}/drive_c"
 gempath="${winedir}\drive_c\Ruby187\bin\gem"
 replace="\\"
 prefix="Z:"
-gempath=${gempath////$replace}
-gempath=${prefix}${gempath}
+gempath="${gempath////$replace}"
+gempath="${prefix}${gempath}"
+nukewinedir=""
+silent=false
+force=false
+arg=""
+errors=""
 
 BOLD="\033[01;01m"     # Highlight
 RED="\033[01;31m"      # Issues/Errors
@@ -64,21 +63,24 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-10"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-11"
   echo " =========================================================================="
-  echo "  [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
+  echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
   echo ""
-  echo "            winedir = ${winedir}"
-  echo "          winedrive = ${winedrive}"
-  echo "        userhomedir = ${HOME}"
-  echo "            rootdir = ${rootdir}"
-  echo "            veildir = ${veildir}"
-  echo "    dependenciesdir = ${dependenciesdir}"
-  echo "           trueuser = ${trueuser}"
-  echo "   userprimarygroup = ${userprimarygroup}"
   echo "                 os = ${os}"
   echo "          osversion = ${osversion}"
+  echo "               arch = ${arch}"
+  echo "           trueuser = ${trueuser}"
+  echo "   userprimarygroup = ${userprimarygroup}"
+  echo "        userhomedir = ${userhomedir}"
+  echo "            rootdir = ${rootdir}"
+  echo "            veildir = ${veildir}"
+  echo "          outputdir = ${outputdir}"
+  echo "    dependenciesdir = ${dependenciesdir}"
+  echo "            winedir = ${winedir}"
+  echo "          winedrive = ${winedrive}"
+  echo "            gempath = ${gempath}"
   echo ""
 }
 
@@ -609,34 +611,29 @@ func_go_deps(){
       echo -e "\n\n [*] ${YELLOW}Installing Go x86_64 (via TAR)${RESET}\n"
 
       file="${dependenciesdir}/go1.7.5.linux-amd64.tar.gz"
-      shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
-      if [ "${shasum}" == "2e4dd6c44f0693bef4e7b46cc701513d74c3cc44f2419bf519d7868b12931ac3" ]; then
-        sudo rm -rf "${veildir}/go/"
-        sudo mkdir -p "${veildir}"
-        sudo tar -C "${veildir}" -xf "${file}"
-      else
-        if [ "${tmp}" -ne "0" ]; then
-          msg="Bad hash for go153x64.tar.gz!"
-          errors="${errors}\n${msg}"
-          echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-        fi
-      fi
+      file_hash="2e4dd6c44f0693bef4e7b46cc701513d74c3cc44f2419bf519d7868b12931ac3"
     elif [ "${arch}" == "x86" ] \
     || [ "${arch}" == "i686" ]; then
       echo -e "\n\n [*] ${YELLOW}Installing Go x86 (via TAR)${RESET}\n"
 
       file="${dependenciesdir}/go1.7.5.linux-386.tar.gz"
-      shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
-      if [ "${shasum}" == "432cb92ae656f6fe1fa96a981782ef5948438b6da6691423aae900918b1eb955" ]; then
-        sudo rm -rf "${veildir}/go/"
-        sudo mkdir -p "${veildir}"
-        sudo tar -C "${veildir}" -xf "${file}"
-      else
-        if [ "${tmp}" -ne "0" ]; then
-          msg="Bad hash for go153x86.tar.gz!"
-          errors="${errors}\n${msg}"
-          echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-        fi
+      file_hash="432cb92ae656f6fe1fa96a981782ef5948438b6da6691423aae900918b1eb955"
+    else
+      ## Dead code. We really shouldn't end up here, but, you never know...
+      echo -e "${RED}[ERROR]: Architecture ${arch} is not supported!\n${RESET}\n"
+      exit 1
+    fi
+
+    shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
+    if [ "${shasum}" == "${file_hash}" ]; then
+      sudo rm -rf "${veildir}/go/"
+      sudo mkdir -p "${veildir}"
+      sudo tar -C "${veildir}" -xf "${file}"
+    else
+      if [ "${tmp}" -ne "0" ]; then
+        msg="Bad hash for ${file}!"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
       fi
     fi
 
@@ -728,11 +725,11 @@ func_update_config(){
   ## snip 8<-  -  -  -  -  -  -  -  -  -  -  -  -  - The alternative below without "sudo -u username"...
   ##      - | sudo python update-config.py (${USER}=root ${SUDO_USER}=root)
   ## snip 8<-  -  -  -  -  -  -  -  -  -  -  -  -  - And thus it would have screwed up the ${winedir} dir for the user.
-  if [ -f /etc/veil/settings.py ]; then
-    echo -e "\n\n [*] ${YELLOW}Detected current Veil settings file. Removing...${RESET}\n"
-    sudo rm -f /etc/veil/settings.py
+  if [ -e /etc/veil/ ]; then
+    echo -e "\n\n [*] ${YELLOW}Detected current Veil settings. Removing...${RESET}\n"
+    sudo rm -rf /etc/veil/
   fi
-  sudo -u "${trueuser}" sudo python2 update-config.py
+  sudo -u "${trueuser}" sudo python update-config.py
 
   sudo mkdir -p "${outputdir}"
 

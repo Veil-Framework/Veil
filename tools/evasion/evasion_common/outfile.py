@@ -203,7 +203,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
         elif payload_object.language == 'go':
             if payload_object.required_options['COMPILE_TO_EXE'][0].lower() == 'y':
                 # Compile go payload
-                os.system('env GOROOT=/var/lib/veil-evasion/go GOOS=windows GOARCH=386 /var/lib/veil-evasion/go/bin/go build -ldflags "-s -w -H=windowsgui" -v -o ' + executable_filepath + ' ' + source_code_filepath)
+                os.system('env GOROOT=/var/lib/veil/go GOOS=windows GOARCH=386 /var/lib/veil/go/bin/go build -ldflags "-s -w -H=windowsgui" -v -o ' + executable_filepath + ' ' + source_code_filepath)
 
                 evasion_helpers.title_screen()
 
