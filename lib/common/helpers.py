@@ -44,8 +44,8 @@ if not os.path.exists( settings.WINEPREFIX + "/drive_c/Ruby187/bin/ruby.exe" ):
     print( "\n [!] ERROR #2-3: Can't find the WINE profile for Ruby v1.8.7 (%s).   Run: %s --force --silent\n" % ( settings.WINEPREFIX + "/drive_c/Ruby187/bin/ruby.exe", os.path.abspath( "./config/setup.sh" ) ) )
     sys.exit()
 
-if not os.path.exists( settings.WINEPREFIX + "/drive_c/Program\ Files/AutoIt3/Aut2Exe/Aut2exe.exe" ):
-    print( "\n [!] ERROR #2-3: Can't find the WINE profile for AuotIT v3 (%s).   Run: %s --force --silent\n" % ( settings.WINEPREFIX + "/drive_c/Program\ Files/AutoIt3/Aut2Exe/Aut2exe.exe", os.path.abspath( "./config/setup.sh" ) ) )
+if not os.path.exists( settings.WINEPREFIX + "/drive_c/Program Files/AutoIt3/Aut2Exe/Aut2exe.exe" ):
+    print( "\n [!] ERROR #2-3: Can't find the WINE profile for AuotIT v3 (%s).   Run: %s --force --silent\n" % ( settings.WINEPREFIX + "/drive_c/Program Files/AutoIt3/Aut2Exe/Aut2exe.exe", os.path.abspath( "./config/setup.sh" ) ) )
     sys.exit()
 
 
