@@ -13,7 +13,6 @@ from lib.common import helpers
 try:
     sys.path.append("/etc/veil/")
     import settings
-
 except ImportError:
     print( "\n [!] ERROR #1-5: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
     sys.exit()

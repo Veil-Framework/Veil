@@ -14,7 +14,6 @@ import sys
 try:
     sys.path.append("/etc/veil/")
     import settings
-
 except ImportError:
     print( "\n [!] ERROR #1-3: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
     sys.exit()
