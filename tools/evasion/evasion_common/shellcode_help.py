@@ -25,7 +25,7 @@ except ImportError:
     sys.exit()
 
 
-sys.path.insert(0, settings.VEIL_EVASION_PATH + 'tools/ordnance')
+sys.path.insert(0, settings.VEIL_PATH + 'tools/ordnance')
 import tool as ordnance_import
 
 

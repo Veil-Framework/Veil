@@ -200,10 +200,12 @@ class Conductor:
                     self.options_veil()
                     main_menu_command = ''
 
+                # Hidden menu option
                 elif main_menu_command.startswith('config'):
                     self.config_veil()
                     main_menu_command = ''
 
+                # Hidden menu option
                 elif main_menu_command.startswith('setup'):
                     self.setup_veil()
                     main_menu_command = ''
@@ -226,6 +228,7 @@ class Conductor:
 
     # Show options
     def options_veil(self):
+        print( " [i] Veil configuration file: /etc/veil/settings.py" )
         for i in dir(settings):
             if i.startswith('_'): continue
             print( " [i] {0}: {1}".format( i , exec( "print ( settings." + i + " )" ) ), end='', flush=True)
