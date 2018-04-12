@@ -29,7 +29,7 @@ class Tools:
         self.command_options = cli_options
         self.ordnance_main_menu_commands = {
             "list": "List available [payloads] or [encoders]",
-            "payload": "Use a specific payload",
+            "use": "Use a specific payload",
             "info": "Information on a specific payload or encoder",
             "exit": "Exit Veil",
             "back": "Go to main Veil menu"}
@@ -242,7 +242,7 @@ class Tools:
                 else:
                     sys.exit(0)
 
-            elif ordnance_main_command.lower().startswith('payload'):
+            elif ordnance_main_command.lower().startswith('use'):
                 if len(ordnance_main_command.split()) < 2:
                     print(helpers.color("[*] Error: You did not provide the payload to use!", warning=True))
                     print(helpers.color("[*] Ex: use rev_http", warning=True))
