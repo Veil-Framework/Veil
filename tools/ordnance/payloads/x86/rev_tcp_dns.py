@@ -50,7 +50,7 @@ class ShellcodeModule:
             "LHOST": ["", "LHOST domain value"],
             "LPORT": ["", "LPORT value"],
             "Encoder": ["None", "Optional: Encoder to use when avoiding bad characters"],
-            "BadChars": ["X", "Optional: Bad characters to avoid"]
+            "BadChars": ["\\x00", "Optional: Bad characters to avoid"]
         }
 
     def cli_gen_shellcode(self):

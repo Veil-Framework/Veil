@@ -41,7 +41,7 @@ class ShellcodeModule:
         self.required_options = {
             "LPORT": ["", "LPORT value"],
             "Encoder": ["None", "Optional: Encoder to use when avoiding bad characters"],
-            "BadChars": ["X", "Optional: Bad characters to avoid"],
+            "BadChars": ["\\x00", "Optional: Bad characters to avoid"],
             "RHOST": ["", "RHOST value"]
         }
 
