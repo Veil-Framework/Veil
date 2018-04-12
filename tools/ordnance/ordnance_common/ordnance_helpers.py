@@ -8,7 +8,16 @@ import re
 import socket
 import string
 import struct
+import sys
 from lib.common import helpers
+
+# Try to find and import the settings.py config file
+try:
+    sys.path.append("/etc/veil/")
+    import settings
+except ImportError:
+    print( "\n [!] ERROR #1-9: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
+    sys.exit()
 
 
 def check_lhost(lhost_value):
@@ -66,7 +75,9 @@ def title_screen():
     """
     Print the framework title, with version.
     """
-    os.system('clear')
+    if settings.TERMINAL_CLEAR != "false":
+      os.system('clear')
+
     print('=' * 79)
     print(' ' * 35 + helpers.color('Veil-Ordnance', status=False, bold=True))
     print('=' * 79)
