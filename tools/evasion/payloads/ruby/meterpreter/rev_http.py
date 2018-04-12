@@ -28,7 +28,7 @@ class PayloadModule:
         elif cli_obj.msfvenom is not None:
             self.payload_type = cli_obj.msfvenom
         elif not cli_obj.tool:
-            self.payload_type = ''
+            self.payload_type = ""
         self.cli_shellcode = False
 
         # options we require user ineraction for- format is {Option : [Value, Description]]}

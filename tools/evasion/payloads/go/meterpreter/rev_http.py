@@ -20,13 +20,13 @@ class PayloadModule:
         self.name = "Pure Golang Reverse HTTP Stager"
         self.path = "go/meterpreter/rev_http"
         self.cli_opts = cli_obj
-        self.payload_source_code = ''
+        self.payload_source_code = ""
         if cli_obj.ordnance_payload is not None:
             self.payload_type = cli_obj.ordnance_payload
         elif cli_obj.msfvenom is not None:
             self.payload_type = cli_obj.msfvenom
         elif not cli_obj.tool:
-            self.payload_type = ''
+            self.payload_type = ""
         self.cli_shellcode = False
 
         # options we require user ineraction for- format is {Option : [Value, Description]]}

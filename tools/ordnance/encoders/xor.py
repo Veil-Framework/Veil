@@ -191,7 +191,7 @@ class EncoderModule:
             print("IP Address: " + parsed_cli_object.ip)
         print("Port: " + str(parsed_cli_object.port))
         print("Encoder Name: " + self.name)
-        string_bad_chars = ''
+        string_bad_chars = ""
         for bchar in self.bad_chars:
             string_bad_chars += str(hex(bchar)) + " "
         print("Bad Character(s): " + string_bad_chars)

@@ -28,13 +28,13 @@ class PayloadModule:
         self.path = "python/shellcode_inject/base64_substitution"
         self.shellcode = shellcode_help.Shellcode(cli_obj)
         self.cli_opts = cli_obj
-        self.payload_source_code = ''
+        self.payload_source_code = ""
         if cli_obj.ordnance_payload is not None:
             self.payload_type = cli_obj.ordnance_payload
         elif cli_obj.msfvenom is not None:
             self.payload_type = cli_obj.msfvenom
         elif not cli_obj.tool:
-            self.payload_type = ''
+            self.payload_type = ""
         self.cli_shellcode = False
 
         # options we require user interaction for- format is {OPTION : [Value, Description]]}
@@ -68,7 +68,7 @@ class PayloadModule:
                 self.payload_type = self.shellcode.msfvenompayload
             elif self.shellcode.payload_choice:
                 self.payload_type = self.shellcode.payload_choice
-                self.shellcode.payload_choice = ''
+                self.shellcode.payload_choice = ""
             # assume custom shellcode
             else:
                 self.payload_type = 'custom'
@@ -87,7 +87,7 @@ class PayloadModule:
         rand_virtual_protect = evasion_helpers.randomString()
 
         num_tabs_required = 0
-        payload_code = ''
+        payload_code = ""
 
         payload_code, num_tabs_required = gamemaker.senecas_games(self)
 

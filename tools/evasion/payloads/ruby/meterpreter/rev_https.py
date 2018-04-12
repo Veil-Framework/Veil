@@ -29,7 +29,7 @@ class PayloadModule:
         elif cli_obj.msfvenom is not None:
             self.payload_type = cli_obj.msfvenom
         elif not cli_obj.tool:
-            self.payload_type = ''
+            self.payload_type = ""
         self.cli_shellcode = False
 
         # options we require user ineraction for- format is {Option : [Value, Description]]}
@@ -45,7 +45,7 @@ class PayloadModule:
         }
 
     def generate(self):
-        payload_code = ''
+        payload_code = ""
 
         payload_code = "require 'rubygems';require 'uri';require 'win32/api';require 'net/https';require 'openssl';include Win32\n"
         # Add logic for adding this line, stupid bug and I have no idea

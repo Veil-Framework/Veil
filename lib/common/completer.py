@@ -193,7 +193,7 @@ class PayloadCompleter(object):
 
             options = [k for k in sorted(self.payload.required_options.keys())]
 
-            if args[0] != "":
+            if args[0] != '':
                 if args[0].strip() == "LHOST":
                     # autocomplete the IP for LHOST
                     if settings.DISTRO == 'Debian':
@@ -486,7 +486,7 @@ class OrdnanceCompleter(object):
 
             options = [k for k in sorted(self.payload.required_options.keys())]
 
-            if args[0] != "":
+            if args[0] != '':
                 if args[0].strip() == "LHOST":
                     if settings.DISTRO == 'Debian':
                         ip_output = subprocess.getoutput("ip a").split("\n")[8][9:].split('/')[0]

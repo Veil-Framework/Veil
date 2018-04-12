@@ -55,7 +55,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
 
         if payload_object.language == 'python':
             if not invoked:
-                compile_method = ''
+                compile_method = ""
             else:
                 compile_method = cli_object.compiler
             # Check extension for war or normal python file
@@ -72,7 +72,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                         print('     %s - Py2Exe\n' % (helpers.color('2')))
 
                         user_compile_choice = input(" [>] Please enter the number of your choice: ")
-                        if user_compile_choice == "1" or user_compile_choice == "":
+                        if user_compile_choice == "1" or user_compile_choice == '':
                             compile_method = "pyinstaller"
                         elif user_compile_choice == "2":
                             compile_method = "py2exe"
@@ -301,10 +301,10 @@ def find_file_name(payload_name, selected_payload_object):
 
 
 def handler_code_generator(selected_payobject, handler_name, invoked=False, cli_obj=None):
-    lhost_value = ''
-    lport_value = ''
-    rhost_value = ''
-    payload_used = ''
+    lhost_value = ""
+    lport_value = ""
+    rhost_value = ""
+    payload_used = ""
     skip_handler = False
 
     if selected_payobject.language != "native" and selected_payobject.extension != "war":
