@@ -34,7 +34,7 @@ class Conductor:
             "info": "Information on a specific tool",
             "options": "Show Veil configuration",
             "update": "Update Veil",
-            "exit": "Exit Veil"}
+            "exit": "Completely exit Veil"}
         self.number_of_tools = len(self.imported_tools)
         self.command_line_options = cli_stuff
 
@@ -47,7 +47,6 @@ class Conductor:
                 tool_found = True
         if not tool_found:
             print(helpers.color('Error: You did not provide a valid tool name!', warning=True))
-            print(helpers.color('Quitting Veil...', warning=True))
             sys.exit()
 
     def list_tools(self, show_header = True):
@@ -215,7 +214,6 @@ class Conductor:
                     main_menu_command = ""
 
                 elif main_menu_command.startswith('exit') or main_menu_command.startswith('quit'):
-                    print('\n' + helpers.color('Quitting Veil', warning=True) + '\n')
                     sys.exit()
 
                 else:
@@ -223,7 +221,7 @@ class Conductor:
                     main_menu_command = ""
 
         except KeyboardInterrupt:
-            print("\n\n" + helpers.color("Rage quit!", warning=True))
+            print("\n\n" + helpers.color("^C.   Quitting...", warning=True))
             sys.exit()
 
     # Show options

@@ -40,12 +40,12 @@ class Tools:
         self.load_payloads(cli_options)
         self.command_options = cli_options
         self.evasion_main_menu_commands = {
-            "list"   : "List available payloads",
-            "use"    : "Use a specific payload",
-            "info"   : "Information on a specific payload",
-            "exit"   : "Exit Veil",
-            "back"   : "Go to main Veil menu",
-            "clean"  : "Remove generated artifacts",
+            "list": "List available payloads",
+            "use": "Use a specific payload",
+            "info": "Information on a specific payload",
+            "exit": "Completely exit Veil",
+            "back": "Go to Veil's main menu",
+            "clean": "Remove generated artifacts",
             "checkvt": "Check VirusTotal against generated hashes"}
         self.final_shellcode = ""
         self.payload_option_commands = {
@@ -315,7 +315,7 @@ class Tools:
 
             evasion_main_command = input('Veil-Evasion command: ').strip().lower()
 
-            if evasion_main_command.startswith("back") or evasion_main_command.startswith("main"):
+            if evasion_main_command.startswith("back") or evasion_main_command.startswith("main") or evasion_main_command.startswith("menu"):
                 evasion_main_command = ""
                 break
 
@@ -402,9 +402,9 @@ class Tools:
         evasion_helpers.print_dict_message(self.payload_option_commands, show_title=False)
 
         while True:
-            payload_options_command = input("\n[" + selected_payload.path + ">>] ").strip().lower()
+            payload_options_command = input("[" + selected_payload.path + ">>] ").strip().lower()
 
-            if payload_options_command.startswith("back") or payload_options_command.startswith("main"):
+            if payload_options_command.startswith("back") or payload_options_command.startswith("main") or payload_options_command.startswith("menu"):
                 payload_options_command = ""
                 break
 
@@ -415,11 +415,7 @@ class Tools:
                     payload_options_command = ""
                 else:
                     selected_payload.generate()
-                    if not outfile.compiler(selected_payload):
-                        payload_options_command = ""
-                    else:
-                        payload_options_command = ""
-                        break
+                    outfile.compiler(selected_payload)
 
             elif payload_options_command.startswith("exit") or payload_options_command.startswith("quit"):
                 sys.exit(0)
@@ -469,10 +465,4 @@ class Tools:
                     print(helpers.color("[*] Ex: set DOMAIN christest.com", warning=True))
                     print()
                 payload_options_command = ""
-
-            else:
-                # Not a real command
-                evasion_helpers.print_dict_message(self.payload_option_commands)
-                payload_options_command = ""
-
         return

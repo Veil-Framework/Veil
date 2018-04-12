@@ -521,7 +521,7 @@ class Shellcode:
                 print(helpers.color(" [!] ERROR: msfvenom command not specified in payload!\n", warning=True))
                 return None
             else:
-                # Stript out extra characters, new lines, etc., just leave the shellcode.
+                # Strip out extra characters, new lines, etc., just leave the shellcode.
                 # Tim Medin's patch for non-root non-Kali users
 
                 msfvenom_shellcode = subprocess.check_output(settings.MSFVENOM_PATH + self.msfvenomCommand, shell=True)
