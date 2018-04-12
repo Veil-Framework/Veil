@@ -114,7 +114,7 @@ class Tools:
                 sys.exit()
 
     def load_encoders(self, cli_args):
-        for name in glob.glob('tools/ordnance/encoders/*.py'):
+        for name in sorted( glob.glob('tools/ordnance/encoders/*.py') ):
             if name.endswith(".py") and ("__init__" not in name):
                 loaded_encoder = imp.load_source(
                     name.replace("/", ".").rstrip('.py'), name)
@@ -122,7 +122,7 @@ class Tools:
         return
 
     def load_payloads(self, cli_args):
-        for name in glob.glob('tools/ordnance/payloads/x86/*.py'):
+        for name in sorted( glob.glob('tools/ordnance/payloads/x86/*.py') ):
             if name.endswith(".py") and ("__init__" not in name):
                 loaded_payloads = imp.load_source(
                     name.replace("/", ".").rstrip('.py'), name)
@@ -131,11 +131,13 @@ class Tools:
 
     def print_encoders(self):
         print("Available Encoder Modules")
-        print("Command Line Name => Description")
+        print("\tCommand Line Name => Description")
         print("-" * 79)
         print()
+        x = 1
         for encoder_module in self.active_encoders.values():
-            print(helpers.color(encoder_module.cli_name) + " => " + encoder_module.name)
+            print( "\t%s)\t%s => %s" % ( x, '{0: <24}'.format( helpers.color( encoder_module.cli_name ) ), encoder_module.name ) )
+            x += 1
         return
 
     def print_shellcode_option_commands(self):
@@ -158,11 +160,13 @@ class Tools:
 
     def print_payloads(self):
         print("Available Payload Modules")
-        print("Command Line Name => Description")
+        print("\tCommand Line Name => Description")
         print("-" * 79)
         print()
+        x = 1
         for payload in self.active_shellcode.values():
-            print(helpers.color(payload.cli_name) + " => " + payload.name)
+            print( "\t%s)\t%s => %s" % ( x, '{0: <28}'.format( helpers.color( payload.cli_name ) ), payload.name ) )
+            x += 1
         return
 
     def tool_main_menu(self, invoked=False):
@@ -244,23 +248,7 @@ class Tools:
                     sys.exit(0)
 
             elif ordnance_main_command.startswith('use'):
-                if len(ordnance_main_command.split()) < 2:
-                    print()
-                    print(helpers.color("[*] Error: You did not provide the payload to use!", warning=True))
-                    print(helpers.color("[*] Ex: use rev_http", warning=True))
-                    print()
-                    ordnance_main_command = ""
-                    show_ordnance_menu = False
-
-                elif len(ordnance_main_command.split()) > 2:
-                    print()
-                    print(helpers.color("[*] Error: You provided too many options!", warning=True))
-                    print(helpers.color("[*] Ex: use rev_http", warning=True))
-                    print()
-                    ordnance_main_command = ""
-                    show_ordnance_menu = False
-
-                else:
+                if len(ordnance_main_command.split()) == 2:
                     self.selected_payload = ordnance_main_command.split()[1].lower()
                     self.use_payload(self.selected_payload)
 
@@ -270,6 +258,12 @@ class Tools:
 
                     if self.final_shellcode == '':
                         show_ordnance_menu = False
+                else:
+                    print()
+                    print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
+                    print(helpers.color("[*] Ex: use rev_http", warning=True))
+                    print()
+                    show_ordnance_menu = False
                 self.selected_payload = ""
                 ordnance_main_command = ""
 
@@ -295,6 +289,7 @@ class Tools:
         for payload in self.active_shellcode.values():
             if incoming_payload.lower() == payload.cli_name:
                 shellcode_found = True
+
                 while ordnance_helpers.loop_req_options(payload):
                     self.print_options_screen(payload)
 

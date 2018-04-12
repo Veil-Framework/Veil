@@ -368,7 +368,7 @@ class Tools:
                     if not selected_payload_module:
                         print()
                         print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
-                        print(helpers.color("[*] Ex: info 2 or info lua/shellcode_inject/flat.py", warning=True))
+                        print(helpers.color("[*] Ex: use 2 or use lua/shellcode_inject/flat.py", warning=True))
                         print()
                         evasion_main_command = ""
                         show_evasion_menu = False
