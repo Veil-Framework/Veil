@@ -745,7 +745,7 @@ elif [ "${os}" == "parrot" ]; then
 elif [ "${os}" == "ubuntu" ]; then
   version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Ubuntu ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "15" ]]; then
+  if [[ "${version}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Ubuntu 15.10 or higher!${RESET}\n"
     exit 1
   fi
@@ -755,7 +755,7 @@ elif [ "${os}" == "linuxmint" ]; then
 elif [ "${os}" == "deepin" ]; then
   version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Deepin ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "15" ]]; then
+  if [[ "${version}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Deepin 15 or higher!${RESET}\n"
     exit 1
   fi
@@ -763,7 +763,7 @@ elif [ "${os}" == '"elementary"' ]; then
   echo -e " [I] ${YELLOW}Elementary OS ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "debian" ]; then
   version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
-  if [[ "${osversion}" -lt "8" ]]; then
+  if [[ "${version}" -lt "8" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported on Debian 8 (Jessie) or higher!${RESET}\n"
     exit 1
   fi
