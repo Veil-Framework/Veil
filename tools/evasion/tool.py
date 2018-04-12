@@ -221,6 +221,7 @@ class Tools:
 
     def list_loaded_payloads(self):
         print(helpers.color("\n [*] Available Payloads:\n"))
+
         lastBase = None
         x = 1
         for name in sorted(self.active_payloads.keys()):
@@ -228,7 +229,9 @@ class Tools:
             if lastBase and parts[0] != lastBase:
                 print()
             lastBase = parts[0]
+
             print("\t%s)\t%s" % (x, '{0: <24}'.format(name)))
+
             x += 1
         print("\n")
         return
@@ -339,20 +342,15 @@ class Tools:
                         print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                         print(helpers.color("[*] Ex: info 2 or info lua/shellcode_inject/flat.py", warning=True))
                         print()
-                        evasion_main_command = ""
-                        show_evasion_menu = False
                     else:
                         self.print_options_screen(selected_payload_module)
-                        evasion_main_command = ""
-                        show_evasion_menu = False
-
                 else:
                     print()
                     print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                     print(helpers.color("[*] Ex: info 2 or info lua/shellcode_inject/flat.py", warning=True))
                     print()
-                    evasion_main_command = ""
-                    show_evasion_menu = False
+                show_evasion_menu = False
+                evasion_main_command = ""
 
             elif evasion_main_command.startswith('list'):
                 evasion_helpers.title_screen()
@@ -363,27 +361,24 @@ class Tools:
 
             elif evasion_main_command.startswith('use'):
                 if len(evasion_main_command.split()) == 2:
-                    payload_selected = evasion_main_command.split()[1]
+                    payload_selected = evasion_main_command.split()[1].lower()
                     selected_payload_module = self.return_payload_object(payload_selected)
                     if not selected_payload_module:
                         print()
                         print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                         print(helpers.color("[*] Ex: use 2 or use lua/shellcode_inject/flat.py", warning=True))
                         print()
-                        evasion_main_command = ""
                         show_evasion_menu = False
                     else:
                         self.use_payload(selected_payload_module)
-                        evasion_main_command = ""
                         show_evasion_menu = True
-
                 else:
                     print()
                     print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                     print(helpers.color("[*] Ex: use 2 or use lua/shellcode_inject/flat.py", warning=True))
                     print()
-                    evasion_main_command = ""
                     show_evasion_menu = False
+                evasion_main_command = ""
 
             else:
                 evasion_main_command = ""

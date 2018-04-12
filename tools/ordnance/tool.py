@@ -30,7 +30,6 @@ class Tools:
         self.ordnance_main_menu_commands = {
             "list": "List available [payloads] or [encoders]",
             "use": "Use a specific payload",
-            "info": "Information on a specific payload or encoder",
             "exit": "Completely exit Veil",
             "back": "Go to Veil's main menu"}
         self.final_shellcode = ""
@@ -134,10 +133,11 @@ class Tools:
         print("\tCommand Line Name => Description")
         print("-" * 79)
         print()
-        x = 1
+        #x = 1
         for encoder_module in self.active_encoders.values():
             print( "\t%s)\t%s => %s" % ( x, '{0: <24}'.format( helpers.color( encoder_module.cli_name ) ), encoder_module.name ) )
-            x += 1
+            print( "\t%s => %s" % ( x, '{0: <24}'.format( helpers.color( encoder_module.cli_name ) ), encoder_module.name ) )
+            #x += 1
         return
 
     def print_shellcode_option_commands(self):
@@ -163,9 +163,17 @@ class Tools:
         print("\tCommand Line Name => Description")
         print("-" * 79)
         print()
+
+        lastBase = None
         x = 1
         for payload in self.active_shellcode.values():
+            parts = payload.cli_name.split("_")
+            if lastBase and parts[0] != lastBase:
+                print()
+            lastBase = parts[0]
+
             print( "\t%s)\t%s => %s" % ( x, '{0: <28}'.format( helpers.color( payload.cli_name ) ), payload.name ) )
+
             x += 1
         return
 
@@ -249,27 +257,46 @@ class Tools:
 
             elif ordnance_main_command.startswith('use'):
                 if len(ordnance_main_command.split()) == 2:
-                    self.selected_payload = ordnance_main_command.split()[1].lower()
-                    self.use_payload(self.selected_payload)
-
-                    # If invoked, return the shellcode
-                    if self.invoked:
-                        return
-
-                    if self.final_shellcode == '':
+                    payload_selected = ordnance_main_command.split()[1].lower()
+                    selected_payload_module = self.return_payload_object(payload_selected)
+                    if not selected_payload_module:
+                        print()
+                        print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
+                        print(helpers.color("[*] Ex: use 2 or use rev_http", warning=True))
+                        print()
                         show_ordnance_menu = False
+                    else:
+                        self.use_payload(selected_payload_module)
+                        show_evasion_menu = True
                 else:
                     print()
                     print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
-                    print(helpers.color("[*] Ex: use rev_http", warning=True))
+                    print(helpers.color("[*] Ex: use 2 or use rev_http", warning=True))
                     print()
                     show_ordnance_menu = False
-                self.selected_payload = ""
                 ordnance_main_command = ""
 
             else:
                 ordnance_main_command = ""
         return
+
+    def return_payload_object(self, user_selection):
+        # This function handles returning the selected payload module object
+        # to the calling function
+        counter_value = 1
+        for payload in self.active_shellcode.values():
+            if user_selection.isdigit() and (0 < int(user_selection) <= len(self.active_shellcode)):
+                if int(user_selection) == counter_value:
+                    print ("w00t1!")
+                    return payload
+            else:
+                if user_selection.lower() == payload.cli_name:
+                    print ("w00t2!")
+                    return payload
+
+            # Iterate counter for number based selection
+            counter_value += 1
+        return False
 
     def use_encoder(self, incoming_pload):
         encoder_found = False
@@ -284,133 +311,124 @@ class Tools:
             print()
         return
 
-    def use_payload(self, incoming_payload):
-        shellcode_found = False
-        for payload in self.active_shellcode.values():
-            if incoming_payload.lower() == payload.cli_name:
-                shellcode_found = True
+    def use_payload(self, payload):
+        while ordnance_helpers.loop_req_options(payload):
+            self.print_options_screen(payload)
 
-                while ordnance_helpers.loop_req_options(payload):
+            while True:
+                comp = completer.OrdnanceCompleter(self.shellcode_option_commands, payload)
+                readline.set_completer_delims(' \t\n;')
+                readline.parse_and_bind("tab: complete")
+                readline.set_completer(comp.complete)
+                breakout = False
+                shellcode_command = input(
+                    "[" + payload.cli_name + ">>]: ").strip().lower()
+
+                # Start logic for required option commands
+                if shellcode_command.startswith("set"):
+                    if len(shellcode_command.split()) < 3 or len(shellcode_command.split()) > 3:
+                        print()
+                        print(helpers.color("[*] Error: You did not provide the correct input for setting an option!", warning=True))
+                        print(helpers.color("[*] Ex: set LHOST 192.168.18.14", warning=True))
+                        print()
+                    else:
+                        found_req_option = False
+                        for key, value in payload.required_options.items():
+                            if shellcode_command.split()[1] == key.lower():
+                                found_req_option = True
+                                value[0] = shellcode_command.split()[2]
+                        if not found_req_option:
+                            print()
+                            print(helpers.color("[*] Error: You didn't provide a correct option to set, please retry!", warning=True))
+                            print()
+                elif shellcode_command.startswith("exit") or shellcode_command.startswith("quit"):
+                    # Completely exit out of Veil
+                    sys.exit(0)
+                elif shellcode_command.startswith("back") or shellcode_command.startswith("main") or shellcode_command.startswith("menu"):
+                    # Go back to shellcode selection
+                    shellcode_command = ""
+                    breakout = True
+                    break
+                elif shellcode_command.startswith("list"):
+                    ordnance_helpers.title_screen()
+                    print()
+                    self.print_encoders()
+                    print()
+                elif shellcode_command.startswith("gen") or shellcode_command.startswith("run"):
+                    lport_out = ""
+                    lhost_out = ""
+                    rhost_out = ""
+                    if ordnance_helpers.loop_req_options(payload):
+                        print()
+                        print(helpers.color("[*] Error: You didn't provide all the required options!", warning=True))
+                        print()
+                    else:
+                        safe_to_generate = True
+                        if "LHOST" in payload.required_options:
+                            if not ordnance_helpers.check_lhost(payload.required_options["LHOST"][0]):
+                                print()
+                                print(helpers.color("[*] Error: You didn't provide a valid IP address!", warning=True))
+                                print(helpers.color("[*] Error: Try again :)", warning=True))
+                                print()
+                                safe_to_generate = False
+                        if "LPORT" in payload.required_options:
+                            if not ordnance_helpers.check_lport(payload.required_options["LPORT"][0]):
+                                print()
+                                print(helpers.color("[*] Error: You didn't provide a valid LPORT value!", warning=True))
+                                print(helpers.color("[*] Error: Try again :)", warning=True))
+                                print()
+                                safe_to_generate = False
+                        if safe_to_generate:
+                            # Generate the shellcode
+                            payload.gen_shellcode()
+                            # Gather information to generate handler if requested
+                            self.final_shellcode = payload.customized_shellcode
+                            if "LHOST" in payload.required_options:
+                                lhost_out = payload.required_options["LHOST"][0]
+                            if "LPORT" in payload.required_options:
+                                lport_out = payload.required_options["LPORT"][0]
+                            if "RHOST" in payload.required_options:
+                                rhost_out = payload.required_options["RHOST"][0]
+
+                            if lhost_out:
+                                self.payload_options['LHOST'] = lhost_out
+                            if lport_out:
+                                self.payload_options['LPORT'] = lport_out
+                            if rhost_out:
+                                self.payload_options['RHOST'] = rhost_out
+
+                            # Check if encoder is needed
+                            if payload.required_options["Encoder"][0] is not "None":
+                                self.use_encoder(payload)
+                                self.final_shellcode = payload.customized_shellcode
+
+                            # Print payload stats
+                            payload.payload_stats()
+                            if self.invoked:
+                                dummy = input('\nHit enter to return to Veil-Evasion... ')
+                            else:
+                                dummy2 = input('\nHit enter to continue... ')
+                            shellcode_command = ""
+
+                            #if "LHOST" in payload.required_options:
+                            #    payload.required_options["LHOST"][0] = ""
+                            #if "LPORT" in payload.required_options:
+                            #    payload.required_options["LPORT"][0] = ""
+                            #breakout = True
+                            #break
+                elif shellcode_command.startswith("option"):
+                    # Reprint the shellcode options to console
                     self.print_options_screen(payload)
 
-                    while True:
-                        comp = completer.OrdnanceCompleter(self.shellcode_option_commands, payload)
-                        readline.set_completer_delims(' \t\n;')
-                        readline.parse_and_bind("tab: complete")
-                        readline.set_completer(comp.complete)
-                        breakout = False
-                        shellcode_command = input(
-                            "[" + payload.cli_name + ">>]: ").strip().lower()
+            if breakout:
+                ordnance_helpers.title_screen()
+                print("Veil-Ordnance Menu")
+                print("\n\t" + helpers.color(len(self.active_shellcode)) + " payloads loaded")
+                print("\t" + helpers.color(len(self.active_encoders)) + " encoders loaded\n")
+                print("Available Commands:\n")
+                for command in sorted(self.ordnance_main_menu_commands.keys()):
+                    print("\t" + helpers.color(command) + '\t\t\t' + self.ordnance_main_menu_commands[command])
+                print()
+                break
 
-                        # Start logic for required option commands
-                        if shellcode_command.startswith("set"):
-                            if len(shellcode_command.split()) < 3 or len(shellcode_command.split()) > 3:
-                                print()
-                                print(helpers.color("[*] Error: You did not provide the correct input for setting an option!", warning=True))
-                                print(helpers.color("[*] Ex: set LHOST 192.168.18.14", warning=True))
-                                print()
-                            else:
-                                found_req_option = False
-                                for key, value in payload.required_options.items():
-                                    if shellcode_command.split()[1] == key.lower():
-                                        found_req_option = True
-                                        value[0] = shellcode_command.split()[2]
-                                if not found_req_option:
-                                    print()
-                                    print(helpers.color("[*] Error: You didn't provide a correct option to set, please retry!", warning=True))
-                                    print()
-                        elif shellcode_command.startswith("exit") or shellcode_command.startswith("quit"):
-                            # Completely exit out of Veil
-                            sys.exit(0)
-                        elif shellcode_command.startswith("back") or shellcode_command.startswith("main") or shellcode_command.startswith("menu"):
-                            # Go back to shellcode selection
-                            shellcode_command = ""
-                            breakout = True
-                            break
-                        elif shellcode_command.startswith("list"):
-                            ordnance_helpers.title_screen()
-                            print()
-                            self.print_encoders()
-                            print()
-                        elif shellcode_command.startswith("gen") or shellcode_command.startswith("run"):
-                            lport_out = ""
-                            lhost_out = ""
-                            rhost_out = ""
-                            if ordnance_helpers.loop_req_options(payload):
-                                print()
-                                print(helpers.color("[*] Error: You didn't provide all the required options!", warning=True))
-                                print()
-                            else:
-                                safe_to_generate = True
-                                if "LHOST" in payload.required_options:
-                                    if not ordnance_helpers.check_lhost(payload.required_options["LHOST"][0]):
-                                        print()
-                                        print(helpers.color("[*] Error: You didn't provide a valid IP address!", warning=True))
-                                        print(helpers.color("[*] Error: Try again :)", warning=True))
-                                        print()
-                                        safe_to_generate = False
-                                if "LPORT" in payload.required_options:
-                                    if not ordnance_helpers.check_lport(payload.required_options["LPORT"][0]):
-                                        print()
-                                        print(helpers.color("[*] Error: You didn't provide a valid LPORT value!", warning=True))
-                                        print(helpers.color("[*] Error: Try again :)", warning=True))
-                                        print()
-                                        safe_to_generate = False
-                                if safe_to_generate:
-                                    # Generate the shellcode
-                                    payload.gen_shellcode()
-                                    # Gather information to generate handler if requested
-                                    self.final_shellcode = payload.customized_shellcode
-                                    if "LHOST" in payload.required_options:
-                                        lhost_out = payload.required_options["LHOST"][0]
-                                    if "LPORT" in payload.required_options:
-                                        lport_out = payload.required_options["LPORT"][0]
-                                    if "RHOST" in payload.required_options:
-                                        rhost_out = payload.required_options["RHOST"][0]
-
-                                    if lhost_out:
-                                        self.payload_options['LHOST'] = lhost_out
-                                    if lport_out:
-                                        self.payload_options['LPORT'] = lport_out
-                                    if rhost_out:
-                                        self.payload_options['RHOST'] = rhost_out
-
-                                    # Check if encoder is needed
-                                    if payload.required_options["Encoder"][0] is not "None":
-                                        self.use_encoder(payload)
-                                        self.final_shellcode = payload.customized_shellcode
-
-                                    # Print payload stats
-                                    payload.payload_stats()
-                                    if self.invoked:
-                                        dummy = input('\nHit enter to return to Veil-Evasion... ')
-                                    else:
-                                        dummy2 = input('\nHit enter to continue... ')
-                                    shellcode_command = ""
-
-                                    #if "LHOST" in payload.required_options:
-                                    #    payload.required_options["LHOST"][0] = ""
-                                    #if "LPORT" in payload.required_options:
-                                    #    payload.required_options["LPORT"][0] = ""
-                                    #breakout = True
-                                    #break
-                        elif shellcode_command.startswith("option"):
-                            # Reprint the shellcode options to console
-                            self.print_options_screen(payload)
-
-                    if breakout:
-                        ordnance_helpers.title_screen()
-                        print("Veil-Ordnance Menu")
-                        print("\n\t" + helpers.color(len(self.active_shellcode)) + " payloads loaded")
-                        print("\t" + helpers.color(len(self.active_encoders)) + " encoders loaded\n")
-                        print("Available Commands:\n")
-                        for command in sorted(self.ordnance_main_menu_commands.keys()):
-                            print("\t" + helpers.color(command) + '\t\t\t' + self.ordnance_main_menu_commands[command])
-                        print()
-                        break
-
-        if not shellcode_found:
-            print()
-            print(helpers.color("[*] Error: You did not provide a valid payload name, please try again!", warning=True))
-            print()
         return
