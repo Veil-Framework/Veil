@@ -160,13 +160,17 @@ class EncoderModule:
                         if rohan_re_code.match(item):
                             final_bad_chars.append(item)
                         else:
-                            print(helpers.color("[*] Bad Character Error: Invalid bad character detected.", warning=True))
-                            print(helpers.color("[*] Bad Character Error: Please provide bad characters in \\\\x00\\\\x02... format.", warning=True))
-                            sys.exit()
+                            print()
+                            print(helpers.color("[*] Bad Character Error (1): Invalid bad character detected.", warning=True))
+                            print(helpers.color("[*] Bad Character Error: Please provide bad characters in \\x00\\x02... format.", warning=True))
+                            print()
+                            return
                     else:
-                        print(helpers.color("[*] Bad Character Error: Invalid bad character detected.", warning=True))
-                        print(helpers.color("[*] Bad Character Error: Please provide bad characters in \\\\x00\\\\x01... format.", warning=True))
-                        sys.exit()
+                        print()
+                        print(helpers.color("[*] Bad Character Error (2): Invalid bad character detected.", warning=True))
+                        print(helpers.color("[*] Bad Character Error: Please provide bad characters in \\x00\\x01... format.", warning=True))
+                        print()
+                        return
             self.bad_chars = [int("0x" + x, 16) for x in final_bad_chars]
         return
 
