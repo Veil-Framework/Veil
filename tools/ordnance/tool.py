@@ -33,7 +33,7 @@ class Tools:
             "info": "Information on a specific payload or encoder",
             "exit": "Exit Veil",
             "back": "Go to main Veil menu"}
-        self.final_shellcode = ''
+        self.final_shellcode = ""
         self.shellcode_option_commands = {
             "set": "Set shellcode option",
             "generate": "Generate the shellcode",
@@ -43,7 +43,7 @@ class Tools:
         }
         # Used to track if invoked by another tool
         self.invoked = False
-        self.selected_payload = ''
+        self.selected_payload = ""
         self.payload_options = {}
 
     def cli_menu(self, invoked=False):
@@ -168,7 +168,7 @@ class Tools:
         # This is the main function where everything is called from
         # Iterate over payloads and find the user selected payload module
         # invoked is used when another tool is calling this function
-        ordnance_main_command = ''
+        ordnance_main_command = ""
         show_ordnance_menu = True
         if invoked:
             self.invoked = True
@@ -186,70 +186,79 @@ class Tools:
                 print()
             show_ordnance_menu = True
 
-            ordnance_main_command = input('Veil-Ordnance command: ').strip()
+            ordnance_main_command = input('Veil-Ordnance command: ').strip().lower()
 
             # See if we're listing payloads or encoders
-            if ordnance_main_command.lower().startswith('list'):
+            if ordnance_main_command.startswith('list'):
 
                 if len(ordnance_main_command.split()) == 1:
                     print()
                     print(helpers.color("[*] Error: You did not provide what you want to list!", warning=True))
                     print(helpers.color("[*] Ex: list payloads or list encoders", warning=True))
                     print()
-                    ordnance_main_command = ''
+                    ordnance_main_command = ""
                     show_ordnance_menu = False
 
                 elif len(ordnance_main_command.split()) == 2:
 
-                    list_selection = ordnance_main_command.split()[1]
+                    list_selection = ordnance_main_command.split()[1].lower()
 
                     # Check and see what we are listing
-                    if list_selection.lower() == 'payloads':
+                    if list_selection.startswith('p'):
                         ordnance_helpers.title_screen()
                         self.print_payloads()
-                        show_ordnance_menu = False
                         print()
-                        ordnance_main_command = ''
+                        ordnance_main_command = ""
+                        show_ordnance_menu = False
 
-                    elif list_selection.lower() == 'encoders':
+                    elif list_selection.startswith('e'):
                         ordnance_helpers.title_screen()
                         self.print_encoders()
-                        show_ordnance_menu = False
                         print()
-                        ordnance_main_command = ''
+                        ordnance_main_command = ""
+                        show_ordnance_menu = False
 
                     else:
-                        show_ordnance_menu = False
                         print()
                         print(helpers.color("[*] Error: You did not provide a valid item to list!", warning=True))
                         print(helpers.color("[*] Ex: list payloads or list encoders", warning=True))
                         print()
-                        ordnance_main_command = ''
+                        ordnance_main_command = ""
+                        show_ordnance_menu = False
 
                 else:
-                    ordnance_main_command = ''
+                    ordnance_main_command = ""
 
-            elif ordnance_main_command.lower() == "help":
-                ordnance_main_command = ''
+            elif ordnance_main_command.startswith("help"):
+                ordnance_main_command = ""
 
-            elif ordnance_main_command.lower() == "back":
-                ordnance_main_command = ''
+            elif ordnance_main_command.startswith("back") or ordnance_main_command.startswith("main") :
+                ordnance_main_command = ""
                 break
 
-            elif ordnance_main_command.lower() == "exit":
+            elif ordnance_main_command.startswith("exit") or ordnance_main_command.startswith("quit"):
                 if invoked:
                     break
                 else:
                     sys.exit(0)
 
-            elif ordnance_main_command.lower().startswith('use'):
+            elif ordnance_main_command.startswith('use'):
                 if len(ordnance_main_command.split()) < 2:
+                    print()
                     print(helpers.color("[*] Error: You did not provide the payload to use!", warning=True))
                     print(helpers.color("[*] Ex: use rev_http", warning=True))
-                    ordnance_main_command = ''
+                    print()
+                    ordnance_main_command = ""
+                    show_ordnance_menu = False
+
                 elif len(ordnance_main_command.split()) > 2:
+                    print()
                     print(helpers.color("[*] Error: You provided too many options!", warning=True))
                     print(helpers.color("[*] Ex: use rev_http", warning=True))
+                    print()
+                    ordnance_main_command = ""
+                    show_ordnance_menu = False
+
                 else:
                     self.selected_payload = ordnance_main_command.split()[1].lower()
                     self.use_payload(self.selected_payload)
@@ -260,11 +269,11 @@ class Tools:
 
                     if self.final_shellcode == '':
                         show_ordnance_menu = False
-                self.selected_payload = ''
-                ordnance_main_command = ''
+                self.selected_payload = ""
+                ordnance_main_command = ""
 
             else:
-                ordnance_main_command = ''
+                ordnance_main_command = ""
         return
 
     def use_encoder(self, incoming_pload):
@@ -293,13 +302,13 @@ class Tools:
                         readline.set_completer(comp.complete)
                         breakout = False
                         shellcode_command = input(
-                            "[" + payload.cli_name + ">>]: ").lower().strip()
+                            "[" + payload.cli_name + ">>]: ").strip().lower()
 
                         # Start logic for required option commands
                         if shellcode_command.startswith("set"):
                             if len(shellcode_command.split()) < 3 or len(shellcode_command.split()) > 3:
                                 print(helpers.color("[*] Error: You did not provide the correct input for setting an option!", warning=True))
-                                print(helpers.color("[*] Error: Ex: set LHOST 192.168.18.14"))
+                                print(helpers.color("[*] Ex: set LHOST 192.168.18.14", warning=True))
                             else:
                                 found_req_option = False
                                 for key, value in payload.required_options.items():
@@ -308,19 +317,19 @@ class Tools:
                                         value[0] = shellcode_command.split()[2]
                                 if not found_req_option:
                                     print(helpers.color("[*] Error: You didn't provide a correct option to set, please retry!", warning=True))
-                        elif shellcode_command == "exit":
+                        elif shellcode_command.startswith("exit") or shellcode_command.startswith("quit"):
                             # Completely exit out of Veil
                             print(helpers.color("[*] You're rage quitting all of Veil!", warning=True))
                             sys.exit(0)
-                        elif shellcode_command == "back":
+                        elif shellcode_command.startswith("back") or shellcode_command.startswith("main") :
                             # Go back to shellcode selection
-                            shellcode_command = ''
+                            shellcode_command = ""
                             breakout = True
                             break
-                        elif shellcode_command == "generate":
-                            lport_out = ''
-                            lhost_out = ''
-                            rhost_out = ''
+                        elif shellcode_command.startswith("gen") or shellcode_command.startswith("run"):
+                            lport_out = ""
+                            lhost_out = ""
+                            rhost_out = ""
                             if ordnance_helpers.loop_req_options(payload):
                                 print(helpers.color("[*] Error: You didn't provide all the required options!", warning=True))
                             else:
@@ -365,15 +374,15 @@ class Tools:
                                         dummy = input('\nHit enter to return to Veil-Evasion... ')
                                     else:
                                         dummy2 = input('\nHit enter to continue... ')
-                                    shellcode_command = ''
+                                    shellcode_command = ""
 
                                     if "LHOST" in payload.required_options:
-                                        payload.required_options["LHOST"][0] = ''
+                                        payload.required_options["LHOST"][0] = ""
                                     if "LPORT" in payload.required_options:
-                                        payload.required_options["LPORT"][0] = ''
+                                        payload.required_options["LPORT"][0] = ""
                                     breakout = True
                                     break
-                        elif shellcode_command == "options":
+                        elif shellcode_command.startswith("option"):
                             # Reprint the shellcode options to console
                             self.print_options_screen(payload)
 

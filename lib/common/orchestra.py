@@ -81,7 +81,7 @@ class Conductor:
 
     def main_menu(self):
         # default blank command for the main menu loop
-        main_menu_command = ''
+        main_menu_command = ""
         show_header = True
 
         # Try except to catch keyboard interrupts
@@ -115,7 +115,7 @@ class Conductor:
                         # List tools, don't show header, loop back in main menu
                         self.list_tools()
                         show_header = False
-                        main_menu_command = ''
+                        main_menu_command = ""
 
                     elif len(main_menu_command.split()) == 2:
 
@@ -145,23 +145,23 @@ class Conductor:
                                     show_header = True
 
                         # Once done with tool, clear main menu command
-                        main_menu_command = ''
+                        main_menu_command = ""
                         show_header = True
 
                     # Catch anything else, like an error
                     else:
-                        main_menu_command = ''
+                        main_menu_command = ""
 
                 elif main_menu_command.startswith('list'):
                     # List tools, don't show header, loop back in main menu
                     self.list_tools()
                     show_header = False
-                    main_menu_command = ''
+                    main_menu_command = ""
 
                 elif main_menu_command.startswith('info'):
                     if len(main_menu_command.split()) == 1:
                         show_header = True
-                        main_menu_command = ''
+                        main_menu_command = ""
 
                     elif len(main_menu_command.split()) == 2:
 
@@ -190,37 +190,37 @@ class Conductor:
                                     print()
                                     show_header = False
 
-                        main_menu_command = ''
+                        main_menu_command = ""
 
                     else:
-                        main_menu_command = ''
+                        main_menu_command = ""
                         show_header = True
 
                 elif main_menu_command.startswith('option'):
                     self.options_veil()
-                    main_menu_command = ''
+                    main_menu_command = ""
 
                 # Hidden menu option
                 elif main_menu_command.startswith('config'):
                     self.config_veil()
-                    main_menu_command = ''
+                    main_menu_command = ""
 
                 # Hidden menu option
                 elif main_menu_command.startswith('setup'):
                     self.setup_veil()
-                    main_menu_command = ''
+                    main_menu_command = ""
 
                 elif main_menu_command.startswith('update'):
                     self.update_veil()
-                    main_menu_command = ''
+                    main_menu_command = ""
 
-                elif main_menu_command.startswith('exit'):
+                elif main_menu_command.startswith('exit') or main_menu_command.startswith('quit'):
                     print('\n' + helpers.color('Quitting Veil', warning=True) + '\n')
                     sys.exit()
 
                 else:
                     show_header = True
-                    main_menu_command = ''
+                    main_menu_command = ""
 
         except KeyboardInterrupt:
             print("\n\n" + helpers.color("Rage quit!", warning=True))

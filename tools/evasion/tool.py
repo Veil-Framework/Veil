@@ -47,7 +47,7 @@ class Tools:
             "back"   : "Go to main Veil menu",
             "clean"  : "Remove generated artifacts",
             "checkvt": "Check VirusTotal against generated hashes"}
-        self.final_shellcode = ''
+        self.final_shellcode = ""
         self.payload_option_commands = {
             "set": "Set shellcode option",
             "generate": "Generate the payload",
@@ -98,9 +98,9 @@ class Tools:
 
         # prompt for confirmation if we're in the interactive menu
         if interactive:
-            choice = input("\n [>] Are you sure you want to clean payload folders? [y/N] ")
+            choice = input("\n [>] Are you sure you want to clean payload folders? [y/N] ").strip().lower()
 
-            if choice.lower() == "y":
+            if choice.startswith('y'):
                 helpers.clean_payloads()
 
                 choice = input("\n [>] Folders cleaned, press any enter to return to the main menu.")
@@ -282,7 +282,7 @@ class Tools:
                 if int(user_selection) == counter_value:
                     return payload_module
             else:
-                if user_selection.lower().strip() == payload_path:
+                if user_selection.strip().lower() == payload_path:
                     return payload_module
 
             # Iterate counter for number based selection
@@ -292,7 +292,7 @@ class Tools:
     def tool_main_menu(self):
         # This is the main function where everything is called from
         # Iterate over payloads and find the user selected payload module
-        evasion_main_command = ''
+        evasion_main_command = ""
         show_evasion_menu = True
         while evasion_main_command == '':
 
@@ -313,24 +313,24 @@ class Tools:
                 print()
             show_evasion_menu = True
 
-            evasion_main_command = input('Veil-Evasion command: ').strip()
+            evasion_main_command = input('Veil-Evasion command: ').strip().lower()
 
-            if evasion_main_command.lower() == "back":
-                evasion_main_command = ''
+            if evasion_main_command.startswith("back") or evasion_main_command.startswith("main"):
+                evasion_main_command = ""
                 break
 
-            elif evasion_main_command.lower() == "checkvt":
+            elif evasion_main_command.startswith("checkvt"):
                 self.check_vt()
-                evasion_main_command = ''
+                evasion_main_command = ""
 
-            elif evasion_main_command.lower() == "clean":
+            elif evasion_main_command.startswith("clean"):
                 self.clean_artifacts()
-                evasion_main_command = ''
+                evasion_main_command = ""
 
-            elif evasion_main_command.lower() == "exit":
+            elif evasion_main_command.startswith("exit") or evasion_main_command.startswith("quit"):
                 sys.exit(0)
 
-            elif evasion_main_command.lower().startswith('info'):
+            elif evasion_main_command.startswith('info'):
                 if len(evasion_main_command.split()) == 2:
                     payload_selected = evasion_main_command.split()[1]
                     selected_payload_module = self.return_payload_object(payload_selected)
@@ -339,11 +339,11 @@ class Tools:
                         print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                         print(helpers.color("[*] Ex: info 2 or info lua/shellcode_inject/flat.py", warning=True))
                         print()
-                        evasion_main_command = ''
+                        evasion_main_command = ""
                         show_evasion_menu = False
                     else:
                         self.print_options_screen(selected_payload_module)
-                        evasion_main_command = ''
+                        evasion_main_command = ""
                         show_evasion_menu = False
 
                 else:
@@ -351,18 +351,17 @@ class Tools:
                     print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                     print(helpers.color("[*] Ex: info 2 or info lua/shellcode_inject/flat.py", warning=True))
                     print()
-                    evasion_main_command = ''
+                    evasion_main_command = ""
                     show_evasion_menu = False
 
-            elif evasion_main_command.lower().startswith('list'):
-
+            elif evasion_main_command.startswith('list'):
                 evasion_helpers.title_screen()
                 self.list_loaded_payloads()
                 show_evasion_menu = False
                 print()
-                evasion_main_command = ''
+                evasion_main_command = ""
 
-            elif evasion_main_command.lower().startswith('use'):
+            elif evasion_main_command.startswith('use'):
                 if len(evasion_main_command.split()) == 2:
                     payload_selected = evasion_main_command.split()[1]
                     selected_payload_module = self.return_payload_object(payload_selected)
@@ -371,11 +370,11 @@ class Tools:
                         print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                         print(helpers.color("[*] Ex: info 2 or info lua/shellcode_inject/flat.py", warning=True))
                         print()
-                        evasion_main_command = ''
+                        evasion_main_command = ""
                         show_evasion_menu = False
                     else:
                         self.use_payload(selected_payload_module)
-                        evasion_main_command = ''
+                        evasion_main_command = ""
                         show_evasion_menu = True
 
                 else:
@@ -383,11 +382,11 @@ class Tools:
                     print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
                     print(helpers.color("[*] Ex: use 2 or use lua/shellcode_inject/flat.py", warning=True))
                     print()
-                    evasion_main_command = ''
+                    evasion_main_command = ""
                     show_evasion_menu = False
 
             else:
-                evasion_main_command = ''
+                evasion_main_command = ""
         return
 
     def use_payload(self, selected_payload):
@@ -399,40 +398,40 @@ class Tools:
 
         self.display_payload_options(selected_payload)
 
-        payload_options_cmd = ""
+        payload_options_command = ""
         evasion_helpers.print_dict_message(self.payload_option_commands, show_title=False)
 
         while True:
-            payload_options_cmd = input("\n[" + selected_payload.path + ">>] ").strip()
+            payload_options_command = input("\n[" + selected_payload.path + ">>] ").strip().lower()
 
-            if payload_options_cmd.lower() == "back" or payload_options_cmd.lower() == "main":
-                payload_options_cmd = ""
+            if payload_options_command.startswith("back") or payload_options_command.startswith("main"):
+                payload_options_command = ""
                 break
 
-            elif payload_options_cmd.lower() == "generate":
+            elif payload_options_command.startswith("gen") or payload_options_command.startswith("run"):
                 # Checking for Ruby specific payloads because of dumbass sleep check
                 if selected_payload.language == 'ruby' and selected_payload.required_options["SLEEP"][0] != "X" and selected_payload.required_options["USERNAME"][0] == "X" and selected_payload.required_options["DOMAIN"][0] == "X" and selected_payload.required_options["HOSTNAME"][0] == "X":
                     print(helpers.color("[*] If using SLEEP check with Ruby, you must also provide an additional check (like HOSTNAME)!", warning=True))
-                    payload_options_cmd = ""
+                    payload_options_command = ""
                 else:
                     selected_payload.generate()
                     if not outfile.compiler(selected_payload):
-                        payload_options_cmd = ""
+                        payload_options_command = ""
                     else:
-                        payload_options_cmd = ""
+                        payload_options_command = ""
                         break
 
-            elif payload_options_cmd.lower() == "exit":
+            elif payload_options_command.startswith("exit") or payload_options_command.startswith("quit"):
                 sys.exit(0)
 
-            elif payload_options_cmd.lower() == "help" or payload_options_cmd.lower() == "options":
+            elif payload_options_command.startswith("help") or payload_options_command.startswith("option"):
                 self.print_options_screen(selected_payload)
                 evasion_helpers.print_dict_message(self.payload_option_commands, show_title=False)
-                payload_options_cmd = ""
+                payload_options_command = ""
 
-            elif payload_options_cmd.lower().startswith("set"):
-                if len(payload_options_cmd.split()) == 3:
-                    set_command, key, value = payload_options_cmd.split()
+            elif payload_options_command.startswith("set"):
+                if len(payload_options_command.split()) == 3:
+                    set_command, key, value = payload_options_command.split()
                     # Make sure it is uppercase
                     key = key.upper()
                     if key in selected_payload.required_options:
@@ -444,7 +443,7 @@ class Tools:
                                 print()
                                 print(helpers.color("[*] Error: You did not provide a valid IP!", warning=True))
                                 print()
-                                payload_options_cmd = ''
+                                payload_options_command = ""
                         # Validate LPORT
                         elif key is "LPORT":
                             if helpers.validate_port(value):
@@ -453,7 +452,7 @@ class Tools:
                                 print()
                                 print(helpers.color("[*] Error: You did not provide a valid port number!", warning=True))
                                 print()
-                                payload_options_cmd = ''
+                                payload_options_command = ""
 
                         else:
                             # Set other options
@@ -469,11 +468,11 @@ class Tools:
                     print(helpers.color("[*] Error: You did not provide a valid amount of arguments!", warning=True))
                     print(helpers.color("[*] Ex: set DOMAIN christest.com", warning=True))
                     print()
-                payload_options_cmd = ''
+                payload_options_command = ""
 
             else:
                 # Not a real command
                 evasion_helpers.print_dict_message(self.payload_option_commands)
-                payload_options_cmd = ""
+                payload_options_command = ""
 
         return
