@@ -265,11 +265,12 @@ def compiler(payload_object, invoked=False, cli_object=None):
             handler_code_generator(payload_object, file_name, invoked=True, cli_obj=cli_object)
         else:
             handler_code_generator(payload_object, file_name)
+
         if os.path.isfile(settings.HANDLER_PATH + file_name + '.rc'):
-            print(" [*] Metasploit RC file written to: " + helpers.color(settings.HANDLER_PATH + file_name + '.rc'))
+            print(" [*] Metasploit Resource file written to: " + helpers.color(settings.HANDLER_PATH + file_name + '.rc'))
 
         if not invoked:
-            dummy = input('\nPlease press enter to continue >: ')
+            dummy = input('\nHit enter to continue... ')
 
     # End of if statement checking to make sure payload_source_code is
     # not empty
@@ -378,15 +379,22 @@ def handler_code_generator(selected_payobject, handler_name, invoked=False, cli_
         elif rhost_value:
             handler_text += 'set RHOST ' + rhost_value + '\n'
         else:
-            print(helpers.color("\nError generating handler code, giving up on creating the .rc file\n", warning=True))
             skip_handler = True
         handler_text += 'set LPORT ' + str(lport_value) + '\n'
         handler_text += 'set ExitOnSession false\n'
-        handler_text += 'exploit -j'
+        handler_text += 'exploit -j\n'
+
+        # Check to see if there is something there already
+        try:
+            os.remove(settings.HANDLER_PATH + handler_name + '.rc')
+        except OSError:
+            pass
 
         if not skip_handler:
             with open(settings.HANDLER_PATH + handler_name + '.rc', 'w') as handler_out:
                 handler_out.write(handler_text)
+        else:
+            print(helpers.color("\nNo LHOST/RHOST value. Not going to create an .rc file\n", warning=True))
     else:
         # we do nothing since no handler file is made for native payloads
         pass
