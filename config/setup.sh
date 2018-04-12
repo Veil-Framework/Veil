@@ -32,6 +32,7 @@ fi
 userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
 osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
+osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
 veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
@@ -63,13 +64,14 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-11"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-12"
   echo " =========================================================================="
   echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
   echo ""
   echo "                 os = ${os}"
   echo "          osversion = ${osversion}"
+  echo "       osmajversion = ${osmajversion}"
   echo "               arch = ${arch}"
   echo "           trueuser = ${trueuser}"
   echo "   userprimarygroup = ${userprimarygroup}"
@@ -781,33 +783,29 @@ if [ "${os}" == "kali" ]; then
 elif [ "${os}" == "parrot" ]; then
   echo -e " [I] ${YELLOW}Parrot Security ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "ubuntu" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Ubuntu ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "15" ]]; then
+  if [[ "${osmajversion}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Ubuntu 15.10 or higher!${RESET}\n"
     exit 1
   fi
 elif [ "${os}" == "linuxmint" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Linux Mint ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "deepin" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Deepin ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "15" ]]; then
+  if [[ "${osmajversion}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Deepin 15 or higher!${RESET}\n"
     exit 1
   fi
 elif [ "${os}" == '"elementary"' ]; then
   echo -e " [I] ${YELLOW}Elementary OS ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "debian" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
-  if [[ "${osversion}" -lt "8" ]]; then
+  if [[ "${osmajversion}" -lt "8" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported on Debian 8 (Jessie) or higher!${RESET}\n"
     exit 1
   fi
 elif [ "${os}" == "fedora" ]; then
   echo -e " [I] ${YELLOW}Fedora ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "22" ]]; then
+  if [[ "${osmajversion}" -lt "22" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported on Fedora 22 or higher!${RESET}\n"
     exit 1
   fi
