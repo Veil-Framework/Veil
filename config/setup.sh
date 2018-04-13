@@ -260,7 +260,7 @@ func_package_deps(){
       if [ "${os}" == "ubuntu" ] \
       || [ "${os}" == "linuxmint" ]; then
         ## Special urghbuntu derivative snowflakes
-        sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386 \
+        sudo ${arg} apt-get -y -qq install wine-stable \
           || echo -e "${RED}[ERROR]: Failed with apt-get install wine (1)\n${RESET}\n"
       else
         ## anything that isn't ubuntu or ubuntu-derived
@@ -409,11 +409,15 @@ func_package_deps(){
   if [ "${os}" == "debian" ] \
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ] \
   || [ "${os}" == "deepin" ] \
   || [ "${os}" == "linuxmint" ]; then
     #ttf-mscorefonts-installer
     sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
+      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind \
+        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (1)\n${RESET}\n"
+
+  elif [ "${os}" == "ubuntu" ]; then
+    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine-stable unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind \
         || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (1)\n${RESET}\n"
 
