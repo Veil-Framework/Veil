@@ -410,7 +410,11 @@ class Tools:
                     payload_options_command = ""
                 else:
                     selected_payload.generate()
-                    outfile.compiler(selected_payload)
+                    if not outfile.compiler(selected_payload):
+                        payload_options_command = ""
+                    else:
+                        payload_options_command = ""
+                        break
 
             elif payload_options_command.startswith("exit") or payload_options_command.startswith("quit"):
                 sys.exit(0)
