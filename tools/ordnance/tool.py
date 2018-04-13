@@ -409,13 +409,6 @@ class Tools:
                             else:
                                 dummy2 = input('\nHit enter to continue... ')
                             shellcode_command = ""
-
-                            #if "LHOST" in payload.required_options:
-                            #    payload.required_options["LHOST"][0] = ""
-                            #if "LPORT" in payload.required_options:
-                            #    payload.required_options["LPORT"][0] = ""
-                            #breakout = True
-                            #break
                 elif shellcode_command.startswith("option"):
                     # Reprint the shellcode options to console
                     self.print_options_screen(payload)
