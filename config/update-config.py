@@ -207,41 +207,48 @@ if __name__ == '__main__':
 
         # Check the paths are correct (WINEPREFIX)
         while not os.path.isdir( options["TEMP_PATH"] ):
-            path = raw_input( " [>] Please enter the directory of your system's temp path (e.g. /tmp/): " )
+            path = input( " [>] Please enter the directory of your system's temp path (e.g. /tmp/): " )
+            path = str(path)
             options["TEMP_PATH"] = path
 
         # Check the paths are correct (METASPLOIT_PATH)
         while not os.path.isdir( options["METASPLOIT_PATH"] ):
-            path = raw_input( " [>] Please enter the directory of the Metasploit Framework (e.g. /opt/metasploit-framework/): " )
+            path = input( " [>] Please enter the directory of the Metasploit Framework (e.g. /opt/metasploit-framework/): " )
+            path = str(path)
             options["METASPLOIT_PATH"] = path
 
         # Check the paths are correct (MSFVENOM_PATH)
         while not os.path.isfile( options["MSFVENOM_PATH"] + "/msfvenom" ):
-            path = raw_input( " [>] Please enter the directory of msfvenom (e.g. /usr/bin/): " )
+            path = input( " [>] Please enter the directory of msfvenom (e.g. /usr/bin/): " )
+            path = str(path)
             options["MSFVENOM_PATH"] = path
 
         # Check the paths are correct (VEIL_PATH)
         while not os.path.isdir( options["VEIL_PATH"] ):
-            print( "\n [i] Can't find Veil's path?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = raw_input( " [>] Please enter the directory to Veil (e.g. /opt/veil/): " )
+            print( "\n [i] Can't find Veil's path?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
+            path = str(path)
+            path = input( " [>] Please enter the directory to Veil (e.g. /opt/veil/): " )
             options["VEIL_PATH"] = path
 
         # Check the paths are correct (PYINSTALLER_PATH)
         while not os.path.isdir( options["PYINSTALLER_PATH"] ):
-            print( "\n [i] Can't find PyInstaller?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = raw_input( " [>] Please enter the directory of PyInstaller (e.g. /var/lib/veil/PyInstaller/): " )
+            print( "\n [i] Can't find PyInstaller?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
+            path = input( " [>] Please enter the directory of PyInstaller (e.g. /var/lib/veil/PyInstaller/): " )
+            path = str(path)
             options["PYINSTALLER_PATH"] = path
 
         # Check the paths are correct (WINEPREFIX)
         while not os.path.isdir( options["WINEPREFIX"] ):
-            print( "\n [i] Can't find WINE profile?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = raw_input( " [>] Please enter the directory of Veil's WINE profile (e.g. /var/lib/veil/wine/): " )
+            print( "\n [i] Can't find WINE profile?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
+            path = input( " [>] Please enter the directory of Veil's WINE profile (e.g. /var/lib/veil/wine/): " )
+            path = str(path)
             options["WINEPREFIX"] = path
 
         # Check the paths are correct (GOLANG_PATH)
         while not os.path.isdir( options["GOLANG_PATH"] ):
-            print( "\n [i] Can't find GoLang?   Run: %s --force --silent\n" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = raw_input( " [>] Please enter the directory of GoLang (e.g. /var/lib/veil/go/): " )
+            print( "\n [i] Can't find GoLang?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
+            path = input( " [>] Please enter the directory of GoLang (e.g. /var/lib/veil/go/): " )
+            path = str(path)
             options["GOLANG_PATH"] = path
     # Unsupported platform...
     else:

@@ -85,7 +85,7 @@ if __name__ == "__main__":
         "-e", "--encoder", metavar="ENCODER", default=None,
         help='Name of shellcode encoder to use')
     ordnance_encoder.add_argument(
-        "-b", "--bad-chars", metavar="\\\\x00\\\\x0a..", default=None,
+        "-b", "--bad-chars", metavar="\\x00\\x0a..", default=None,
         help='Bad characters to avoid')
     ordnance_encoder.add_argument(
         '--print-stats', default=False, action='store_true',

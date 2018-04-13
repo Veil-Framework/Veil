@@ -285,11 +285,11 @@ func_package_deps(){
   ## Couple of extras for other OSs
   if [ "${os}" == "kali" ] \
   || [ "${os}" == "parrot" ]; then
-    sudo ${arg} apt-get -y install metasploit-framework python2.7 python3 python3-pycryptodome \
+    sudo ${arg} apt-get -y install metasploit-framework python2.7 python3 python3-pycryptodome python3-crypto \
         || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (5)\n${RESET}\n"
     tmp="$?"
     if [[ "${tmp}" -ne "0" ]]; then
-      msg="Failed to install dependencies (Metasploit-Framework/python2.7/python3/python3-pycryptodome)... Exit code: ${tmp}"
+      msg="Failed to install dependencies (Metasploit-Framework/python2.7/python3/python3-pycryptodome/python3-crypto)... Exit code: ${tmp}"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
