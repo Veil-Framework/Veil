@@ -324,7 +324,7 @@ class Tools:
                 print()
             show_evasion_menu = True
 
-            evasion_main_command = input('Veil-Evasion command: ').strip().lower()
+            evasion_main_command = input('Veil/Evasion>: ').strip().lower()
 
             if evasion_main_command.startswith("back") or evasion_main_command.startswith("main") or evasion_main_command.startswith("menu"):
                 evasion_main_command = ""

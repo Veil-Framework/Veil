@@ -105,7 +105,7 @@ class Conductor:
                     print()
 
                 print()
-                main_menu_command = input('Main menu choice: ').strip()
+                main_menu_command = input('Veil>: ').strip()
 
                 if main_menu_command.startswith('use'):
                     # Check to make sure a tool is provided with use command
