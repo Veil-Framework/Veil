@@ -47,21 +47,36 @@ class Tools:
         self.payload_options = {}
 
     def cli_menu(self, invoked=False):
+        ordnance_helpers.title_screen()
+
         # Check to see if we're just listing payloads or encoders
         # If so, do that and then exit
+        # --list-payloads
         if self.command_options.list_payloads:
             self.print_payloads()
             sys.exit()
+        # --list-encoders
         elif self.command_options.list_encoders:
             self.print_encoders()
             sys.exit()
+
         # Now let's check for payloads we're doing
-        if self.command_options.ordnance_payload:
-            payload_found = False
-            for payload in self.active_shellcode.values():
-                if self.command_options.ordnance_payload.lower() == payload.cli_name:
-                    payload_found = True
-                    if "LHOST" in payload.required_options:
+        # Missing --ordnance-payload ?
+        if not self.command_options.ordnance_payload:
+            print(helpers.color("[*] Error: Missing ordnance-payload selection (--ordnance-payload <payload>).    Try: -t Ordnance --list-payloads", warning=True))
+        else:
+            payload_selected = self.command_options.ordnance_payload.lower()
+            payload = self.return_payload_object(payload_selected)
+            if not payload:
+                print(helpers.color("[*] Error: You specified a non-existent Ordnance payload!", warning=True))
+                sys.exit()
+            else:
+                if "LHOST" in payload.required_options:
+                    # Is --ip missing?
+                    if self.command_options.ip is None:
+                        print(helpers.color("[*] Error: Missing --ip <value>", warning=True))
+                        sys.exit()
+                    else:
                         valid_ip = helpers.validate_ip(self.command_options.ip)
                         valid_hostname = helpers.validate_hostname(self.command_options.ip)
                         if valid_ip:
@@ -71,46 +86,39 @@ class Tools:
                                 payload.required_options["LHOST"][0] = self.command_options.ip
                             else:
                                 print(helpers.color("[*] Error: Invalid IP/Hostname specified!", warning=True))
-                                print(helpers.color("[*] Try again?", warning=True))
                                 sys.exit()
                         else:
                             print(helpers.color("[*] Error: Invalid IP/Hostname specified!", warning=True))
-                            print(helpers.color("[*] Try again?", warning=True))
                             sys.exit()
-                    if "LPORT" in payload.required_options:
-                        if 0 < self.command_options.port < 65535:
-                            payload.required_options["LPORT"][0] = self.command_options.port
-                        else:
-                            print(helpers.color("[*] Error: Invalid port number provided!", warning=True))
-                            print(helpers.color("[*] Try again?", warning=True))
-                            sys.exit()
-                    # Generate the original shellcode
-                    payload.cli_gen_shellcode()
-                    self.final_shellcode = payload.customized_shellcode
-                    # Check if an encoder is being called by the user
-                    if self.command_options.encoder is not None:
-                        encoder_found_here = False
-                        if "BadChars" in payload.required_options:
-                            payload.required_options["BadChars"][0] = self.command_options.bad_chars
-                        for loaded_encoder in self.active_encoders.values():
-                            if self.command_options.encoder.lower() == loaded_encoder.cli_name:
-                                encoder_found_here = True
-                                loaded_encoder.cli_encode(payload)
-                        if not encoder_found_here:
-                            print(helpers.color("[*] Error: Encoder you specified was not found!", warning=True))
-                            print(helpers.color("[*] Try again?", warning=True))
-                            sys.exit()
-                        self.final_shellcode = payload.customized_shellcode
-                    if invoked:
-                        pass
+                if "LPORT" in payload.required_options:
+                    if 0 < self.command_options.port < 65535:
+                        payload.required_options["LPORT"][0] = self.command_options.port
                     else:
-                        payload.payload_stats()
-
-            # If the payload supplied isn't found
-            if not payload_found:
-                print(helpers.color("[*] Error: You specified a non-existent Ordnance payload!", warning=True))
-                print(helpers.color("[*] Go to start... do not collect $200!", warning=True))
-                sys.exit()
+                        print(helpers.color("[*] Error: Invalid port number provided!", warning=True))
+                        print(helpers.color("[*] Try again?", warning=True))
+                        sys.exit()
+                # Generate the original shellcode
+                payload.cli_gen_shellcode()
+                self.final_shellcode = payload.customized_shellcode
+                # Check if an encoder is being called by the user
+                if self.command_options.encoder is not None:
+                    encoder_found_here = False
+                    if "BadChars" in payload.required_options:
+                        payload.required_options["BadChars"][0] = self.command_options.bad_chars
+                    for loaded_encoder in self.active_encoders.values():
+                        if self.command_options.encoder.lower() == loaded_encoder.cli_name:
+                            encoder_found_here = True
+                            loaded_encoder.cli_encode(payload)
+                    if not encoder_found_here:
+                        print(helpers.color("[*] Error: Encoder you specified was not found!", warning=True))
+                        print(helpers.color("[*] Try again?", warning=True))
+                        sys.exit()
+                    self.final_shellcode = payload.customized_shellcode
+                if invoked:
+                    pass
+                else:
+                    payload.payload_stats()
+        return
 
     def load_encoders(self, cli_args):
         for name in sorted( glob.glob('tools/ordnance/encoders/*.py') ):
@@ -133,11 +141,8 @@ class Tools:
         print("\tCommand Line Name => Description")
         print("-" * 79)
         print()
-        #x = 1
         for encoder_module in self.active_encoders.values():
-            print( "\t%s)\t%s => %s" % ( x, '{0: <24}'.format( helpers.color( encoder_module.cli_name ) ), encoder_module.name ) )
-            print( "\t%s => %s" % ( x, '{0: <24}'.format( helpers.color( encoder_module.cli_name ) ), encoder_module.name ) )
-            #x += 1
+            print( "\t%s => %s" % ( '{0: <24}'.format( helpers.color( encoder_module.cli_name ) ), encoder_module.name ) )
         return
 
     def print_shellcode_option_commands(self):
@@ -217,6 +222,7 @@ class Tools:
                     list_selection = ordnance_main_command.split()[1].lower()
 
                     # Check and see what we are listing
+                    # Payloads
                     if list_selection.startswith('p'):
                         ordnance_helpers.title_screen()
                         self.print_payloads()
@@ -224,6 +230,7 @@ class Tools:
                         ordnance_main_command = ""
                         show_ordnance_menu = False
 
+                    # Encdoers
                     elif list_selection.startswith('e'):
                         ordnance_helpers.title_screen()
                         self.print_encoders()
@@ -287,11 +294,9 @@ class Tools:
         for payload in self.active_shellcode.values():
             if user_selection.isdigit() and (0 < int(user_selection) <= len(self.active_shellcode)):
                 if int(user_selection) == counter_value:
-                    print ("w00t1!")
                     return payload
             else:
                 if user_selection.lower() == payload.cli_name:
-                    print ("w00t2!")
                     return payload
 
             # Iterate counter for number based selection
@@ -403,6 +408,7 @@ class Tools:
                                 self.final_shellcode = payload.customized_shellcode
 
                             # Print payload stats
+                            ordnance_helpers.title_screen()
                             payload.payload_stats()
                             if self.invoked:
                                 dummy = input('\nHit enter to return to Veil-Evasion... ')

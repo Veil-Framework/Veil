@@ -64,7 +64,7 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-12"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-16"
   echo " =========================================================================="
   echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
@@ -83,6 +83,8 @@ func_title(){
   echo "            winedir = ${winedir}"
   echo "          winedrive = ${winedrive}"
   echo "            gempath = ${gempath}"
+  echo "             silent = ${silent}"
+  echo "              force = ${force}"
   echo ""
 }
 
@@ -106,11 +108,6 @@ func_check_env(){
     echo -e " ${YELLOW}                  For Fedora 22+: dnf -y install sudo${RESET}"
     exit 1
   fi
-
-
-  ## Feedback to user
-  [ "${silent}" == "true" ] && echo -e " [I] ${YELLOW}Silent Mode${RESET}: ${GREEN}Enabled${RESET}"
-  [ "${force}" == "true" ] &&  echo -e " [I]  ${YELLOW}Force Mode${RESET}: ${GREEN}Enabled${RESET}"
 
 
   ## Double check install (if not silent)
@@ -289,7 +286,7 @@ func_package_deps(){
         || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (5)\n${RESET}\n"
     tmp="$?"
     if [[ "${tmp}" -ne "0" ]]; then
-      msg="Failed to install dependencies (Metasploit-Framework/python2.7/python3/python3-pycryptodome/python3-crypto)... Exit code: ${tmp}"
+      msg="Failed to install the additional Kali/parrot dependencies... Exit code: ${tmp}"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi

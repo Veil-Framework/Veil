@@ -129,8 +129,8 @@ usage: Veil.py [--list-tools] [-t TOOL] [--update] [--setup] [--config]
                [-p [PAYLOAD]] [-o OUTPUT-NAME]
                [-c [OPTION=value [OPTION=value ...]]]
                [--msfoptions [OPTION=value [OPTION=value ...]]] [--msfvenom ]
-               [--compiler pyinstaller] [--clean] [--ordnance-payload rev_tcp]
-               [--list-encoders] [-e ENCODER] [-b \\x00\\x0a..]
+               [--compiler pyinstaller] [--clean] [--ordnance-payload [PAYLOAD]]
+               [--list-encoders] [-e ENCODER] [-b \x00\x0a..]
                [--print-stats]
 
 Veil is a framework containing multiple tools.
@@ -166,14 +166,14 @@ Veil is a framework containing multiple tools.
   --clean               Clean out payload folders
 
 [*] Veil-Ordnance Shellcode Options:
-  --ordnance-payload rev_tcp
+  --ordnance-payload [PAYLOAD]
                         Payload type (bind_tcp, rev_tcp, etc.)
 
 [*] Veil-Ordnance Encoder Options:
   --list-encoders       Lists all available encoders
   -e ENCODER, --encoder ENCODER
                         Name of shellcode encoder to use
-  -b \\x00\\x0a.., --bad-chars \\x00\\x0a..
+  -b \\x00\\x0a.., --bad-chars \x00\x0a..
                         Bad characters to avoid
   --print-stats         Print information about the encoded shellcode
 $

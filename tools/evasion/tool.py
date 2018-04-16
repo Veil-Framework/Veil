@@ -46,7 +46,7 @@ class Tools:
             "exit": "Completely exit Veil",
             "back": "Go to Veil's main menu",
             "clean": "Remove generated artifacts",
-            "checkvt": "Check VirusTotal against generated hashes"}
+            "checkvt": "Check VirusTotal.com against generated hashes"}
         self.final_shellcode = ""
         self.payload_option_commands = {
             "set": "Set shellcode option",
@@ -58,7 +58,7 @@ class Tools:
 
     def check_vt(self, interactive=True):
         """
-        Checks payload hashes in veil-output/hashes.txt vs VirusTotal
+        Checks payload hashes in veil-output/hashes.txt vs VirusTotal.com
         """
 
         # Command for in-menu vt-notify check against hashes within hash file
@@ -78,7 +78,7 @@ class Tools:
                         print(helpers.color(" [!] File %s with hash %s found!" % (filename, filehash), warning=True))
                         found = True
                 if found is False:
-                    print(" [*] No payloads found on VirusTotal!")
+                    print(" [*] No payloads found on VirusTotal.com!")
 
                 input("\n [>] Press any key to continue...")
 
@@ -126,12 +126,19 @@ class Tools:
         return
 
     def cli_menu(self, invoked=False):
+        evasion_helpers.title_screen()
+
+        # --list-payloads
         if self.command_options.list_payloads:
             self.list_loaded_payloads()
+            sys.exit()
 
-        # check if a payload is provided, and if so, start the generation
+        # Check if a payload is provided, and if so, start the generation
         # process
-        elif self.command_options.p:
+        # Missing -p ?
+        if not self.command_options.p:
+            print(helpers.color("[*] Error: Missing --payload selection (-p <payload>).    Try: -t Evasion --list-payloads", warning=True))
+        else:
             user_cli_payload = self.return_payload_object(self.command_options.p)
             if not user_cli_payload:
                 print(helpers.color("[*] Error: You did not provide a valid payload selection!", warning=True))
@@ -142,6 +149,7 @@ class Tools:
                 sys.exit()
 
             # Make sure IP is valid
+            # --ip
             if self.command_options.ip is not None:
                 valid_ip = helpers.validate_ip(self.command_options.ip)
                 valid_hostname = helpers.validate_hostname(self.command_options.ip)
@@ -183,6 +191,7 @@ class Tools:
                     user_cli_payload.cli_shellcode = cli_shellcode
 
             # Loop over setting required options
+            # -c
             if self.command_options.c is not None:
                 for payload_option in self.command_options.c:
                     if payload_option is not '':
@@ -204,7 +213,6 @@ class Tools:
 
             # figure out how to compile the code
             outfile.compiler(user_cli_payload, invoked=True, cli_object=self.command_options)
-
         return
 
     def display_payload_options(self, selected_pload, showTitle=True):

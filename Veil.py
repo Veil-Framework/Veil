@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     ordnance_shellcode = parser.add_argument_group('[*] Veil-Ordnance Shellcode Options')
     ordnance_shellcode.add_argument(
-        "--ordnance-payload", metavar="rev_tcp", default=None,
+        "--ordnance-payload", metavar="PAYLOAD", default=None,
         help='Payload type (bind_tcp, rev_tcp, etc.)')
 
     ordnance_encoder = parser.add_argument_group('[*] Veil-Ordnance Encoder Options')
@@ -95,34 +95,42 @@ if __name__ == "__main__":
 
     the_conductor = orchestra.Conductor(args)
 
+    # --help
     if args.h:
         parser.print_help()
         sys.exit()
 
+    # --version
     if args.version:
         messages.title_screen()
         sys.exit()
 
+    # --update
     if args.update:
         the_conductor.update_veil()
         sys.exit()
 
+    # --setup
     if args.setup:
         the_conductor.setup_veil()
         sys.exit()
 
+    # --config
     if args.config:
         the_conductor.config_veil()
         sys.exit()
 
+    # --list-tools
     if args.list_tools:
         the_conductor.list_tools()
         sys.exit()
 
+    # --clean
     if args.clean:
         helpers.clean_payloads()
         sys.exit()
 
+    # Anything else that isn't defined
     if not args.tool:
         the_conductor.main_menu()
         sys.exit()
