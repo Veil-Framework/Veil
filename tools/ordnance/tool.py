@@ -146,7 +146,7 @@ class Tools:
         return
 
     def print_shellcode_option_commands(self):
-        print("Available Commands: \n")
+        print(helpers.color(" Available Commands:\n"))
         for name in sorted(self.shellcode_option_commands.keys()):
             print('\t' + '{0: <8}'.format(name) + "\t\t" + '{0: <8}'.format(self.shellcode_option_commands[name]))
         print()
@@ -399,12 +399,11 @@ class Tools:
                             # Print banner & payload stats
                             print()
                             ordnance_helpers.title_screen()
-                            print()
                             payload.payload_stats()
 
                             # Did we come from Evasion? Or direct from Ordnance...
                             if self.invoked:
-                                print('\nHalf way... Shellcode generated with Veil-Ordnance!   Returning to Veil-Evasion.')
+                                print('\nHalf way... ' + helpers.color('Shellcode generated with Veil-Ordnance!') + '   Returning to Veil-Evasion.\n')
 
                                 # Re-set settings
                                 if "LHOST" in payload.required_options:
@@ -412,7 +411,7 @@ class Tools:
                                 if "LPORT" in payload.required_options:
                                     payload.required_options["LPORT"][0] = ""
                             else:
-                                dummy = input('\nDone! Hit enter to continue...\n')
+                                dummy = input("\n" + helpers.color('Done!') + "Hit enter to continue...")
 
                             show_payload_menu = True
                             break

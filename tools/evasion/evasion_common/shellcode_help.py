@@ -503,11 +503,11 @@ class Shellcode:
 
         # return custom specified shellcode if it was set previously
         if self.custom_shellcode != '':
-            print(helpers.color("\n [*] Using pre-generated shellcode...\n"))
+            print(helpers.color("\n [*] Using pre-generated shellcode..."))
             return self.custom_shellcode
 
         elif self.invoke_ordnance:
-            print(helpers.color("\n [*] Generating shellcode using Veil-Ordnance...\n"))
+            print(helpers.color("\n [*] Generating shellcode using Veil-Ordnance..."))
             ordnance_loop = True
             Ordnance_object = ordnance_import.Tools()
             while ordnance_loop:
@@ -520,7 +520,7 @@ class Shellcode:
 
         # generate the shellcode using msfvenom
         else:
-            print(helpers.color("\n [*] Generating shellcode using msfvenom...\n"))
+            print(helpers.color("\n [*] Generating shellcode using msfvenom..."))
             if self.msfvenomCommand == '':
                 print(helpers.color(" [!] ERROR: msfvenom command not specified in payload!\n", warning=True))
                 return None

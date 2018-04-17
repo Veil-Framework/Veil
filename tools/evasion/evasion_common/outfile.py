@@ -29,14 +29,14 @@ def compiler(payload_object, invoked=False, cli_object=None):
 
         if not invoked:
             # Determine the file name to use for output
-            file_name = input('Please enter the base name for output files (default is payload): ').strip()
+            file_name = input(' [>] Please enter the base name for output files (default is payload): ').strip()
         else:
             file_name = cli_object.o
 
         # Basic checks on input
         while file_name != '' and ("\\" in file_name or "/" in file_name):
             print(helpers.color("\nPlease provide a base name, not a path, for the output base\n", warning=True))
-            file_name = input('Please enter the base name for output files (default is payload): ').strip()
+            file_name = input(' [>] Please enter the base name for output files (default is payload): ').strip()
 
         # If no base name, set it to be payload
         if file_name == '':
