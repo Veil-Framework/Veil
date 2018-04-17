@@ -114,11 +114,12 @@ def print_dict_message(commands, show_title=True):
     if show_title:
         title_screen()
 
-    print(" Available Commands:\n")
+    print(helpers.color(" Available Commands:\n"))
 
     # list commands in sorted order
     for (cmd, desc) in sorted(commands.items()):
         print("\t%s\t%s" % ('{0: <12}'.format(cmd), desc))
+    print()
     return
 
 

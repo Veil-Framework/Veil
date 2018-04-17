@@ -182,9 +182,11 @@ class Shellcode:
 
         # print out the main title to reset the interface
         if showTitle:
+            print()
             evasion_helpers.title_screen()
 
-        print(' [?] Generate or supply custom shellcode?\n')
+        print()
+        print(helpers.color(" [?] Generate or supply custom shellcode?\n"))
         print('     %s - Ordnance %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
         print('     %s - MSFVenom' % (helpers.color('2')))
         print('     %s - Custom shellcode string' % (helpers.color('3')))
@@ -501,9 +503,11 @@ class Shellcode:
 
         # return custom specified shellcode if it was set previously
         if self.custom_shellcode != '':
+            print(helpers.color("\n [*] Using pre-generated shellcode...\n"))
             return self.custom_shellcode
 
         elif self.invoke_ordnance:
+            print(helpers.color("\n [*] Generating shellcode using Veil-Ordnance...\n"))
             ordnance_loop = True
             Ordnance_object = ordnance_import.Tools()
             while ordnance_loop:
@@ -512,11 +516,11 @@ class Shellcode:
                     self.payload_choice = Ordnance_object.selected_payload
                     self.shellcode_options = Ordnance_object.payload_options
                     ordnance_loop = False
-                    return Ordnance_object.final_shellcode
+            return Ordnance_object.final_shellcode
 
         # generate the shellcode using msfvenom
         else:
-            print(helpers.color("\n [*] Generating shellcode..."))
+            print(helpers.color("\n [*] Generating shellcode using msfvenom...\n"))
             if self.msfvenomCommand == '':
                 print(helpers.color(" [!] ERROR: msfvenom command not specified in payload!\n", warning=True))
                 return None

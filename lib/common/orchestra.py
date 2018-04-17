@@ -89,7 +89,7 @@ class Conductor:
         try:
 
             # Loop for the main menu, will always loop as long as command is ''
-            while main_menu_command == '':
+            while True:
                 comp = completer.VeilMainMenuCompleter(self.mainmenu_commands, self.imported_tools)
                 readline.set_completer_delims(' \t\n;')
                 readline.parse_and_bind("tab: complete")
@@ -105,8 +105,8 @@ class Conductor:
                     for command in sorted(self.mainmenu_commands.keys()):
                         print("\t" + helpers.color(command) + '\t\t\t' + self.mainmenu_commands[command])
                     print()
+                    show_header = False
 
-                print()
                 main_menu_command = input('Veil>: ').strip()
 
                 if main_menu_command.startswith('use'):
@@ -116,10 +116,8 @@ class Conductor:
                         # List tools, don't show header, loop back in main menu
                         self.list_tools()
                         show_header = False
-                        main_menu_command = ""
 
                     elif len(main_menu_command.split()) == 2:
-
                         # Grab the command, either the number or word
                         tool_choice = main_menu_command.split()[1]
 
@@ -131,10 +129,7 @@ class Conductor:
                                 # if the entered number matches the payload, use that payload
                                 if int(tool_choice) == tool_number:
                                     tool_object.tool_main_menu()
-                                    tool_number += 1
-                                    show_header = True
-                                else:
-                                    tool_number += 1
+                                tool_number += 1
                             show_header = True
 
                         # Else if selecting payload by name
@@ -146,26 +141,17 @@ class Conductor:
                                     show_header = True
 
                         # Once done with tool, clear main menu command
-                        main_menu_command = ""
                         show_header = True
-
-                    # Catch anything else, like an error
-                    else:
-                        main_menu_command = ""
 
                 elif main_menu_command.startswith('list'):
                     # List tools, don't show header, loop back in main menu
                     self.list_tools()
-                    show_header = False
-                    main_menu_command = ""
 
                 elif main_menu_command.startswith('info'):
                     if len(main_menu_command.split()) == 1:
                         show_header = True
-                        main_menu_command = ""
 
                     elif len(main_menu_command.split()) == 2:
-
                         # Grab the command, either the number or word
                         info_choice = main_menu_command.split()[1]
 
@@ -179,7 +165,6 @@ class Conductor:
                                     print()
                                     print(helpers.color(tool_object.cli_name) + " => " + tool_object.description)
                                     print()
-                                    show_header = False
                                 tool_number += 1
 
                         # If the entered name matches the tool, use that tool
@@ -189,38 +174,25 @@ class Conductor:
                                     print()
                                     print(helpers.color(tool_object.cli_name) + " => " + tool_object.description)
                                     print()
-                                    show_header = False
-
-                        main_menu_command = ""
-
                     else:
-                        main_menu_command = ""
                         show_header = True
 
                 elif main_menu_command.startswith('option'):
                     self.options_veil()
-                    main_menu_command = ""
 
                 # Hidden menu option
                 elif main_menu_command.startswith('config'):
                     self.config_veil()
-                    main_menu_command = ""
 
                 # Hidden menu option
                 elif main_menu_command.startswith('setup'):
                     self.setup_veil()
-                    main_menu_command = ""
 
                 elif main_menu_command.startswith('update'):
                     self.update_veil()
-                    main_menu_command = ""
 
                 elif main_menu_command.startswith('exit') or main_menu_command.startswith('quit'):
                     sys.exit()
-
-                else:
-                    show_header = True
-                    main_menu_command = ""
 
         except KeyboardInterrupt:
             print("\n\n" + helpers.color("^C.   Quitting...", warning=True))

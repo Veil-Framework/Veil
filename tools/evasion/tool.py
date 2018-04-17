@@ -256,7 +256,7 @@ class Tools:
     def print_options_screen(self, pload_object):
         print()
         print("Payload: " + helpers.color(pload_object.path) + " selected\n")
-        print(helpers.color("Required Options:\n"))
+        print(helpers.color(" Required Options:\n"))
         print('{0: <16}'.format('Name') + '\t' + '{0: <8}'.format('Value') + '\t' + '{0: <8}'.format('Description'))
         print('{0: <16}'.format('----') + '\t' + '{0: <8}'.format('-----') + '\t' + '{0: <8}'.format('-----------'))
         for opt_name in sorted(pload_object.required_options.keys()):
@@ -272,7 +272,7 @@ class Tools:
         showInfo = whether to show the payload information bit
         """
 
-        print(helpers.color(" Payload information:\n"))
+        print(helpers.color(" Payload Information:\n"))
         print("\tName:\t\t" + payload_obj.name)
         print("\tLanguage:\t" + payload_obj.language)
         print("\tRating:\t\t" + payload_obj.rating)
@@ -305,7 +305,7 @@ class Tools:
         # Iterate over payloads and find the user selected payload module
         evasion_main_command = ""
         show_evasion_menu = True
-        while evasion_main_command == '':
+        while True:
 
             # set out tab completion for the appropriate modules on each run
             # as other modules sometimes reset this
@@ -322,21 +322,18 @@ class Tools:
                 for command in sorted(self.evasion_main_menu_commands.keys()):
                     print("\t" + helpers.color(command) + '\t\t\t' + self.evasion_main_menu_commands[command])
                 print()
-            show_evasion_menu = True
+                show_evasion_menu = False
 
             evasion_main_command = input('Veil/Evasion>: ').strip().lower()
 
             if evasion_main_command.startswith("back") or evasion_main_command.startswith("main") or evasion_main_command.startswith("menu"):
-                evasion_main_command = ""
                 break
 
             elif evasion_main_command.startswith("checkvt"):
                 self.check_vt()
-                evasion_main_command = ""
 
             elif evasion_main_command.startswith("clean"):
                 self.clean_artifacts()
-                evasion_main_command = ""
 
             elif evasion_main_command.startswith("exit") or evasion_main_command.startswith("quit"):
                 sys.exit(0)
@@ -394,23 +391,18 @@ class Tools:
         evasion_helpers.print_dict_message(self.payload_option_commands, show_title=False)
 
         while True:
-            payload_options_command = input("[" + selected_payload.path + ">>] ").strip().lower()
+            payload_options_command = input("[" + selected_payload.path + ">>]: ").strip().lower()
 
             if payload_options_command.startswith("back") or payload_options_command.startswith("main") or payload_options_command.startswith("menu"):
-                payload_options_command = ""
                 break
 
             elif payload_options_command.startswith("gen") or payload_options_command.startswith("run"):
                 # Checking for Ruby specific payloads because of dumbass sleep check
                 if selected_payload.language == 'ruby' and selected_payload.required_options["SLEEP"][0] != "X" and selected_payload.required_options["USERNAME"][0] == "X" and selected_payload.required_options["DOMAIN"][0] == "X" and selected_payload.required_options["HOSTNAME"][0] == "X":
                     print(helpers.color("[*] If using SLEEP check with Ruby, you must also provide an additional check (like HOSTNAME)!", warning=True))
-                    payload_options_command = ""
                 else:
                     selected_payload.generate()
-                    if not outfile.compiler(selected_payload):
-                        payload_options_command = ""
-                    else:
-                        payload_options_command = ""
+                    if outfile.compiler(selected_payload):
                         break
 
             elif payload_options_command.startswith("exit") or payload_options_command.startswith("quit"):
@@ -419,7 +411,6 @@ class Tools:
             elif payload_options_command.startswith("help") or payload_options_command.startswith("option"):
                 self.print_options_screen(selected_payload)
                 evasion_helpers.print_dict_message(self.payload_option_commands, show_title=False)
-                payload_options_command = ""
 
             elif payload_options_command.startswith("set"):
                 if len(payload_options_command.split()) == 3:
