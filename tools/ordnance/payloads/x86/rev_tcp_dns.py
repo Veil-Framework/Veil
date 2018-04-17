@@ -126,9 +126,9 @@ class ShellcodeModule:
         return
 
     def payload_stats(self):
-        print("Payload Name: " + helpers.color(self.name))
-        print("IP Address: " + helpers.color(self.required_options['LHOST'][0]))
-        print("Port: " + helpers.color(str(self.required_options['LPORT'][0])))
-        print("Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
+        print(" [*] Payload Name: " + helpers.color(self.name))
+        print(" [*] IP Address: " + helpers.color(self.required_options['LHOST'][0]))
+        print(" [*] Port: " + helpers.color(str(self.required_options['LPORT'][0])))
+        print(" [*] Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
         print(self.customized_shellcode)
         return
