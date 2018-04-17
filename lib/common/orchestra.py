@@ -46,14 +46,16 @@ class Conductor:
                 tool_object.cli_menu()
                 tool_found = True
         if not tool_found:
-            print(helpers.color('Error: You did not provide a valid tool name!', warning=True))
+            print(helpers.color(' [!] ERROR: You did not provide a valid tool name!', warning=True))
             sys.exit()
 
     def list_tools(self, show_header = True):
         # Did we run a command?
         if show_header:
             # show title bar
+            print()
             messages.title_screen()
+            print()
             print(helpers.color(' [*] Available Tools:\n'))
         else:
             print("Available Tools:\n")

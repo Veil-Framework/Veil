@@ -63,18 +63,18 @@ class Tools:
         # Now let's check for payloads we're doing
         # Missing --ordnance-payload ?
         if not self.command_options.ordnance_payload:
-            print(helpers.color("[*] Error: Missing ordnance-payload selection (--ordnance-payload <payload>).    Try: -t Ordnance --list-payloads", warning=True))
+            print(helpers.color(" [!] ERROR: Missing ordnance-payload selection (--ordnance-payload <payload>).    Try: -t Ordnance --list-payloads", warning=True))
         else:
             payload_selected = self.command_options.ordnance_payload.lower()
             payload = self.return_payload_object(payload_selected)
             if not payload:
-                print(helpers.color("[*] Error: You specified a non-existent Ordnance payload!", warning=True))
+                print(helpers.color(" [!] ERROR: You specified a non-existent Ordnance payload!", warning=True))
                 sys.exit()
             else:
                 if "LHOST" in payload.required_options:
                     # Is --ip missing?
                     if self.command_options.ip is None:
-                        print(helpers.color("[*] Error: Missing --ip <value>", warning=True))
+                        print(helpers.color(" [!] ERROR: Missing --ip <value>", warning=True))
                         sys.exit()
                     else:
                         valid_ip = helpers.validate_ip(self.command_options.ip)
@@ -85,16 +85,16 @@ class Tools:
                             if payload.cli_name == 'rev_tcp_dns':
                                 payload.required_options["LHOST"][0] = self.command_options.ip
                             else:
-                                print(helpers.color("[*] Error: Invalid IP/Hostname specified!", warning=True))
+                                print(helpers.color(" [!] ERROR: Invalid IP/Hostname specified!", warning=True))
                                 sys.exit()
                         else:
-                            print(helpers.color("[*] Error: Invalid IP/Hostname specified!", warning=True))
+                            print(helpers.color(" [!] ERROR: Invalid IP/Hostname specified!", warning=True))
                             sys.exit()
                 if "LPORT" in payload.required_options:
                     if 0 < self.command_options.port < 65535:
                         payload.required_options["LPORT"][0] = self.command_options.port
                     else:
-                        print(helpers.color("[*] Error: Invalid port number provided!", warning=True))
+                        print(helpers.color(" [!] ERROR: Invalid port number provided!", warning=True))
                         print(helpers.color("[*] Try again?", warning=True))
                         sys.exit()
                 # Generate the original shellcode
@@ -110,7 +110,7 @@ class Tools:
                             encoder_found_here = True
                             loaded_encoder.cli_encode(payload)
                     if not encoder_found_here:
-                        print(helpers.color("[*] Error: Encoder you specified was not found!", warning=True))
+                        print(helpers.color(" [!] ERROR: Encoder you specified was not found!", warning=True))
                         print(helpers.color("[*] Try again?", warning=True))
                         sys.exit()
                     self.final_shellcode = payload.customized_shellcode
@@ -312,12 +312,13 @@ class Tools:
 
         if not encoder_found:
             print()
-            print(helpers.color("[*] Error: Encoder not found! Printing non-encoded shellcode!", warning=True))
+            print(helpers.color(" [!] ERROR: Encoder not found! Printing non-encoded shellcode!", warning=True))
             print()
         return
 
     def use_payload(self, payload):
         while ordnance_helpers.loop_req_options(payload):
+            # Soon as we load the payload, show options
             self.print_options_screen(payload)
 
             while True:
@@ -344,48 +345,46 @@ class Tools:
                                 value[0] = shellcode_command.split()[2]
                         if not found_req_option:
                             print()
-                            print(helpers.color("[*] Error: You didn't provide a correct option to set, please retry!", warning=True))
+                            print(helpers.color(" [!] ERROR: You didn't provide a correct option to set, please retry!", warning=True))
                             print()
                 elif shellcode_command.startswith("exit") or shellcode_command.startswith("quit"):
-                    # Completely exit out of Veil
                     sys.exit(0)
                 elif shellcode_command.startswith("back") or shellcode_command.startswith("main") or shellcode_command.startswith("menu"):
-                    # Go back to shellcode selection
-                    shellcode_command = ""
-                    breakout = True
+                    show_payload_menu = True
                     break
                 elif shellcode_command.startswith("list"):
+                    print()
                     ordnance_helpers.title_screen()
                     print()
                     self.print_encoders()
-                    print()
                 elif shellcode_command.startswith("gen") or shellcode_command.startswith("run"):
                     lport_out = ""
                     lhost_out = ""
                     rhost_out = ""
                     if ordnance_helpers.loop_req_options(payload):
                         print()
-                        print(helpers.color("[*] Error: You didn't provide all the required options!", warning=True))
+                        print(helpers.color(" [!] ERROR: You didn't provide all the required options!", warning=True))
                         print()
                     else:
                         safe_to_generate = True
                         if "LHOST" in payload.required_options:
                             if not ordnance_helpers.check_lhost(payload.required_options["LHOST"][0]):
                                 print()
-                                print(helpers.color("[*] Error: You didn't provide a valid IP address!", warning=True))
-                                print(helpers.color("[*] Error: Try again :)", warning=True))
+                                print(helpers.color(" [!] ERROR: You didn't provide a valid IP address!", warning=True))
+                                print(helpers.color(" [!] ERROR: Try again :)", warning=True))
                                 print()
                                 safe_to_generate = False
                         if "LPORT" in payload.required_options:
                             if not ordnance_helpers.check_lport(payload.required_options["LPORT"][0]):
                                 print()
-                                print(helpers.color("[*] Error: You didn't provide a valid LPORT value!", warning=True))
-                                print(helpers.color("[*] Error: Try again :)", warning=True))
+                                print(helpers.color(" [!] ERROR: You didn't provide a valid LPORT value!", warning=True))
+                                print(helpers.color(" [!] ERROR: Try again :)", warning=True))
                                 print()
                                 safe_to_generate = False
                         if safe_to_generate:
                             # Generate the shellcode
                             payload.gen_shellcode()
+
                             # Gather information to generate handler if requested
                             self.final_shellcode = payload.customized_shellcode
                             if "LHOST" in payload.required_options:
