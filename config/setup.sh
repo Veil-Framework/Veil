@@ -295,6 +295,7 @@ func_package_deps(){
 
   ## Clone down the required install files
   echo -e "\n\n [*] ${YELLOW}Pulling down binary dependencies${RESET}\n"
+  [ "${force}" == "true" ] && rm -rf "${dependenciesdir}"
   ## Pulling down from github, if it fails, pull local folder
   if [ -d "${dependenciesdir}" ]; then
     echo -e " [*] ${YELLOW}Already detected folder: ${BOLD}${dependenciesdir}${RESET}\n"
