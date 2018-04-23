@@ -25,7 +25,7 @@ except ImportError:
     sys.exit()
 
 
-sys.path.insert(0, settings.VEIL_PATH + 'tools/ordnance')
+sys.path.insert(0, settings.VEIL_PATH + '/tools/ordnance')
 import tool as ordnance_import
 
 
@@ -559,7 +559,7 @@ def cli_msf_shellcode_gen(command_line_args):
                     extra_options += ' ' + final_opt
 
     # generate the msfvenom command
-    msf_command = settings.MSFVENOM_PATH + "msfvenom -p " + msf_payload + " "
+    msf_command = settings.MSFVENOM_PATH + "/msfvenom -p " + msf_payload + " "
     msf_command += "LHOST=" + ip + " LPORT=" + str(port)
     if extra_options != '':
         msf_command += extra_options
