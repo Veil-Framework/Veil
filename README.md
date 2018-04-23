@@ -45,7 +45,7 @@ apt -y install veil
 sudo apt-get -y install git
 git clone https://github.com/Veil-Framework/Veil.git
 cd Veil/
-bash config/setup.sh --force --silent
+sudo bash config/setup.sh --force --silent
 ```
 
 ### ./config/setup.sh // Setup Files
