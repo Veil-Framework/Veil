@@ -50,7 +50,7 @@ def generateConfig(options):
     print( " [*] TERMINAL_CLEAR = " + options['TERMINAL_CLEAR'] )
 
     # Veil's path
-    config += '# Veil-Evasion install path\n'
+    config += '# Veil install path\n'
     config += 'VEIL_PATH="' + options['VEIL_PATH'] + '"\n\n'
     print( " [*] VEIL_PATH = " + options['VEIL_PATH'] )
 
@@ -65,7 +65,7 @@ def generateConfig(options):
     print( " [*] TEMP_PATH = " + options["TEMP_PATH"] )
 
     # Metasploit Framework's path
-    config += '# The path to the metasploit framework, for example: /opt/metasploit-framework/embedded/framework/\n'
+    config += '# The path to the metasploit framework, for example: %s\n' % ( options['METASPLOIT_PATH'] )
     config += 'METASPLOIT_PATH="' + options['METASPLOIT_PATH'] + '"\n\n'
     print( " [*] METASPLOIT_PATH = " + options['METASPLOIT_PATH'] )
 
@@ -80,12 +80,12 @@ def generateConfig(options):
     print( " [*] MSFVENOM_OPTIONS = " + options['MSFVENOM_OPTIONS'] )
 
     # PyInstaller's path
-    config += '# The path to pyinstaller, for example: /var/lib/veil/PyInstaller/\n'
+    config += '# The path to pyinstaller, for example: %s\n' % ( options['PYINSTALLER_PATH'] )
     config += 'PYINSTALLER_PATH="' + options['PYINSTALLER_PATH'] + '"\n\n'
     print( " [*] PYINSTALLER_PATH = " + options['PYINSTALLER_PATH'] )
 
     # GoLang's path
-    config += '# The path to pyinstaller, for example: /var/lib/veil/go/\n'
+    config += '# The path to pyinstaller, for example: %s\n' % ( options['GOLANG_PATH'] )
     config += 'GOLANG_PATH="' + options['GOLANG_PATH'] + '"\n\n'
     print( " [*] GOLANG_PATH = " + options['GOLANG_PATH'])
 
@@ -170,7 +170,6 @@ if __name__ == '__main__':
         sys.exit()
 
     if platform.system() == "Linux":
-
         # Check /etc/issue for the exact linux distro
         issue = open( "/etc/issue" ).read()
 
@@ -213,7 +212,7 @@ if __name__ == '__main__':
 
         # Check the paths are correct (METASPLOIT_PATH)
         while not os.path.isdir( options["METASPLOIT_PATH"] ):
-            path = input( " [>] Please enter the directory of the Metasploit Framework (e.g. /opt/metasploit-framework/): " )
+            path = input( " [>] Please enter the directory of the Metasploit Framework (e.g. %s): " % ( options["METASPLOIT_PATH"] ) )
             path = str(path)
             options["METASPLOIT_PATH"] = path
 
@@ -233,21 +232,21 @@ if __name__ == '__main__':
         # Check the paths are correct (PYINSTALLER_PATH)
         while not os.path.isdir( options["PYINSTALLER_PATH"] ):
             print( "\n [i] Can't find PyInstaller?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = input( " [>] Please enter the directory of PyInstaller (e.g. /var/lib/veil/PyInstaller/): " )
+            path = input( " [>] Please enter the directory of PyInstaller (e.g. %s): " % ( options["PYINSTALLER_PATH"] ) )
             path = str(path)
             options["PYINSTALLER_PATH"] = path
 
         # Check the paths are correct (WINEPREFIX)
         while not os.path.isdir( options["WINEPREFIX"] ):
             print( "\n [i] Can't find WINE profile?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = input( " [>] Please enter the directory of Veil's WINE profile (e.g. /var/lib/veil/wine/): " )
+            path = input( " [>] Please enter the directory of Veil's WINE profile (e.g. %s): " % ( options["WINEPREFIX"] ) )
             path = str(path)
             options["WINEPREFIX"] = path
 
         # Check the paths are correct (GOLANG_PATH)
         while not os.path.isdir( options["GOLANG_PATH"] ):
             print( "\n [i] Can't find GoLang?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = input( " [>] Please enter the directory of GoLang (e.g. /var/lib/veil/go/): " )
+            path = input( " [>] Please enter the directory of GoLang (e.g. %s): " % ( options["GOLANG_PATH"] ) )
             path = str(path)
             options["GOLANG_PATH"] = path
     # Unsupported platform...

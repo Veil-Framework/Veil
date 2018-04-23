@@ -83,8 +83,6 @@ func_title(){
   echo "            winedir = ${winedir}"
   echo "          winedrive = ${winedrive}"
   echo "            gempath = ${gempath}"
-  echo "             silent = ${silent}"
-  echo "              force = ${force}"
   echo ""
 }
 
@@ -108,6 +106,11 @@ func_check_env(){
     echo -e " ${YELLOW}                  For Fedora 22+: dnf -y install sudo${RESET}"
     exit 1
   fi
+
+
+  ## Feedback to user
+  [ "${silent}" == "true" ] && echo -e " [I] ${YELLOW}Silent Mode${RESET}: ${GREEN}Enabled${RESET}"
+  [ "${force}" == "true" ] &&  echo -e " [I]  ${YELLOW}Force Mode${RESET}: ${GREEN}Enabled${RESET}"
 
 
   ## Double check install (if not silent)
