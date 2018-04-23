@@ -11,7 +11,7 @@ def senecas_games(evasion_payload):
     # Start checks to determine language
     # Define original values of variables
     num_tabs_required = 0
-    check_code = ''
+    check_code = ""
 
     if evasion_payload.language == 'python':
         if evasion_payload.required_options["EXPIRE_PAYLOAD"][0].lower() != "x":

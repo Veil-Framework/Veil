@@ -14,9 +14,37 @@ import sys
 try:
     sys.path.append("/etc/veil/")
     import settings
-
 except ImportError:
-    print("\n [!] ERROR #1: Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-3: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
+    sys.exit()
+
+# See if ./config/setup.sh has been executed
+if not os.path.exists( settings.GOLANG_PATH ):
+    print( "\n [!] ERROR #2-3: Can't find Go (%s).   Run: %s --force --silent\n" % ( settings.GOLANG_PATH, os.path.abspath( "./config/setup.sh" ) ) )
+    sys.exit()
+
+if not os.path.exists( settings.PYINSTALLER_PATH ):
+    print( "\n [!] ERROR #2-3: Can't find PyInstaller (%s).   Run: %s --force --silent\n" % ( settings.PYINSTALLER_PATH, os.path.abspath( "./config/setup.sh" ) ) )
+    sys.exit()
+
+if not os.path.exists( settings.METASPLOIT_PATH ):
+    print( "\n [!] ERROR #2-3: Can't find the Metasploit Framework (%s).   Run: %s --force --silent\n" % ( settings.METASPLOIT_PATH, os.path.abspath( "./config/setup.sh" ) ) )
+    sys.exit()
+
+if not os.path.exists( settings.WINEPREFIX ):
+    print( "\n [!] ERROR #2-3: Can't find the WINE profile (%s).   Run: %s --force --silent\n" % ( settings.WINEPREFIX, os.path.abspath( "./config/setup.sh" ) ) )
+    sys.exit()
+
+if not os.path.exists( settings.WINEPREFIX + "/drive_c/Python34/python.exe" ):
+    print( "\n [!] ERROR #2-3: Can't find the WINE profile for Python v3.4 (%s).   Run: %s --force --silent\n" % ( settings.WINEPREFIX + "/drive_c/Python34/python.exe", os.path.abspath( "./config/setup.sh" ) ) )
+    sys.exit()
+
+if not os.path.exists( settings.WINEPREFIX + "/drive_c/Ruby187/bin/ruby.exe" ):
+    print( "\n [!] ERROR #2-3: Can't find the WINE profile for Ruby v1.8.7 (%s).   Run: %s --force --silent\n" % ( settings.WINEPREFIX + "/drive_c/Ruby187/bin/ruby.exe", os.path.abspath( "./config/setup.sh" ) ) )
+    sys.exit()
+
+if not os.path.exists( settings.WINEPREFIX + "/drive_c/Program Files/AutoIt3/Aut2Exe/Aut2exe.exe" ):
+    print( "\n [!] ERROR #2-3: Can't find the WINE profile for AuotIT v3 (%s).   Run: %s --force --silent\n" % ( settings.WINEPREFIX + "/drive_c/Program Files/AutoIt3/Aut2Exe/Aut2exe.exe", os.path.abspath( "./config/setup.sh" ) ) )
     sys.exit()
 
 

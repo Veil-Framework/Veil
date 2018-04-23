@@ -20,13 +20,12 @@ from lib.common import completer
 try:
     sys.path.append("/etc/veil/")
     import settings
-
 except ImportError:
-    print("\n [!] ERROR #1: Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-4: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
     sys.exit()
 
 
-sys.path.insert(0, settings.VEIL_EVASION_PATH + 'tools/ordnance')
+sys.path.insert(0, settings.VEIL_PATH + 'tools/ordnance')
 import tool as ordnance_import
 
 
@@ -58,8 +57,8 @@ class Shellcode:
         self.ord_lport = None
         # Load cli options
         self.cli_options = cli_obj
-        self.payload_choice = ''
-        self.shellcode_options = ''
+        self.payload_choice = ""
+        self.shellcode_options = ""
 
     def Reset(self):
         """
@@ -183,14 +182,16 @@ class Shellcode:
 
         # print out the main title to reset the interface
         if showTitle:
+            print()
             evasion_helpers.title_screen()
 
-        print(' [?] Generate or supply custom shellcode?\n')
+        print()
+        print(helpers.color(" [?] Generate or supply custom shellcode?\n"))
         print('     %s - Ordnance %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
         print('     %s - MSFVenom' % (helpers.color('2')))
-        print('     %s - custom shellcode string' % (helpers.color('3')))
-        print('     %s - file with shellcode (\\x41\\x42..)' % (helpers.color('4')))
-        print('     %s - binary file with shellcode\n' % helpers.color('5'))
+        print('     %s - Custom shellcode string' % (helpers.color('3')))
+        print('     %s - File with shellcode (\\x41\\x42..)' % (helpers.color('4')))
+        print('     %s - Binary file with shellcode\n' % helpers.color('5'))
 
         try:
             choice = self.required_options['SHELLCODE'][0].lower().strip()
@@ -258,7 +259,7 @@ class Shellcode:
                 print(helpers.color(" [!] WARNING: no custom shellcode restrieved, defaulting to msfvenom!", warning=True))
                 return None
 
-            binary_code = ''
+            binary_code = ""
             # Convert from binary to shellcode
             for byte in file_shellcode:
                 binary_code += "\\x" + hex(byte)[2:].zfill(2)
@@ -295,7 +296,7 @@ class Shellcode:
             showMessage = True
 
         # if no generation method has been selected yet
-        if self.msfvenomCommand == "" and self.custom_shellcode == "":
+        if self.msfvenomCommand == '' and self.custom_shellcode == '':
 
             # show banner?
             if settings.TERMINAL_CLEAR != "false":
@@ -335,7 +336,7 @@ class Shellcode:
                     except:
                         selected_payload = input(' [>] Please enter metasploit payload: ').strip().lower()
 
-                    if selected_payload == "":
+                    if selected_payload == '':
                         # default to reverse_tcp for the payload
                         selected_payload = "windows/meterpreter/reverse_tcp"
                     try:
@@ -361,7 +362,7 @@ class Shellcode:
                 # request a value for each required option
                 for option in options:
                     value = ""
-                    while value == "":
+                    while value == '':
 
                         ### VALIDATION ###
                         # LHOST is a special case, so we can tab complete the local IP
@@ -386,7 +387,7 @@ class Shellcode:
                                         # do a IP validation check
                                         if not helpers.validate_ip(value):
                                             if 'LHOST' in self.required_options:
-                                                self.required_options['LHOST'][0] = ''
+                                                self.required_options['LHOST'][0] = ""
                                             print(helpers.color("\n [!] ERROR: Bad IP address specified.\n", warning=True))
                                             value = ""
 
@@ -394,7 +395,7 @@ class Shellcode:
                                     else:
                                         if not helpers.validate_hostname(value):
                                             if 'LHOST' in self.required_options:
-                                                self.required_options['LHOST'][0] = ''
+                                                self.required_options['LHOST'][0] = ""
                                             print(helpers.color("\n [!] ERROR: Bad hostname specified.\n", warning=True))
                                             value = ""
 
@@ -410,13 +411,13 @@ class Shellcode:
                                     socket.inet_pton(socket.AF_INET6, value)
                                 except socket.error:
                                     if 'LHOST' in self.required_options:
-                                        self.required_options['LHOST'][0] = ''
+                                        self.required_options['LHOST'][0] = ""
                                     print(helpers.color("\n [!] ERROR: Bad IP address or hostname specified.\n", warning=True))
                                     value = ""
 
                             else:
                                 if 'LHOST' in self.required_options:
-                                    self.required_options['LHOST'][0] = ''
+                                    self.required_options['LHOST'][0] = ""
                                 print(helpers.color("\n [!] ERROR: Bad IP address or hostname specified.\n", warning=True))
                                 value = ""
 
@@ -433,12 +434,12 @@ class Shellcode:
                                 if int(value) <= 0 or int(value) >= 65535:
                                     print(helpers.color(" [!] ERROR: Bad port number specified.\n", warning=True))
                                     if 'LPORT' in self.required_options:
-                                        self.required_options['LPORT'][0] = ''
+                                        self.required_options['LPORT'][0] = ""
                                     value = ""
                             except ValueError:
                                 print(helpers.color(" [!] ERROR: Bad port number specified.\n", warning=True))
                                 if 'LPORT' in self.required_options:
-                                    self.required_options['LPORT'][0] = ''
+                                    self.required_options['LPORT'][0] = ""
                                 value = ""
 
                         else:
@@ -453,7 +454,7 @@ class Shellcode:
                     # clear out the tab completion
                     readline.set_completer(completer.none().complete)
                     selection = input(' [>] Enter any extra msfvenom options (syntax: OPTION1=value1 or -OPTION2=value2): ').strip()
-                    if selection != "":
+                    if selection != '':
                         num_extra_options = selection.split(' ')
                         for xtra_opt in num_extra_options:
                             if xtra_opt is not '':
@@ -497,14 +498,16 @@ class Shellcode:
 
         # if the msfvenom command nor shellcode are set, revert to the
         # interactive menu to set any options
-        if self.msfvenomCommand == "" and self.custom_shellcode == "":
+        if self.msfvenomCommand == '' and self.custom_shellcode == '':
             self.menu()
 
         # return custom specified shellcode if it was set previously
-        if self.custom_shellcode != "":
+        if self.custom_shellcode != '':
+            print(helpers.color("\n [*] Using pre-generated shellcode..."))
             return self.custom_shellcode
 
         elif self.invoke_ordnance:
+            print(helpers.color("\n [*] Generating shellcode using Veil-Ordnance..."))
             ordnance_loop = True
             Ordnance_object = ordnance_import.Tools()
             while ordnance_loop:
@@ -513,22 +516,22 @@ class Shellcode:
                     self.payload_choice = Ordnance_object.selected_payload
                     self.shellcode_options = Ordnance_object.payload_options
                     ordnance_loop = False
-                    return Ordnance_object.final_shellcode
+            return Ordnance_object.final_shellcode
 
         # generate the shellcode using msfvenom
         else:
-            print(helpers.color("\n [*] Generating shellcode..."))
-            if self.msfvenomCommand == "":
+            print(helpers.color("\n [*] Generating shellcode using msfvenom..."))
+            if self.msfvenomCommand == '':
                 print(helpers.color(" [!] ERROR: msfvenom command not specified in payload!\n", warning=True))
                 return None
             else:
-                # Stript out extra characters, new lines, etc., just leave the shellcode.
+                # Strip out extra characters, new lines, etc., just leave the shellcode.
                 # Tim Medin's patch for non-root non-Kali users
 
                 msfvenom_shellcode = subprocess.check_output(settings.MSFVENOM_PATH + self.msfvenomCommand, shell=True)
                 self.shellcode_options = self.msfvenomCommand
                 msfvenom_shellcode = msfvenom_shellcode.decode('ascii')
-                self.msfvenomCommand = ''
+                self.msfvenomCommand = ""
 
                 return msfvenom_shellcode[22:-1].strip()
 
@@ -540,7 +543,7 @@ def cli_msf_shellcode_gen(command_line_args):
     port = command_line_args.port
 
     # Parse extra flags to be included in msfvenom command
-    extra_options = ''
+    extra_options = ""
     if command_line_args.msfoptions is not None:
         num_extra_options = command_line_args.msfoptions.split(' ')
         for xtra_opt in num_extra_options:

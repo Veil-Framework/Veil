@@ -29,13 +29,13 @@ class PayloadModule:
         self.name = "Pure C Reverse HTTP Service"
         self.path = "c/meterpreter/rev_http_service"
         self.cli_opts = cli_obj
-        self.payload_source_code = ''
+        self.payload_source_code = ""
         if cli_obj.ordnance_payload is not None:
             self.payload_type = cli_obj.ordnance_payload
         elif cli_obj.msfvenom is not None:
             self.payload_type = cli_obj.msfvenom
         elif not cli_obj.tool:
-            self.payload_type = ''
+            self.payload_type = ""
         self.cli_shellcode = False
 
         # optional

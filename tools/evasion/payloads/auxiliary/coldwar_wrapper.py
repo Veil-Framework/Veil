@@ -29,7 +29,7 @@ class PayloadModule:
         self.name = "Coldwar Wrapper"
         self.path = "auxuliary/coldwar_wrapper"
         self.cli_opts = cli_obj
-        self.payload_source_code = ''
+        self.payload_source_code = ""
 
         self.required_options = {
                                     "ORIGINAL_EXE" : ["", "Path to a .exe file to convert to .war file"]  #/usr/share/windows-binaries/nc.exe

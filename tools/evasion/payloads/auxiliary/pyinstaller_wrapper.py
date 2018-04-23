@@ -21,7 +21,7 @@ class PayloadModule:
         self.name = "PyInstaller Wrapper"
         self.path = "auxuliary/pyinstaller_wrapper"
         self.cli_opts = cli_obj
-        self.payload_source_code = ''
+        self.payload_source_code = ""
 
         self.required_options = {
                                     "PYTHON_SOURCE" : ["", "A Python source file to compile with pyinstaller"],   # /path/to/any/python/file.py

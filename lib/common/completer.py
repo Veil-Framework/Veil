@@ -12,14 +12,13 @@ import re
 import os
 import sys
 
-# try to find and import the settings.py config file
-if os.path.exists("/etc/veil/settings.py"):
-    try:
-        sys.path.append("/etc/veil/")
-        import settings
-    except:
-        print("Error importing Veil Settings!")
-        sys.exit(1)
+# Try to find and import the settings.py config file
+try:
+    sys.path.append("/etc/veil/")
+    import settings
+except ImportError:
+    print( "\n [!] ERROR #1-7: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
+    sys.exit()
 
 
 class none(object):
@@ -194,7 +193,7 @@ class PayloadCompleter(object):
 
             options = [k for k in sorted(self.payload.required_options.keys())]
 
-            if args[0] != "":
+            if args[0] != '':
                 if args[0].strip() == "LHOST":
                     # autocomplete the IP for LHOST
                     if settings.DISTRO == 'Debian':
@@ -487,7 +486,7 @@ class OrdnanceCompleter(object):
 
             options = [k for k in sorted(self.payload.required_options.keys())]
 
-            if args[0] != "":
+            if args[0] != '':
                 if args[0].strip() == "LHOST":
                     if settings.DISTRO == 'Debian':
                         ip_output = subprocess.getoutput("ip a").split("\n")[8][9:].split('/')[0]

@@ -16,9 +16,8 @@ from lib.common import messages
 try:
     sys.path.append("/etc/veil/")
     import settings
-
 except ImportError:
-    print("\n [!] ERROR #1: Run %s\n" % (os.path.abspath("./config/update-config.py")))
+    print( "\n [!] ERROR #1-2: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
     sys.exit()
 
 
@@ -33,8 +32,9 @@ class Conductor:
             "list": "List available tools",
             "use": "Use a specific tool",
             "info": "Information on a specific tool",
+            "options": "Show Veil configuration",
             "update": "Update Veil",
-            "exit": "Exit Veil"}
+            "exit": "Completely exit Veil"}
         self.number_of_tools = len(self.imported_tools)
         self.command_line_options = cli_stuff
 
@@ -46,15 +46,16 @@ class Conductor:
                 tool_object.cli_menu()
                 tool_found = True
         if not tool_found:
-            print(helpers.color('Error: You did not provide a valid tool name!', warning=True))
-            print(helpers.color('Quitting Veil...', warning=True))
+            print(helpers.color(' [!] ERROR: You did not provide a valid tool name!', warning=True))
             sys.exit()
 
     def list_tools(self, show_header = True):
         # Did we run a command?
         if show_header:
             # show title bar
+            print()
             messages.title_screen()
+            print()
             print(helpers.color(' [*] Available Tools:\n'))
         else:
             print("Available Tools:\n")
@@ -81,14 +82,14 @@ class Conductor:
 
     def main_menu(self):
         # default blank command for the main menu loop
-        main_menu_command = ''
+        main_menu_command = ""
         show_header = True
 
         # Try except to catch keyboard interrupts
         try:
 
             # Loop for the main menu, will always loop as long as command is ''
-            while main_menu_command == '':
+            while True:
                 comp = completer.VeilMainMenuCompleter(self.mainmenu_commands, self.imported_tools)
                 readline.set_completer_delims(' \t\n;')
                 readline.parse_and_bind("tab: complete")
@@ -104,22 +105,19 @@ class Conductor:
                     for command in sorted(self.mainmenu_commands.keys()):
                         print("\t" + helpers.color(command) + '\t\t\t' + self.mainmenu_commands[command])
                     print()
+                    show_header = False
 
-                print()
-                main_menu_command = input('Main menu choice: ').strip()
+                main_menu_command = input('Veil>: ').strip()
 
                 if main_menu_command.startswith('use'):
-
                     # Check to make sure a tool is provided with use command
                     if len(main_menu_command.split()) == 1:
 
                         # List tools, don't show header, loop back in main menu
                         self.list_tools()
                         show_header = False
-                        main_menu_command = ''
 
                     elif len(main_menu_command.split()) == 2:
-
                         # Grab the command, either the number or word
                         tool_choice = main_menu_command.split()[1]
 
@@ -131,10 +129,7 @@ class Conductor:
                                 # if the entered number matches the payload, use that payload
                                 if int(tool_choice) == tool_number:
                                     tool_object.tool_main_menu()
-                                    tool_number += 1
-                                    show_header = True
-                                else:
-                                    tool_number += 1
+                                tool_number += 1
                             show_header = True
 
                         # Else if selecting payload by name
@@ -146,28 +141,17 @@ class Conductor:
                                     show_header = True
 
                         # Once done with tool, clear main menu command
-                        main_menu_command = ''
                         show_header = True
-
-                    # Catch anything else, like an error
-                    else:
-                        main_menu_command = ''
 
                 elif main_menu_command.startswith('list'):
-
                     # List tools, don't show header, loop back in main menu
                     self.list_tools()
-                    show_header = False
-                    main_menu_command = ''
 
                 elif main_menu_command.startswith('info'):
-
                     if len(main_menu_command.split()) == 1:
                         show_header = True
-                        main_menu_command = ''
 
                     elif len(main_menu_command.split()) == 2:
-
                         # Grab the command, either the number or word
                         info_choice = main_menu_command.split()[1]
 
@@ -181,7 +165,6 @@ class Conductor:
                                     print()
                                     print(helpers.color(tool_object.cli_name) + " => " + tool_object.description)
                                     print()
-                                    show_header = False
                                 tool_number += 1
 
                         # If the entered name matches the tool, use that tool
@@ -191,30 +174,38 @@ class Conductor:
                                     print()
                                     print(helpers.color(tool_object.cli_name) + " => " + tool_object.description)
                                     print()
-                                    show_header = False
-
-                        main_menu_command = ''
-
                     else:
-                        main_menu_command = ''
                         show_header = True
 
+                elif main_menu_command.startswith('option'):
+                    self.options_veil()
+
+                # Hidden menu option
+                elif main_menu_command.startswith('config'):
+                    self.config_veil()
+
+                # Hidden menu option
+                elif main_menu_command.startswith('setup'):
+                    self.setup_veil()
+
                 elif main_menu_command.startswith('update'):
-
                     self.update_veil()
-                    main_menu_command = ''
 
-                elif main_menu_command.startswith('exit'):
-                    print('\n' + helpers.color('Quitting Veil', warning=True) + '\n')
+                elif main_menu_command.startswith('exit') or main_menu_command.startswith('quit'):
                     sys.exit()
 
-                else:
-                    show_header = True
-                    main_menu_command = ''
-
         except KeyboardInterrupt:
-            print("\n\n" + helpers.color("Rage quit!", warning=True))
+            print("\n\n" + helpers.color("^C.   Quitting...", warning=True))
             sys.exit()
+
+    # Show options
+    def options_veil(self):
+        print( " [i] Veil configuration file: /etc/veil/settings.py" )
+        for i in dir(settings):
+            if i.startswith('_'): continue
+            print( " [i] {0}: {1}".format( i , exec( "print ( settings." + i + " )" ) ), end='', flush=True)
+        input( '\n\nOptions shown. Press enter to continue' )
+        return
 
     # Self update framework
     def update_veil(self):
@@ -231,7 +222,7 @@ class Conductor:
             if os.path.exists("/usr/share/veil/config/setup.sh"):
                 os.system('/usr/share/veil/config/setup.sh -f -s')
             else:
-                print("\n [!] ERROR: Missing %s\n" % ("/usr/share/veil/config/setup.sh"))
+                print("\n [!] ERROR: Kali is missing %s\n" % ("/usr/share/veil/config/setup.sh"))
                 os.system('./config/setup.sh -f -s')
         else:
             os.system('./config/setup.sh -f -s')
@@ -244,7 +235,7 @@ class Conductor:
             if os.path.exists("/usr/share/veil/config/update-config.py"):
                 os.system('cd /usr/share/veil/config/; ./update-config.py')
             else:
-                print("\n [!] ERROR: Missing %s\n" % ("/usr/share/veil/config/update-config.py"))
+                print("\n [!] ERROR: Kali is missing %s\n" % ("/usr/share/veil/config/update-config.py"))
                 os.system('cd ./config/; ./update-config.py')
         else:
             os.system('cd ./config/; ./update-config.py')

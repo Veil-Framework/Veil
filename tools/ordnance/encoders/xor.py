@@ -93,7 +93,7 @@ class EncoderModule:
 
         # Ensure a key was found... if not, error out
         if self.xor_key == 0x00:
-            print("[*] ERROR: No key found... Stop being so picky and change your bad chars!")
+            print(" [!] ERROR: No key found... Stop being so picky and change your bad chars!")
             exit
         else:
             # XOR all the things
@@ -149,8 +149,8 @@ class EncoderModule:
             # Do some validation on the received characters
             for item in bad_characters:
                 if item in self.encoder_bad_chars:
-                    print(helpers.color("[*] Encoder Error: Bad character specified is used for the decoder stub.", warning=True))
-                    print(helpers.color("[*] Encoder Error: Please use different bad characters or another encoder!", warning=True))
+                    print(helpers.color(" [!] ERROR: Encoder - Bad character specified is used for the decoder stub.", warning=True))
+                    print(helpers.color(" [!] ERROR: Encoder - Please use different bad characters or another encoder!", warning=True))
                     sys.exit()
                 else:
                     if len(item) == 2:
@@ -160,13 +160,17 @@ class EncoderModule:
                         if rohan_re_code.match(item):
                             final_bad_chars.append(item)
                         else:
-                            print(helpers.color("[*] Bad Character Error: Invalid bad character detected.", warning=True))
-                            print(helpers.color("[*] Bad Character Error: Please provide bad characters in \\\\x00\\\\x02... format.", warning=True))
-                            sys.exit()
+                            print()
+                            print(helpers.color(" [!] ERROR: Bad Character - #1: Invalid bad character detected.", warning=True))
+                            print(helpers.color(" [!] ERROR: Bad Character - Please provide bad characters in \\x00\\x02... format.", warning=True))
+                            print()
+                            return
                     else:
-                        print(helpers.color("[*] Bad Character Error: Invalid bad character detected.", warning=True))
-                        print(helpers.color("[*] Bad Character Error: Please provide bad characters in \\\\x00\\\\x01... format.", warning=True))
-                        sys.exit()
+                        print()
+                        print(helpers.color(" [!] ERROR: Bad Character - #2: Invalid bad character detected.", warning=True))
+                        print(helpers.color(" [!] ERROR: Bad Character - Please provide bad characters in \\x00\\x01... format.", warning=True))
+                        print()
+                        return
             self.bad_chars = [int("0x" + x, 16) for x in final_bad_chars]
         return
 
@@ -191,7 +195,7 @@ class EncoderModule:
             print("IP Address: " + parsed_cli_object.ip)
         print("Port: " + str(parsed_cli_object.port))
         print("Encoder Name: " + self.name)
-        string_bad_chars = ''
+        string_bad_chars = ""
         for bchar in self.bad_chars:
             string_bad_chars += str(hex(bchar)) + " "
         print("Bad Character(s): " + string_bad_chars)

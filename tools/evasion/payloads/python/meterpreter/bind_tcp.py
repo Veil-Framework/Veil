@@ -17,7 +17,7 @@ class PayloadModule:
         self.name = "Pure Python Reverse TCP stager"
         self.path = "python/meterpreter/bind_tcp"
         self.cli_opts = cli_obj
-        self.payload_source_code = ''
+        self.payload_source_code = ""
         self.language = "python"
         self.extension = "py"
         if cli_obj.ordnance_payload is not None:
@@ -25,7 +25,7 @@ class PayloadModule:
         elif cli_obj.msfvenom is not None:
             self.payload_type = cli_obj.msfvenom
         elif not cli_obj.tool:
-            self.payload_type = ''
+            self.payload_type = ""
 
         # optional
         # options we require user interaction for- format is {OPTION : [Value, Description]]}

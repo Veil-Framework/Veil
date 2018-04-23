@@ -1,4 +1,5 @@
 #!/bin/bash
+## Can be called by doing: "Veil.py --setup"
 
 ## Global variables
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
@@ -28,26 +29,26 @@ else
   userhomedir="${HOME}"
 fi
 
+userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
-nukewinedir=""
-silent=false
-force=false
-osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- )"
-arg=""
-errors=""
-veildir="/opt/veil"
+osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
+osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
+veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
-runuser="$( whoami )"
-userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 rootdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )
-winedir="${veildir}/wine/veil"
+winedir="${veildir}/wine"
 winedrive="${winedir}/drive_c"
 gempath="${winedir}\drive_c\Ruby187\bin\gem"
 replace="\\"
 prefix="Z:"
-gempath=${gempath////$replace}
-gempath=${prefix}${gempath}
+gempath="${gempath////$replace}"
+gempath="${prefix}${gempath}"
+nukewinedir=""
+silent=false
+force=false
+arg=""
+errors=""
 
 BOLD="\033[01;01m"     # Highlight
 RED="\033[01;31m"      # Issues/Errors
@@ -63,22 +64,28 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                  Veil (Setup Script) | [Updated]: 2018-04-02"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-23"
   echo " =========================================================================="
-  echo "  [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
+  echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
   echo ""
-  #echo "Debug:          winedir = ${winedir}"
-  #echo "Debug:        winedrive = ${winedrive}"
-  #echo "Debug:      userhomedir = ${HOME}"
-  #echo "Debug:          rootdir = ${rootdir}"
-  #echo "Debug:          veildir = ${veildir}"
-  #echo "Debug:  dependenciesdir = ${dependenciesdir}"
-  #echo "Debug:         trueuser = ${trueuser}"
-  #echo "Debug: userprimarygroup = ${userprimarygroup}"
-  #echo "Debug:               os = ${os}"
-  #echo "Debug:        osversion = ${osversion}"
-  #echo ""
+  echo "                 os = ${os}"
+  echo "          osversion = ${osversion}"
+  echo "       osmajversion = ${osmajversion}"
+  echo "               arch = ${arch}"
+  echo "           trueuser = ${trueuser}"
+  echo "   userprimarygroup = ${userprimarygroup}"
+  echo "        userhomedir = ${userhomedir}"
+  echo "            rootdir = ${rootdir}"
+  echo "            veildir = ${veildir}"
+  echo "          outputdir = ${outputdir}"
+  echo "    dependenciesdir = ${dependenciesdir}"
+  echo "            winedir = ${winedir}"
+  echo "          winedrive = ${winedrive}"
+  echo "            gempath = ${gempath}"
+  echo "             silent = ${silent}"
+  echo "              force = ${force}"
+  echo ""
 }
 
 
@@ -97,15 +104,10 @@ func_check_env(){
     echo ""
     echo -e " ${RED}[ERROR]: This setup script requires sudo!${RESET}"
     echo -e " ${YELLOW}         Please install and configure sudo then run this setup again.${RESET}"
-    echo -e " ${YELLOW}         Example: For Debian/Ubuntu: apt-get -y install sudo${RESET}"
+    echo -e " ${YELLOW}         Example: For Debian/Ubuntu: apt-get install -y sudo${RESET}"
     echo -e " ${YELLOW}                  For Fedora 22+: dnf -y install sudo${RESET}"
     exit 1
   fi
-
-
-  ## Feedback to user
-  [ "${silent}" == "true" ] && echo -e " [I] ${YELLOW}Silent Mode${RESET}: ${GREEN}Enabled${RESET}"
-  [ "${force}" == "true" ] &&  echo -e " [I]  ${YELLOW}Force Mode${RESET}: ${GREEN}Enabled${RESET}"
 
 
   ## Double check install (if not silent)
@@ -131,15 +133,18 @@ func_check_env(){
 
   ## Make sure Metasploit framework is already installed
   if [ "${os}" != "kali" ] \
-  || [ "${os}" == "parrot" ] \
-  && [ "${silent}" == false ]; then
+  && [ "${os}" != "parrot" ]; then
     echo -e "\n\n ${BOLD}[!] NON-KALI Users: Before you begin the install, make sure that you have"
     echo -e "     the Metasploit-Framework installed before you proceed!${RESET}\n"
     echo -en "     Continue with installation? ([${BOLD}Y${RESET}]es/[${BOLD}n${RESET}]o): "
 
-    read -p '' install
-    install=$(echo "${install}" | tr '[:upper:]' '[:lower:]')
-    echo
+    if [ "${silent}" == "true" ]; then
+      echo -e "${GREEN}Y${RESET}\n"
+    else
+      read -p '' install
+      install=$(echo "${install}" | tr '[:upper:]' '[:lower:]')
+      echo
+    fi
 
     if [ "${install}" == 'n' ] \
     || [ "${install}" == 'no' ]; then
@@ -176,7 +181,7 @@ func_check_env(){
 
   ## Check if go is installed
   if [ "${force}" == "false" ] \
-  && [ -f "/usr/src/go/bin/windows_386/go.exe" ]; then
+  && [ -f "/var/lib/veil-evasion/go/bin/go" ]; then
     echo -e "\n\n [*] ${YELLOW}Go is already installed... Skipping...${RESET}\n"
   else
     func_go_deps
@@ -196,7 +201,7 @@ func_check_env(){
   if [ "${force}" == "false" ] \
   && [ -f "/etc/veil/settings.py" ] \
   && [ -d "${outputdir}" ]; then
-    echo -e "\n\n [*] ${YELLOW}Setttings already detected... Skipping...${RESET}\n"
+    echo -e "\n\n [*] ${YELLOW}Settings already detected... Skipping...${RESET}\n"
   else
     func_update_config
   fi
@@ -212,8 +217,108 @@ func_package_deps(){
   echo -e "\n\n [*] ${YELLOW}Initializing package installation${RESET}\n"
 
 
+  ## Start dependency install
+  echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}\n"
+  if [ "${os}" == "debian" ] \
+  || [ "${os}" == "deepin" ] \
+  || [ "${os}" == "kali" ] \
+  || [ "${os}" == "linuxmint" ] \
+  || [ "${os}" == "parrot" ] \
+  || [ "${os}" == "ubuntu" ]; then
+    ## Silent mode?
+    [ "${silent}" == "true" ] \
+      && arg=" DEBIAN_FRONTEND=noninteractive" \
+      || arg=""
+
+    ## Update APT
+    echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
+    sudo apt-get -qq update
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with apt-get update (1): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+    #ttf-mscorefonts-installer
+    sudo ${arg} apt-get install -y wine   unzip   winbind   wget   git  ca-certificates \
+      mingw-w64   monodevelop mono-mcs \
+      ruby   golang \
+      python python-crypto python-pefile python-pip python3-pip
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing dependencies (1): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+  elif [ "${os}" == '"elementary"' ]; then
+    ## Silent mode?
+    [ "${silent}" == "true" ] \
+      && arg=" DEBIAN_FRONTEND=noninteractive" \
+      || arg=""
+
+    ## Update APT
+    echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
+    sudo apt-get -qq update
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with apt-get update (2): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+    sudo ${arg} apt-get install -y mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
+      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing dependencies (2: $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+  elif [ "${os}" == "centos" ] \
+  || [ "${os}" == "fedora" ] \
+  || [ "${os}" == "rhel" ]; then
+    sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
+      monodevelop mono-tools mono-core wine unzip ruby golang wget git python python-crypto python-pefile \
+      python-pip ca-certificates msttcore-fonts-installer python3-pip winbind
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing dependencies (3): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+  elif [ "${os}" ==  "arch" ] \
+  || [ "${os}" == "blackarch" ]; then
+    sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
+      mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python-pip krb5 samba
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing dependencies (4): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+    ## Install pefile for python2 using pip, rather than via AUR as the package is currently broken.
+    sudo pip2 install pefile
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with pip2 install (1): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+  fi
+
+  ## Couple of extras for other OSs
+  if [ "${os}" == "kali" ] \
+  || [ "${os}" == "parrot" ]; then
+    sudo ${arg} apt-get install -y metasploit-framework python2.7 python3 python3-pycryptodome python3-crypto
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing dependencies (5): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+  fi
+
+
   ## Clone down the required install files
   echo -e "\n\n [*] ${YELLOW}Pulling down binary dependencies${RESET}\n"
+  [ "${force}" == "true" ] && rm -rf "${dependenciesdir}"
   ## Pulling down from github, if it fails, pull local folder
   if [ -d "${dependenciesdir}" ]; then
     echo -e " [*] ${YELLOW}Already detected folder: ${BOLD}${dependenciesdir}${RESET}\n"
@@ -221,15 +326,23 @@ func_package_deps(){
     pushd "${dependenciesdir}" >/dev/null
     sudo git reset --hard HEAD >/dev/null
     sudo git clean -fd >/dev/null
-    sudo git pull \
-      || echo -e "${RED}[ERROR]: Failed with git pull (1)\n${RESET}\n"
+    sudo git pull
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with git pull: $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
     popd >/dev/null
   else
     echo -e " [*] ${YELLOW}Empty folder... git cloning${RESET}\n"
     sudo mkdir -p "${dependenciesdir}"
     sudo rm -rf "${dependenciesdir}"
-    sudo git clone https://github.com/Veil-Framework/VeilDependencies.git "${dependenciesdir}" \
-      || echo -e "${RED}[ERROR]: Failed with git clone (1)\n${RESET}\n"
+    sudo git clone https://github.com/Veil-Framework/VeilDependencies.git "${dependenciesdir}"
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with git clone: $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
   fi
 
 
@@ -240,48 +353,69 @@ func_package_deps(){
 
 
   ## Debian based distributions
-  if [ "${os}" == "ubuntu" ] \
-  || [ "${os}" == "debian" ] \
-  || [ "${os}" == "kali" ] \
-  || [ "${os}" == "parrot" ] \
+  if [ "${os}" == "debian" ] \
   || [ "${os}" == "deepin" ] \
-  || [ "${os}" == "linuxmint" ]; then
+  || [ "${os}" == "kali" ] \
+  || [ "${os}" == "linuxmint" ] \
+  || [ "${os}" == "parrot" ] \
+  || [ "${os}" == "ubuntu" ]; then
+    ## Silent mode?
     [ "${silent}" == "true" ] \
       && arg=" DEBIAN_FRONTEND=noninteractive" \
       || arg=""
 
-    if [ "${arch}" == "x86_64" ]; then
-      echo -e "\n\n [*] ${YELLOW}Adding x86 architecture to x86_64 system for Wine${RESET}\n"
-      sudo dpkg --add-architecture i386
-      sudo apt-get -qq update \
-        || echo -e "${RED}[ERROR]: Failed with apt-get update (1)\n${RESET}\n"
+      if [ "${arch}" == "x86_64" ]; then
+        ## Check to see if we already have i386
+        tmp="$( dpkg --print-foreign-architectures | grep '^i386$' )"
+
+        ## If we do NOT have it, add it
+        if [[ "${tmp}" == "" ]]; then
+          echo -e "\n\n [*] ${YELLOW}Adding i386 architecture to x86_64 system for Wine${RESET}\n"
+          sudo dpkg --add-architecture i386
+
+          echo -e " [*] ${YELLOW}Updating APT${RESET}\n"
+          sudo apt-get -qq update
+          if [[ "$?" -ne "0" ]]; then
+            msg="Failed with apt-get update (3): $?"
+            errors="${errors}\n${msg}"
+            echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+          fi
+        ## Already have i386 added
+        else
+          echo -e " [*] ${YELLOW}Already have x86 architecture added...${RESET}\n"
+        fi
 
       echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries (via APT)${RESET}\n"
       if [ "${os}" == "ubuntu" ] \
       || [ "${os}" == "linuxmint" ]; then
         ## Special urghbuntu derivative snowflakes
-        sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386 \
-          || echo -e "${RED}[ERROR]: Failed with apt-get install wine (1)\n${RESET}\n"
+        sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386
+        if [[ "$?" -ne "0" ]]; then
+          msg="Failed with installing wine (1): $?"
+          errors="${errors}\n${msg}"
+          echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+        fi
       else
-        ## anything that isn't ubuntu or ubuntu-derived
-        sudo ${arg} apt-get -y -qq install wine wine64 wine32 \
-          || echo -e "${RED}[ERROR]: Failed with apt-get install wine (2)\n${RESET}\n"
-      fi
-      tmp="$?"
-      if [ "${tmp}" -ne "0" ]; then
-        msg="Failed to install Wine... Exit code: ${tmp}"
-        errors="${errors}\n${msg}"
-        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+        ## Anything that isn't ubuntu or ubuntu-derived
+        sudo ${arg} apt-get -y -qq install wine wine64 wine32
+        if [[ "$?" -ne "0" ]]; then
+          msg="Failed with installing wine (2): $?"
+          errors="${errors}\n${msg}"
+          echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+        fi
       fi
     elif [ "${arch}" == "x86" ] \
     || [ "${arch}" == "i686" ]; then
-      sudo apt-get -qq update \
-        || echo -e "${RED}[ERROR]: Failed with apt-get update (2)\n${RESET}\n"
-      sudo ${arg} apt-get -y -qq install wine32 \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install wine (3)\n${RESET}\n"
-      tmp="$?"
-      if [ "${tmp}" -ne "0" ]; then
-        msg="Failed to install Wine... Exit code: ${tmp}"
+      sudo apt-get -qq update
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with apt-get update (4): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+
+      sudo ${arg} apt-get -y -qq install wine32
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with installing wine (3): $?"
         errors="${errors}\n${msg}"
         echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
       fi
@@ -294,11 +428,9 @@ func_package_deps(){
   ## Elementary OS x86_64
   elif [ "${os}" == '"elementary"' ]; then
     echo -e "\n\n [*] ${YELLOW}Installing Wine on Elementary OS (via APT)${RESET}\n"
-    sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-amd64 \
-      || echo -e "${RED}[ERROR]: Failed with apt-get install wine (4)\n${RESET}\n"
-    tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
-      msg="Failed to install Wine in Elementary OS... Exit code: ${tmp}"
+    sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-amd64
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing wine (4): $?"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
@@ -309,9 +441,8 @@ func_package_deps(){
   || [ "${os}" == "centos" ]; then
     echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via DNF)${RESET}\n"
     sudo dnf install -y wine.i686 wine
-    tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
-      msg="Failed to install Wine x86_64... Exit code: ${tmp}"
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing wine (5): $?"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
@@ -323,9 +454,8 @@ func_package_deps(){
     fi
 
     sudo pacman -Syu ${args} --needed --noconfirm wine wine-mono wine_gecko git
-    tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
-      msg="Failed to install Wine x86_64... Exit code: ${tmp}"
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with installing wine (6): $?"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
@@ -340,7 +470,7 @@ func_package_deps(){
   ## we're already going to look for an existing veil wine setup (~/.config/veil/) and nuke it
   ## making it easy for a user to rerun the setup and have a new wine environment.
   if [ -d "${winedir}" ]; then
-    echo -e "\n\n [*] ${RED}[ALERT]: Existing Veil Wine environment detected at: ${BOLD}${winedir}${RESET}\n"
+    echo -e "\n\n [*] ${BOLD}[ALERT]${RESET}: Existing Veil Wine environment detected at: ${BOLD}${winedir}${RESET}\n"
     echo -en "     Do you want to nuke it? ([${BOLD}y${RESET}]es/[${BOLD}N${RESET}]o): "
     if [ "${silent}" == "true" ]; then
       echo -e "${GREEN}Y${RESET}\n"
@@ -404,61 +534,6 @@ func_package_deps(){
   fi
 
 
-  ## Start dependency install
-  echo -e "\n\n [*] ${YELLOW}Installing dependencies${RESET}\n"
-  if [ "${os}" == "debian" ] \
-  || [ "${os}" == "kali" ] \
-  || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ] \
-  || [ "${os}" == "deepin" ] \
-  || [ "${os}" == "linuxmint" ]; then
-    #ttf-mscorefonts-installer
-    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
-      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (1)\n${RESET}\n"
-
-  elif [ "${os}" == '"elementary"' ]; then
-    sudo ${arg} apt-get -y install mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
-      python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (2)\n${RESET}\n"
-
-  elif [ "${os}" == "fedora" ] \
-  || [ "${os}" == "rhel" ] \
-  || [ "${os}" == "centos" ]; then
-    sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
-      monodevelop mono-tools mono-core wine unzip ruby golang wget git python python-crypto python-pefile \
-      python-pip ca-certificates msttcore-fonts-installer python3-pip winbind \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (3)\n${RESET}\n"
-
-  elif [ "${os}" ==  "arch" ] \
-  || [ "${os}" == "blackarch" ]; then
-    sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
-      mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python-pip krb5 samba \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (4)\n${RESET}\n"
-    ## Install pefile for python2 using pip, rather than via AUR as the package is currently broken.
-    sudo pip2 install pefile \
-        || echo -e "${RED}[ERROR]: Failed with pip2 install (1)\n${RESET}\n"
-  fi
-  tmp="$?"
-  if [ "${tmp}" -ne "0" ]; then
-    msg="Failed to install dependencies... Exit code: ${tmp}"
-    errors="${errors}\n${msg}"
-    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-  fi
-
-
-  if [ "${os}" == "kali" ] \
-  || [ "${os}" == "parrot" ]; then
-    sudo ${arg} apt-get -y install metasploit-framework python2.7 python3 python3-pycryptodome \
-        || echo -e "${RED}[ERROR]: Failed with apt-get install dependencies (5)\n${RESET}\n"
-    tmp="$?"
-    if [ "${tmp}" -ne "0" ]; then
-      msg="Failed to install dependencies (Metasploit-Framework/python2.7/python3/python3-pycryptodome)... Exit code: ${tmp}"
-      errors="${errors}\n${msg}"
-      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-    fi
-  fi
-
   ## Function done
   echo -e "\n\n [*] ${YELLOW}Finished package installation${RESET}\n"
 }
@@ -483,7 +558,7 @@ func_python_deps(){
     || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine msiexec /i "${dependenciesdir}/python-3.4.4.msi" ${arg}
   tmp="$?"
-  if [ "${tmp}" -ne "0" ]; then
+  if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to install (Wine) Python 3.4.4... Exit code: ${tmp}"
     errors="${errors}\n${msg}"
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -524,7 +599,7 @@ func_python_deps(){
     else
       sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${FILE}"
       tmp="$?"
-      if [ "${tmp}" -ne "0" ]; then
+      if [[ "${tmp}" -ne "0" ]]; then
         msg="Failed to install ${FILE}... Exit code: ${tmp}"
         errors="${errors}\n${msg}"
         echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -576,41 +651,40 @@ func_go_deps(){
 
   sudo mkdir -p /usr/src/go/
 
-  if [ ! -f "/usr/src/go/bin/windows_386/go.exe" ]; then
+  if [ ! -f "/var/lib/veil-evasion/go/bin/go" ]; then
     if [ "${arch}" == "x86_64" ]; then
       echo -e "\n\n [*] ${YELLOW}Installing Go x86_64 (via TAR)${RESET}\n"
 
       file="${dependenciesdir}/go1.7.5.linux-amd64.tar.gz"
-      shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
-      if [ "${shasum}" == "2e4dd6c44f0693bef4e7b46cc701513d74c3cc44f2419bf519d7868b12931ac3" ]; then
-        sudo tar -C /usr/local -xf "${file}"
-      else
-        if [ "${tmp}" -ne "0" ]; then
-          msg="Bad hash for go153x64.tar.gz!"
-          errors="${errors}\n${msg}"
-          echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-        fi
-      fi
+      file_hash="2e4dd6c44f0693bef4e7b46cc701513d74c3cc44f2419bf519d7868b12931ac3"
     elif [ "${arch}" == "x86" ] \
     || [ "${arch}" == "i686" ]; then
       echo -e "\n\n [*] ${YELLOW}Installing Go x86 (via TAR)${RESET}\n"
 
       file="${dependenciesdir}/go1.7.5.linux-386.tar.gz"
-      shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
-      if [ "${shasum}" == "432cb92ae656f6fe1fa96a981782ef5948438b6da6691423aae900918b1eb955" ]; then
-        sudo tar -C /usr/local -xf "${file}"
-      else
-        if [ "${tmp}" -ne "0" ]; then
-          msg="Bad hash for go153x86.tar.gz!"
-          errors="${errors}\n${msg}"
-          echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-        fi
+      file_hash="432cb92ae656f6fe1fa96a981782ef5948438b6da6691423aae900918b1eb955"
+    else
+      ## Dead code. We really shouldn't end up here, but, you never know...
+      echo -e "${RED}[ERROR]: Architecture ${arch} is not supported!\n${RESET}\n"
+      exit 1
+    fi
+
+    shasum="$( openssl dgst -sha256 "${file}" | cut -d' ' -f2 )"
+    if [ "${shasum}" == "${file_hash}" ]; then
+      sudo rm -rf "${veildir}/go/"
+      sudo mkdir -p "${veildir}"
+      sudo tar -C "${veildir}" -xf "${file}"
+    else
+      if [[ "${tmp}" -ne "0" ]]; then
+        msg="Bad hash for ${file}!"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
       fi
     fi
 
-    export GOROOT=/usr/local/go
-    sudo rm -f /usr/bin/go
-    sudo ln -s /usr/local/go/bin/go /usr/bin/go
+    #export GOROOT=$( echo "${veildir}/go" )
+    #sudo rm -f /usr/bin/go
+    #sudo ln -s /usr/local/go/bin/go /usr/bin/go
   fi
 
   ## Done
@@ -658,7 +732,7 @@ func_ruby_deps(){
     || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${dependenciesdir}/rubyinstaller-1.8.7-p371.exe" ${arg}
   tmp="$?"
-  if [ "${tmp}" -ne "0" ]; then
+  if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to install (Wine) Ruby.exe... Exit code: ${tmp}"
     errors="${errors}\n${msg}"
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
@@ -696,11 +770,11 @@ func_update_config(){
   ## snip 8<-  -  -  -  -  -  -  -  -  -  -  -  -  - The alternative below without "sudo -u username"...
   ##      - | sudo python update-config.py (${USER}=root ${SUDO_USER}=root)
   ## snip 8<-  -  -  -  -  -  -  -  -  -  -  -  -  - And thus it would have screwed up the ${winedir} dir for the user.
-  if [ -f /etc/veil/settings.py ]; then
-    echo -e "\n\n [*] ${YELLOW}Detected current Veil settings file. Removing...${RESET}\n"
-    sudo rm -f /etc/veil/settings.py
+  if [ -e /etc/veil/ ]; then
+    echo -e " [*] ${YELLOW}Detected current Veil settings. Removing...${RESET}\n"
+    sudo rm -rf /etc/veil/
   fi
-  sudo -u "${trueuser}" sudo python2 update-config.py
+  sudo -u "${trueuser}" sudo ./update-config.py
 
   sudo mkdir -p "${outputdir}"
 
@@ -709,7 +783,9 @@ func_update_config(){
     echo -e "\n\n [*] ${YELLOW}Ensuring this account (${trueuser}) owns veil output directory (${outputdir})...${RESET}\n"
     sudo chown -R "${trueuser}" "${outputdir}"
   else
-    echo -e " ${RED}[ERROR] Internal Issue. Couldn't create output folder...${RESET}\n"
+    msg="Internal Issue. Couldn't create output folder..."
+    errors="${errors}\n${msg}"
+    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
   fi
 
   ## Ensure that user completely owns the wine directory
@@ -743,33 +819,29 @@ if [ "${os}" == "kali" ]; then
 elif [ "${os}" == "parrot" ]; then
   echo -e " [I] ${YELLOW}Parrot Security ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "ubuntu" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Ubuntu ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "15" ]]; then
+  if [[ "${osmajversion}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Ubuntu 15.10 or higher!${RESET}\n"
     exit 1
   fi
 elif [ "${os}" == "linuxmint" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Linux Mint ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "deepin" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   echo -e " [I] ${YELLOW}Deepin ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "15" ]]; then
+  if [[ "${osmajversion}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Deepin 15 or higher!${RESET}\n"
     exit 1
   fi
 elif [ "${os}" == '"elementary"' ]; then
   echo -e " [I] ${YELLOW}Elementary OS ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "debian" ]; then
-  version="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
-  if [[ "${osversion}" -lt "8" ]]; then
+  if [[ "${osmajversion}" -lt "8" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported on Debian 8 (Jessie) or higher!${RESET}\n"
     exit 1
   fi
 elif [ "${os}" == "fedora" ]; then
   echo -e " [I] ${YELLOW}Fedora ${osversion} ${arch} detected...${RESET}\n"
-  if [[ "${osversion}" -lt "22" ]]; then
+  if [[ "${osmajversion}" -lt "22" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported on Fedora 22 or higher!${RESET}\n"
     exit 1
   fi
@@ -778,9 +850,9 @@ else
   if [ "${os}" == "arch" ]; then
     echo -e " [I] ${YELLOW}Arch Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "blackarch" ]; then
-    echo -e " [I] ${RED}BlackArch Linux ${arch} detected...${RESET}\n"
+    echo -e " [I] ${YELLOW}BlackArch Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "debian" ]; then
-    echo -e " [!] ${RED}Debian Linux sid/TESTING ${arch} *possibly* detected..."
+    echo -e " [!] ${YELLOW}Debian Linux sid/TESTING ${arch} *possibly* detected..."
     echo -e "     If you are not currently running Debian Testing, you should exit this installer!${RESET}\n"
   else
     echo -e " ${RED}[ERROR] Unable to determine OS information. Exiting...${RESET}\n"
