@@ -115,7 +115,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                         # Used for PyInstaller standard
                         # copy the pyinstaller runw to maintain its integrity in the event
                         # pwnstaller is added in for python3 - this will future proof it
-                        runw_path = settings.VEIL_PATH + 'tools/evasion/evasion_common/tools/runw.orig.exe'
+                        runw_path = settings.VEIL_PATH + '/tools/evasion/evasion_common/tools/runw.orig.exe'
                         os.system("cp " + runw_path + " " + settings.PYINSTALLER_PATH + "/PyInstaller/bootloader/Windows-32bit/runw.exe")
 
                         # Validate python is installed in wine
