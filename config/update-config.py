@@ -65,7 +65,7 @@ def generateConfig(options):
     print( " [*] TEMP_PATH = " + options["TEMP_PATH"] )
 
     # Metasploit Framework's path
-    config += '# The path to the metasploit framework, for example: /usr/share/metasploit-framework/\n'
+    config += '# The path to the metasploit framework, for example: /opt/metasploit-framework/embedded/framework/\n'
     config += 'METASPLOIT_PATH="' + options['METASPLOIT_PATH'] + '"\n\n'
     print( " [*] METASPLOIT_PATH = " + options['METASPLOIT_PATH'] )
 
@@ -175,7 +175,7 @@ if __name__ == '__main__':
         issue = open( "/etc/issue" ).read()
 
         # General options
-        options["METASPLOIT_PATH"] = "/opt/metasploit-framework/"
+        options["METASPLOIT_PATH"] = "/opt/metasploit-framework/embedded/framework/"
         options["MSFVENOM_OPTIONS"] = ""
         options["MSFVENOM_PATH"] = "/usr/local/bin/"
         options["OPERATING_SYSTEM"] = "Linux"

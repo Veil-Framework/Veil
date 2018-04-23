@@ -64,7 +64,7 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-16"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-23"
   echo " =========================================================================="
   echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
@@ -738,7 +738,7 @@ func_update_config(){
     echo -e " [*] ${YELLOW}Detected current Veil settings. Removing...${RESET}\n"
     sudo rm -rf /etc/veil/
   fi
-  sudo -u "${trueuser}" sudo python update-config.py
+  sudo -u "${trueuser}" sudo ./update-config.py
 
   sudo mkdir -p "${outputdir}"
 
