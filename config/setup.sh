@@ -597,6 +597,12 @@ func_python_deps(){
       [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/"
       ## Run post install file
       [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null
+      tmp="$?"
+      if [[ "${tmp}" -ne "0" ]]; then
+        msg="Failed to install ${FILE}... Exit code: ${tmp}"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
       ## Clean up
       sudo rm -rf "PLATLIB/" "SCRIPTS/"
     else
@@ -635,8 +641,28 @@ func_python_deps(){
   ## Use wine based pip to install dependencies
   echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's PIP pefile${RESET}\n"
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "--upgrade" "pip"
+  tmp="$?"
+  if [[ "${tmp}" -ne "0" ]]; then
+    msg="Failed to run (wine) Python pip... Exit code: ${tmp}"
+    errors="${errors}\n${msg}"
+    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+  fi
+
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "future"
+  tmp="$?"
+  if [[ "${tmp}" -ne "0" ]]; then
+    msg="Failed to run (wine) Python pip future... Exit code: ${tmp}"
+    errors="${errors}\n${msg}"
+    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+  fi
+
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "pefile"
+  tmp="$?"
+  if [[ "${tmp}" -ne "0" ]]; then
+    msg="Failed to run (wine) Python pip pefile... Exit code: ${tmp}"
+    errors="${errors}\n${msg}"
+    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+  fi
 
 
   ## Function done
@@ -710,7 +736,12 @@ func_autoit_deps(){
     && arg=" /S" \
     || arg=""
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${dependenciesdir}/autoit-v3-setup.exe" ${arg}
-
+  tmp="$?"
+  if [[ "${tmp}" -ne "0" ]]; then
+    msg="Failed to run (wine) AutoIT.. Exit code: ${tmp}"
+    errors="${errors}\n${msg}"
+    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+  fi
 
   ## Function done
   echo -e "\n\n [*] ${YELLOW}Finished AutoIT installation${RESET}\n"
@@ -746,6 +777,12 @@ func_ruby_deps(){
   ## Write batch script to disk
   echo "${gempath} install --force --local ocra-1.3.6.gem" > /tmp/ocrainstall.bat
   sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine cmd /c /tmp/ocrainstall.bat
+  tmp="$?"
+  if [[ "${tmp}" -ne "0" ]]; then
+    msg="Failed to run (wine) Ruby OCRA.. Exit code: ${tmp}"
+    errors="${errors}\n${msg}"
+    echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+  fi
 
   ## Unzip the Ruby dependencies
   echo -e "\n\n [*] ${YELLOW}Extracting (Wine) Ruby dependencies...${RESET}\n"
