@@ -152,7 +152,6 @@ class Tools:
         print()
 
     def print_options_screen(self, pload_object):
-        print()
         ordnance_helpers.title_screen()
         print("Payload: " + helpers.color(pload_object.cli_name) + " selected\n")
         print(helpers.color(" Required Options:\n"))
@@ -162,11 +161,9 @@ class Tools:
             print('{0: <16}'.format(opt_name) + '\t' + '{0: <8}'.format(pload_object.required_options[opt_name][0]) + '\t' + pload_object.required_options[opt_name][1])
         print()
         self.print_shellcode_option_commands()
-        print()
         return
 
     def print_menu(self):
-        print()
         ordnance_helpers.title_screen()
         print("Veil-Ordnance Menu")
         print("\n\t" + helpers.color(len(self.active_shellcode)) + " payloads loaded")
@@ -190,9 +187,7 @@ class Tools:
             if lastBase and parts[0] != lastBase:
                 print()
             lastBase = parts[0]
-
             print( "\t%s)\t%s => %s" % ( x, '{0: <28}'.format( helpers.color( payload.cli_name ) ), payload.name ) )
-
             x += 1
         return
 
@@ -229,16 +224,12 @@ class Tools:
                     # Check and see what we are listing
                     # Payloads
                     if list_selection.startswith('p'):
-                        print()
                         ordnance_helpers.title_screen()
-                        print()
                         self.print_payloads()
 
                     # Encoders
                     elif list_selection.startswith('e'):
-                        print()
                         ordnance_helpers.title_screen()
-                        print()
                         self.print_encoders()
 
                     else:
@@ -343,9 +334,7 @@ class Tools:
                     show_payload_menu = True
                     break
                 elif shellcode_command.startswith("list"):
-                    print()
                     ordnance_helpers.title_screen()
-                    print()
                     self.print_encoders()
                 elif shellcode_command.startswith("gen") or shellcode_command.startswith("run"):
                     lport_out = ""
@@ -397,7 +386,6 @@ class Tools:
                                 self.final_shellcode = payload.customized_shellcode
 
                             # Print banner & payload stats
-                            print()
                             ordnance_helpers.title_screen()
                             payload.payload_stats()
 

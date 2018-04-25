@@ -182,10 +182,10 @@ class Shellcode:
 
         # print out the main title to reset the interface
         if showTitle:
-            print()
             evasion_helpers.title_screen()
+        else:
+            print()
 
-        print()
         print(helpers.color(" [?] Generate or supply custom shellcode?\n"))
         print('     %s - Ordnance %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
         print('     %s - MSFVenom' % (helpers.color('2')))

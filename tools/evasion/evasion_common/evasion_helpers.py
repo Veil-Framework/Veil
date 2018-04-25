@@ -100,7 +100,7 @@ def LHOST():
 
 def obfuscateNum(N, mod):
     """
-    Take a number and modulus and return an obsucfated form.
+    Take a number and modulus and return an obfuscated form.
     Returns a string of the obfuscated number N
     """
     d = random.randint(1, mod)
