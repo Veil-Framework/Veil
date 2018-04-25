@@ -65,7 +65,7 @@ class Tools:
         # It's only triggered if selected in menu and file isn't empty
         try:
             if os.stat(settings.HASH_LIST)[6] != 0:
-                checkVTcommand = settings.VEIL_PATH + "/tools/evasion/scripts/vt-notify/vt-notify.rb -f " + settings.HASH_LIST + " -i 0"
+                checkVTcommand = settings.VEIL_PATH + 'tools/evasion/scripts/vt-notify/vt-notify.rb -f ' + settings.HASH_LIST + ' -i 0'
                 print(helpers.color("\n [*] Checking Virus Total for payload hashes...\n"))
                 checkVTout = subprocess.check_output(checkVTcommand, shell=True)
                 checkVTout = checkVTout.decode('ascii')
