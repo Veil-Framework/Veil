@@ -47,8 +47,6 @@ class Tools:
         self.payload_options = {}
 
     def cli_menu(self, invoked=False):
-        ordnance_helpers.title_screen()
-
         # Check to see if we're just listing payloads or encoders
         # If so, do that and then exit
         # --list-payloads
@@ -391,7 +389,7 @@ class Tools:
 
                             # Did we come from Evasion? Or direct from Ordnance...
                             if self.invoked:
-                                print('\nHalf way... ' + helpers.color('Shellcode generated with Veil-Ordnance!') + '   Returning to Veil-Evasion.\n')
+                                print('\nHalf way... ' + helpers.color('Shellcode generated with Veil-Ordnance!') + '   Returning to Veil-Evasion.')
 
                                 # Re-set settings
                                 if "LHOST" in payload.required_options:

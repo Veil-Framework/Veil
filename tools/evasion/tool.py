@@ -126,8 +126,6 @@ class Tools:
         return
 
     def cli_menu(self, invoked=False):
-        evasion_helpers.title_screen()
-
         # --list-payloads
         if self.command_options.list_payloads:
             self.list_loaded_payloads()
