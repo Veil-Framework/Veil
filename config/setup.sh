@@ -64,7 +64,7 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-23"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-25"
   echo " =========================================================================="
   echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
@@ -242,17 +242,51 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-    #ttf-mscorefonts-installer
-    sudo ${arg} apt-get install -y wine   unzip   winbind   wget   git  ca-certificates \
-      mingw-w64   monodevelop mono-mcs \
-      ruby   golang \
-      python python-crypto python-pefile python-pip python3-pip
+    # sudo                   - its everywhere
+    # unzip                  - used for de-compressing files during setup
+    # git                    - used for setup and keeping up-to-date
+    # ca-certificates        - make sure git behaves well with https/ssl/tls
+    # mingw-w64              - cross compiling c payloads
+    # monodevelop + mono-mcs - c# compiling payloads
+    # ruby                   - ruby payloads
+    # python3-*              - python payloads
+    sudo ${arg} apt-get install -y   sudo   unzip   git ca-certificates \
+      mingw-w64 \
+      monodevelop mono-mcs \
+      ruby \
+      python3
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (1): $?"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
+    if [ "${os}" == "debian" ] \
+    || [ "${os}" == "kali" ] \
+    || [ "${os}" == "parrot" ]; then
+      echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via apt)...${RESET}\n"
+      sudo ${arg} apt-get install -y python3-crypto
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with installing dependencies (6): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    else
+      echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via pip3)...${RESET}\n"
+      sudo ${arg} apt-get install -y python3-pip
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with installing dependencies (7): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+
+      pip3 install pycrypto
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with installing pip3 (1): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    fi
   elif [ "${os}" == '"elementary"' ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
@@ -310,7 +344,7 @@ func_package_deps(){
   ## Couple of extras for other OSs
   if [ "${os}" == "kali" ] \
   || [ "${os}" == "parrot" ]; then
-    sudo ${arg} apt-get install -y metasploit-framework python2.7 python3 python3-pycryptodome python3-crypto
+    sudo ${arg} apt-get install -y metasploit-framework
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (5): $?"
       errors="${errors}\n${msg}"
@@ -570,7 +604,7 @@ func_python_deps(){
   ## If not kali or parrot, use pip to install
   if [ "${os}" != "kali" ] \
   && [ "${os}" != "parrot" ]; then
-    echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via PIP3)...${RESET}\n"
+    echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via pip3)...${RESET}\n"
     pip3 install pycrypto
   fi
 
