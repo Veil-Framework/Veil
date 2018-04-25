@@ -66,9 +66,9 @@ def compiler(payload_object, invoked=False, cli_object=None):
                     if payload_object.required_options['COMPILE_TO_EXE'][0].lower() == 'y' and not invoked:
                         evasion_helpers.title_screen()
                         # if we have a linux distro, continue...
-                        # Determine if the user wants Pyinstaller, Pwnstaller, or Py2Exe.
+                        # Determine if the user wants PyInstaller, Pwnstaller, or Py2Exe.
                         print(' [?] How would you like to create your payload executable?\n')
-                        print('     %s - Pyinstaller %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
+                        print('     %s - PyInstaller %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
                         print('     %s - Py2Exe\n' % (helpers.color('2')))
 
                         user_compile_choice = input(" [>] Please enter the number of your choice: ")
