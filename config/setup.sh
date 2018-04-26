@@ -245,14 +245,13 @@ func_package_deps(){
     # sudo                   - its everywhere
     # unzip                  - used for de-compressing files during setup
     # git                    - used for setup and keeping up-to-date
-    # ca-certificates        - make sure git behaves well with https/ssl/tls
     # mingw-w64              - cross compiling c payloads
-    # monodevelop + mono-mcs - c# compiling payloads
+    # mono-mcs               - c#/cs compiling payloads
     # ruby                   - ruby payloads
     # python3-*              - python payloads
-    sudo ${arg} apt-get install -y   sudo   unzip   git ca-certificates \
+    sudo ${arg} apt-get install -y   sudo   unzip   git \
       mingw-w64 \
-      monodevelop mono-mcs \
+      mono-mcs \
       ruby \
       python3
     if [[ "$?" -ne "0" ]]; then
