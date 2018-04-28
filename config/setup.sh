@@ -253,6 +253,7 @@ func_package_deps(){
       mingw-w64 \
       mono-mcs \
       ruby \
+      python3-pip \
       python3
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (1): $?"
