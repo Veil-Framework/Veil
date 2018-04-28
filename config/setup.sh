@@ -64,7 +64,7 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-25"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-29"
   echo " =========================================================================="
   echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
@@ -253,7 +253,6 @@ func_package_deps(){
       mingw-w64 \
       mono-mcs \
       ruby \
-      python3-pip \
       python3
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (1): $?"
@@ -579,7 +578,7 @@ func_package_deps(){
 ## Install Python dependencies
 func_python_deps(){
   ## Banner
-  echo -e "\n\n [*] ${YELLOW}Initializing Python dependencies installation...${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Initializing (OS + Wine) Python dependencies installation...${RESET}\n"
 
   ## Python (OS) - install-addons.sh
   ## In-case its 'First time run' for Wine (More information - http://wiki.winehq.org/Mono)
@@ -599,13 +598,6 @@ func_python_deps(){
     msg="Failed to install (Wine) Python 3.4.4... Exit code: ${tmp}"
     errors="${errors}\n${msg}"
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-  fi
-
-  ## If not kali or parrot, use pip to install
-  if [ "${os}" != "kali" ] \
-  && [ "${os}" != "parrot" ]; then
-    echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via pip3)...${RESET}\n"
-    pip3 install pycrypto
   fi
 
   ## Cool down
@@ -653,7 +645,7 @@ func_python_deps(){
   popd >/dev/null
 
   ## Install Python (OS) extra setup files (PyInstaller)
-  echo -e "\n\n [*] ${YELLOW}Installing Python's PyInstaller (via TAR)${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Installing (OS) Python's PyInstaller (via TAR)${RESET}\n"
   if [ "${force}" == "false" ] \
   && [ -f "${veildir}/PyInstaller-3.2.1/pyinstaller.py" ]; then
     echo -e "\n\n [*] ${YELLOW}PyInstaller v3.2 is already installed... Skipping...${RESET}\n"
@@ -700,7 +692,7 @@ func_python_deps(){
 
 
   ## Function done
-  echo -e "\n\n [*] ${YELLOW}Finished Python dependencies installation${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Finished (Wine + OS) Python dependencies installation${RESET}\n"
 }
 
 
