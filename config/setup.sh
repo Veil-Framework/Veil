@@ -608,39 +608,54 @@ func_python_deps(){
   pushd "${dependenciesdir}/" >/dev/null
 
   ## Install (Wine) Python extra setup files (PyWin32 & PyCrypto)
-  for FILE in pywin32-220.win32-py3.4.exe pycrypto-2.6.1.win32-py3.4.exe; do
-    echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's ${FILE}...${RESET}\n"
-    echo -e " [*] ${BOLD} Next -> Next -> Next -> Finished! ...Overwrite if prompt (use default values)${RESET}\n"
-    sleep 1s
+    echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's pywin32-220.win32-py3.4.exe...${RESET}\n"
+  echo -e " [*] ${BOLD} Next -> Next -> Next -> Finished! ...Overwrite if prompt (use default values)${RESET}\n"
+  sleep 1s
 
-    if [ "${silent}" == "true" ]; then
-      ## Start fresh
-      sudo rm -rf "PLATLIB/" "SCRIPTS/"
-      ## Extract
-      sudo unzip -q -o "${FILE}"
-      ## Copy files to right location
-      [ -e "PLATLIB" ] && sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/" && true
-      [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/" && true
-      ## Run post install file
-      [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null && true
-      tmp="$?"
-      if [[ "${tmp}" -ne "0" ]]; then
-        msg="Failed to install ${FILE}... Exit code: ${tmp}"
-        errors="${errors}\n${msg}"
-        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-      fi
-      ## Clean up
-      sudo rm -rf "PLATLIB/" "SCRIPTS/"
-    else
-      sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${FILE}"
-      tmp="$?"
-      if [[ "${tmp}" -ne "0" ]]; then
-        msg="Failed to install ${FILE}... Exit code: ${tmp}"
-        errors="${errors}\n${msg}"
-        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-      fi
+  if [ "${silent}" == "true" ]; then
+    ## Start fresh
+    sudo rm -rf "PLATLIB/" "SCRIPTS/"
+    ## Extract
+    sudo unzip -q -o pywin32-220.win32-py3.4.exe
+    ## Copy files to right location
+    [ -e "PLATLIB" ] && sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/"
+    [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/"
+    ## Run post install file
+    [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null
+    ## Clean up
+    sudo rm -rf "PLATLIB/" "SCRIPTS/"
+  else
+    sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine pywin32-220.win32-py3.4.exe
+    tmp="$?"
+    if [ "${tmp}" -ne "0" ]; then
+      msg="Failed to install pywin32-220.win32-py3.4.exe... Exit code: ${tmp}"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
-  done
+  fi
+
+  echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's pycrypto-2.6.1.win32-py3.4.exe...${RESET}\n"
+  echo -e " [*] ${BOLD} Next -> Next -> Next -> Finished! ...Overwrite if prompt (use default values)${RESET}\n"
+  sleep 1s
+
+  if [ "${silent}" == "true" ]; then
+    ## Start fresh
+    sudo rm -rf "PLATLIB/"
+    ## Extract
+    sudo unzip -q -o pycrypto-2.6.1.win32-py3.4.exe
+    ## Copy files to right location
+    [ -e "PLATLIB" ] && sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/"
+    ## Clean up
+    sudo rm -rf "PLATLIB/"
+  else
+    sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine pycrypto-2.6.1.win32-py3.4.exe
+    tmp="$?"
+    if [ "${tmp}" -ne "0" ]; then
+      msg="Failed to install pycrypto-2.6.1.win32-py3.4.exe... Exit code: ${tmp}"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+  fi
 
   popd >/dev/null
 
