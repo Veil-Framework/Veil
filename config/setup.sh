@@ -619,10 +619,10 @@ func_python_deps(){
       ## Extract
       sudo unzip -q -o "${FILE}"
       ## Copy files to right location
-      [ -e "PLATLIB" ] && sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/"
-      [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/"
+      [ -e "PLATLIB" ] && sudo -u "${trueuser}" cp -rf PLATLIB/* "${winedrive}/Python34/Lib/site-packages/" && true
+      [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/" && true
       ## Run post install file
-      [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null
+      [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null && true
       tmp="$?"
       if [[ "${tmp}" -ne "0" ]]; then
         msg="Failed to install ${FILE}... Exit code: ${tmp}"
