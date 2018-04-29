@@ -64,7 +64,7 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-23"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-04-29"
   echo " =========================================================================="
   echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
@@ -242,17 +242,50 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-    #ttf-mscorefonts-installer
-    sudo ${arg} apt-get install -y wine   unzip   winbind   wget   git  ca-certificates \
-      mingw-w64   monodevelop mono-mcs \
-      ruby   golang \
-      python python-crypto python-pefile python-pip python3-pip
+    # sudo                   - its everywhere
+    # unzip                  - used for de-compressing files during setup
+    # git                    - used for setup and keeping up-to-date
+    # mingw-w64              - cross compiling c payloads
+    # mono-mcs               - c#/cs compiling payloads
+    # ruby                   - ruby payloads
+    # python3-*              - python payloads
+    sudo ${arg} apt-get install -y   sudo   unzip   git \
+      mingw-w64 \
+      mono-mcs \
+      ruby \
+      python3
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (1): $?"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
+    if [ "${os}" == "debian" ] \
+    || [ "${os}" == "kali" ] \
+    || [ "${os}" == "parrot" ]; then
+      echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via apt)...${RESET}\n"
+      sudo ${arg} apt-get install -y python3-crypto
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with installing dependencies (6): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    else
+      echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via pip3)...${RESET}\n"
+      sudo ${arg} apt-get install -y python3-pip
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with installing dependencies (7): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+
+      pip3 install pycrypto
+      if [[ "$?" -ne "0" ]]; then
+        msg="Failed with installing pip3 (1): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    fi
   elif [ "${os}" == '"elementary"' ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
@@ -310,7 +343,7 @@ func_package_deps(){
   ## Couple of extras for other OSs
   if [ "${os}" == "kali" ] \
   || [ "${os}" == "parrot" ]; then
-    sudo ${arg} apt-get install -y metasploit-framework python2.7 python3 python3-pycryptodome python3-crypto
+    sudo ${arg} apt-get install -y metasploit-framework
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (5): $?"
       errors="${errors}\n${msg}"
@@ -545,7 +578,7 @@ func_package_deps(){
 ## Install Python dependencies
 func_python_deps(){
   ## Banner
-  echo -e "\n\n [*] ${YELLOW}Initializing Python dependencies installation...${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Initializing (OS + Wine) Python dependencies installation...${RESET}\n"
 
   ## Python (OS) - install-addons.sh
   ## In-case its 'First time run' for Wine (More information - http://wiki.winehq.org/Mono)
@@ -565,13 +598,6 @@ func_python_deps(){
     msg="Failed to install (Wine) Python 3.4.4... Exit code: ${tmp}"
     errors="${errors}\n${msg}"
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-  fi
-
-  ## If not kali or parrot, use pip to install
-  if [ "${os}" != "kali" ] \
-  && [ "${os}" != "parrot" ]; then
-    echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via PIP3)...${RESET}\n"
-    pip3 install pycrypto
   fi
 
   ## Cool down
@@ -597,12 +623,13 @@ func_python_deps(){
       [ -e "SCRIPTS" ] && sudo -u "${trueuser}" cp -rf SCRIPTS/* "${winedrive}/Python34/Scripts/"
       ## Run post install file
       [ -e "SCRIPTS/pywin32_postinstall.py" ] && sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "${winedrive}/Python34/Scripts/pywin32_postinstall.py" "-silent" "-quiet" "-install" >/dev/null
-      tmp="$?"
-      if [[ "${tmp}" -ne "0" ]]; then
-        msg="Failed to install ${FILE}... Exit code: ${tmp}"
-        errors="${errors}\n${msg}"
-        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
-      fi
+      ## Due to pycrypto-2.6.1.win32-py3.4.exe not exacting cleaning, this will falsely trigger
+      #tmp="$?"
+      #if [[ "${tmp}" -ne "0" ]]; then
+      #  msg="Failed to install ${FILE}... Exit code: ${tmp}"
+      #  errors="${errors}\n${msg}"
+      #  echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      #fi
       ## Clean up
       sudo rm -rf "PLATLIB/" "SCRIPTS/"
     else
@@ -619,7 +646,7 @@ func_python_deps(){
   popd >/dev/null
 
   ## Install Python (OS) extra setup files (PyInstaller)
-  echo -e "\n\n [*] ${YELLOW}Installing Python's PyInstaller (via TAR)${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Installing (OS) Python's PyInstaller (via TAR)${RESET}\n"
   if [ "${force}" == "false" ] \
   && [ -f "${veildir}/PyInstaller-3.2.1/pyinstaller.py" ]; then
     echo -e "\n\n [*] ${YELLOW}PyInstaller v3.2 is already installed... Skipping...${RESET}\n"
@@ -666,7 +693,7 @@ func_python_deps(){
 
 
   ## Function done
-  echo -e "\n\n [*] ${YELLOW}Finished Python dependencies installation${RESET}\n"
+  echo -e "\n\n [*] ${YELLOW}Finished (Wine + OS) Python dependencies installation${RESET}\n"
 }
 
 

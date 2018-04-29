@@ -37,11 +37,11 @@ def compileToTemp(language, payloadSource):
     """
     if language == "cs":
 
-        tempExeName = settings.TEMP_PATH + "/temp.exe"
-        tempSourceName = settings.TEMP_PATH + "/temp.cs"
+        tempExeName = settings.TEMP_PATH + 'temp.exe'
+        tempSourceName = settings.TEMP_PATH + 'temp.cs'
 
         # write out the payload source to the temporary location
-        with open(settings.TEMP_PATH + "/temp.cs", 'w') as f:
+        with open(settings.TEMP_PATH + 'temp.cs', 'w') as f:
             f.write(payloadSource)
 
         # Compile our CS code into an executable and pass a compiler flag to prevent it from opening a command prompt when run
@@ -100,7 +100,7 @@ def LHOST():
 
 def obfuscateNum(N, mod):
     """
-    Take a number and modulus and return an obsucfated form.
+    Take a number and modulus and return an obfuscated form.
     Returns a string of the obfuscated number N
     """
     d = random.randint(1, mod)

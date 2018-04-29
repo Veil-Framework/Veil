@@ -1,6 +1,6 @@
 """
 Simple auxiliary module that will take a specified python source
-file and compile it to an executable using Pyinstaller.
+file and compile it to an executable using PyInstaller.
 
 Module built by @harmj0y
 """

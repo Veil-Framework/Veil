@@ -209,18 +209,24 @@ if __name__ == '__main__':
             path = input( " [>] Please enter the directory of your system's temp path (e.g. /tmp/): " )
             path = str(path)
             options["TEMP_PATH"] = path
+        if not options["TEMP_PATH"].endswith('/'):
+            options["TEMP_PATH"] += "/"
 
         # Check the paths are correct (METASPLOIT_PATH)
         while not os.path.isdir( options["METASPLOIT_PATH"] ):
             path = input( " [>] Please enter the directory of the Metasploit Framework (e.g. %s): " % ( options["METASPLOIT_PATH"] ) )
             path = str(path)
             options["METASPLOIT_PATH"] = path
+        if not options["METASPLOIT_PATH"].endswith('/'):
+            options["METASPLOIT_PATH"] += "/"
 
         # Check the paths are correct (MSFVENOM_PATH)
         while not os.path.isfile( options["MSFVENOM_PATH"] + "/msfvenom" ):
             path = input( " [>] Please enter the directory of msfvenom (e.g. /usr/bin/): " )
             path = str(path)
             options["MSFVENOM_PATH"] = path
+        if not options["MSFVENOM_PATH"].endswith('/'):
+            options["MSFVENOM_PATH"] += "/"
 
         # Check the paths are correct (VEIL_PATH)
         while not os.path.isdir( options["VEIL_PATH"] ):
@@ -228,6 +234,8 @@ if __name__ == '__main__':
             path = str(path)
             path = input( " [>] Please enter the directory to Veil (e.g. /opt/veil/): " )
             options["VEIL_PATH"] = path
+        if not options["VEIL_PATH"].endswith('/'):
+            options["VEIL_PATH"] += "/"
 
         # Check the paths are correct (PYINSTALLER_PATH)
         while not os.path.isdir( options["PYINSTALLER_PATH"] ):
@@ -235,6 +243,8 @@ if __name__ == '__main__':
             path = input( " [>] Please enter the directory of PyInstaller (e.g. %s): " % ( options["PYINSTALLER_PATH"] ) )
             path = str(path)
             options["PYINSTALLER_PATH"] = path
+        if not options["PYINSTALLER_PATH"].endswith('/'):
+            options["PYINSTALLER_PATH"] += "/"
 
         # Check the paths are correct (WINEPREFIX)
         while not os.path.isdir( options["WINEPREFIX"] ):
@@ -242,6 +252,8 @@ if __name__ == '__main__':
             path = input( " [>] Please enter the directory of Veil's WINE profile (e.g. %s): " % ( options["WINEPREFIX"] ) )
             path = str(path)
             options["WINEPREFIX"] = path
+        if not options["WINEPREFIX"].endswith('/'):
+            options["WINEPREFIX"] += "/"
 
         # Check the paths are correct (GOLANG_PATH)
         while not os.path.isdir( options["GOLANG_PATH"] ):
@@ -249,6 +261,8 @@ if __name__ == '__main__':
             path = input( " [>] Please enter the directory of GoLang (e.g. %s): " % ( options["GOLANG_PATH"] ) )
             path = str(path)
             options["GOLANG_PATH"] = path
+        if not options["GOLANG_PATH"].endswith('/'):
+            options["GOLANG_PATH"] += "/"
     # Unsupported platform...
     else:
         print( " [!] ERROR: PLATFORM NOT CURRENTLY SUPPORTED" )
