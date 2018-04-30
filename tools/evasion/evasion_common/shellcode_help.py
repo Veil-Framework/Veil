@@ -92,7 +92,7 @@ class Shellcode:
 
             # load up all the stages (meterpreter/vnc/etc.)
             # TODO: detect Windows and modify the paths appropriately
-            for root, dirs, files in os.walk(settings.METASPLOIT_PATH + "/modules/payloads/stages/" + platform + "/"):
+            for root, dirs, files in os.walk(settings.METASPLOIT_PATH + 'modules/payloads/stages/' + platform + '/'):
                 for f in files:
                     stageName = f.split(".")[0]
                     if "x64" in root:
@@ -112,7 +112,7 @@ class Shellcode:
 
             # load up all the stagers (reverse_tcp, bind_tcp, etc.)
             # TODO: detect Windows and modify the paths appropriately
-            for root, dirs, files in os.walk(settings.METASPLOIT_PATH + "/modules/payloads/stagers/" + platform + "/"):
+            for root, dirs, files in os.walk(settings.METASPLOIT_PATH + 'modules/payloads/stagers/' + platform + '/'):
                 for f in files:
 
                     if ".rb" in f:
@@ -146,7 +146,7 @@ class Shellcode:
 
             # load up any payload singles
             # TODO: detect Windows and modify the paths appropriately
-            for root, dirs, files in os.walk(settings.METASPLOIT_PATH + "/modules/payloads/singles/" + platform + "/"):
+            for root, dirs, files in os.walk(settings.METASPLOIT_PATH + 'modules/payloads/singles/' + platform + '/'):
                 for f in files:
 
                     if ".rb" in f:
@@ -182,10 +182,10 @@ class Shellcode:
 
         # print out the main title to reset the interface
         if showTitle:
-            print()
             evasion_helpers.title_screen()
+        else:
+            print()
 
-        print()
         print(helpers.color(" [?] Generate or supply custom shellcode?\n"))
         print('     %s - Ordnance %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
         print('     %s - MSFVenom' % (helpers.color('2')))
@@ -559,7 +559,7 @@ def cli_msf_shellcode_gen(command_line_args):
                     extra_options += ' ' + final_opt
 
     # generate the msfvenom command
-    msf_command = settings.MSFVENOM_PATH + "/msfvenom -p " + msf_payload + " "
+    msf_command = settings.MSFVENOM_PATH + 'msfvenom -p ' + msf_payload + ' '
     msf_command += "LHOST=" + ip + " LPORT=" + str(port)
     if extra_options != '':
         msf_command += extra_options

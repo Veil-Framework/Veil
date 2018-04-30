@@ -64,13 +64,11 @@ def compiler(payload_object, invoked=False, cli_object=None):
                     compile_method = 'py2exe'
                 else:
                     if payload_object.required_options['COMPILE_TO_EXE'][0].lower() == 'y' and not invoked:
-                        print()
                         evasion_helpers.title_screen()
-                        print()
                         # if we have a linux distro, continue...
-                        # Determine if the user wants Pyinstaller, Pwnstaller, or Py2Exe.
+                        # Determine if the user wants PyInstaller, Pwnstaller, or Py2Exe.
                         print(' [?] How would you like to create your payload executable?\n')
-                        print('     %s - Pyinstaller %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
+                        print('     %s - PyInstaller %s' % (helpers.color('1'), helpers.color('(default)', yellow=True)))
                         print('     %s - Py2Exe\n' % (helpers.color('2')))
 
                         user_compile_choice = input(" [>] Please enter the number of your choice: ")
@@ -104,9 +102,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                         runme_file.write('rmdir /S /Q build\n')
                         runme_file.write('rmdir /S /Q dist\n')
 
-                    print()
                     evasion_helpers.title_screen()
-                    print()
                     print_payload_information(payload_object)
                     print(helpers.color("\npy2exe files 'setup.py' and 'runme.bat' written to:\n" + settings.PAYLOAD_SOURCE_PATH + "\n"))
 
@@ -116,7 +112,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                         # copy the pyinstaller runw to maintain its integrity in the event
                         # pwnstaller is added in for python3 - this will future proof it
                         runw_path = settings.VEIL_PATH + '/tools/evasion/evasion_common/tools/runw.orig.exe'
-                        os.system("cp " + runw_path + " " + settings.PYINSTALLER_PATH + "/PyInstaller/bootloader/Windows-32bit/runw.exe")
+                        os.system('cp ' + runw_path + ' ' + settings.PYINSTALLER_PATH + 'PyInstaller/bootloader/Windows-32bit/runw.exe')
 
                         # Validate python is installed in wine
                         if not os.path.isfile(settings.WINEPREFIX + 'drive_c/Python34/python.exe'):
@@ -127,9 +123,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                         random_key = evasion_helpers.randomString()
                         os.system('WINEPREFIX=' + settings.WINEPREFIX + ' wine ' + settings.WINEPREFIX + '/drive_c/Python34/python.exe' + ' ' + os.path.expanduser(settings.PYINSTALLER_PATH + '/pyinstaller.py') + ' --onefile --noconsole --key ' + random_key + ' ' + source_code_filepath)
 
-                        print()
                         evasion_helpers.title_screen()
-                        print()
 
                         if os.path.isfile('dist/' + file_name + ".exe"):
                             os.system('mv dist/' + file_name + ".exe " + settings.PAYLOAD_COMPILED_PATH)
@@ -164,9 +158,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
             if payload_object.required_options['COMPILE_TO_EXE'][0].lower() == 'y':
                 os.system('WINEPREFIX=' + settings.WINEPREFIX + ' wine ' + settings.WINEPREFIX + '/drive_c/Ruby187/bin/ruby.exe ' + settings.WINEPREFIX + '/drive_c/Ruby187/bin/ocra --windows '+ source_code_filepath + ' --output ' + executable_filepath + ' ' + settings.WINEPREFIX + '/drive_c/Ruby187/lib/ruby/gems/1.8/gems/win32-api-1.4.8-x86-mingw32/lib/win32/*')
 
-                print()
                 evasion_helpers.title_screen()
-                print()
 
                 if os.path.isfile(executable_filepath):
                     hash_executable(executable_filepath, file_name)
@@ -177,9 +169,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
             print(" [*] Source code written to: " + helpers.color(source_code_filepath))
 
         elif payload_object.language == 'powershell':
-            print()
             evasion_helpers.title_screen()
-            print()
             print_payload_information(payload_object)
             print(" [*] PowerShell doesn't compile, so you just get text :)")
             print(" [*] Source code written to: " + helpers.color(source_code_filepath))
@@ -214,9 +204,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                 # Compile go payload
                 os.system( 'env GOROOT={0} GOOS=windows GOARCH=386 {0}/bin/go build -ldflags "-s -w -H=windowsgui" -v -o {1} {2}'.format(settings.GOLANG_PATH, executable_filepath, source_code_filepath) )
 
-                print()
                 evasion_helpers.title_screen()
-                print()
 
                 if os.path.isfile(executable_filepath):
                     hash_executable(executable_filepath, file_name)
@@ -231,9 +219,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                 # Compile our CS code into an executable and pass a compiler flag to prevent it from opening a command prompt when run
                 os.system('mcs -platform:x86 -target:winexe ' + source_code_filepath + ' -out:' + executable_filepath)
 
-                print()
                 evasion_helpers.title_screen()
-                print()
 
                 if os.path.isfile(executable_filepath):
                     hash_executable(executable_filepath, file_name)
@@ -248,9 +234,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
                 # Compile our C code into an executable and pass a compiler flag to prevent it from opening a command prompt when run
                 os.system('i686-w64-mingw32-gcc -Wl,-subsystem,windows ' + source_code_filepath + ' -o ' + executable_filepath + " -lwsock32")
 
-                print()
                 evasion_helpers.title_screen()
-                print()
 
                 if os.path.isfile(executable_filepath):
                     hash_executable(executable_filepath, file_name)

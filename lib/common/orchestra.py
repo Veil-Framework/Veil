@@ -53,9 +53,7 @@ class Conductor:
         # Did we run a command?
         if show_header:
             # show title bar
-            print()
             messages.title_screen()
-            print()
             print(helpers.color(' [*] Available Tools:\n'))
         else:
             print("Available Tools:\n")

