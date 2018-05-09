@@ -64,7 +64,7 @@ RESET="\033[00m"       # Normal
 func_title(){
   ## Echo title
   echo " =========================================================================="
-  echo "                 Veil (Setup Script) | [Updated]: 2018-04-29"
+  echo "                 Veil (Setup Script) | [Updated]: 2018-05-08"
   echo " =========================================================================="
   echo "     [Web]: https://www.veil-framework.com/ | [Twitter]: @VeilFramework"
   echo " =========================================================================="
@@ -242,7 +242,7 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-    # sudo                   - its everywhere
+# sudo                   - its everywhere
     # unzip                  - used for de-compressing files during setup
     # git                    - used for setup and keeping up-to-date
     # mingw-w64              - cross compiling c payloads
@@ -301,7 +301,7 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-    sudo ${arg} apt-get install -y mingw-w64 monodevelop mono-mcs wine unzip ruby golang wget git \
+    sudo ${arg} apt-get install -y mingw-w64 monodevelop mono-mcs unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (2: $?"
@@ -313,7 +313,7 @@ func_package_deps(){
   || [ "${os}" == "fedora" ] \
   || [ "${os}" == "rhel" ]; then
     sudo ${arg} dnf -y install mingw64-binutils mingw64-cpp mingw64-gcc mingw64-gcc-c++ mono-tools-monodoc monodoc \
-      monodevelop mono-tools mono-core wine unzip ruby golang wget git python python-crypto python-pefile \
+      monodevelop mono-tools mono-core unzip ruby golang wget git python python-crypto python-pefile \
       python-pip ca-certificates msttcore-fonts-installer python3-pip winbind
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (3): $?"
@@ -420,12 +420,17 @@ func_package_deps(){
         else
           echo -e " [*] ${YELLOW}Already have x86 architecture added...${RESET}\n"
         fi
-
       echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries (via APT)${RESET}\n"
       if [ "${os}" == "ubuntu" ] \
       || [ "${os}" == "linuxmint" ]; then
-        ## Special urghbuntu derivative snowflakes
-        sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386
+        ## Special urghbuntu derivative snowflakes. Now with even *more* special.   
+        if [ "${osmajversion}" -ge "17" ] \
+        && [ "${os}" == "ubuntu" ]; then
+          # Wine package was renamed in Arty
+          sudo ${arg} apt-get -y -qq install wine-stable        
+		    else
+          sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386
+		    fi
         if [[ "$?" -ne "0" ]]; then
           msg="Failed with installing wine (1): $?"
           errors="${errors}\n${msg}"
