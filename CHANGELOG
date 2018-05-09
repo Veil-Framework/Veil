@@ -1,6 +1,10 @@
+[2018-05-08]
+     Released.: 3.1.8
+     Modified.: Setup script to now support Ubuntu 17 - thanks to @leesoh for the PR
+
 [2018-04-29]
-      Released.: 3.1.7
-      Modified.: Setup updated for Debian thanks to @g0tmi1k
+     Released.: 3.1.7
+     Modified.: Setup updated for Debian thanks to @g0tmi1k
 
 [2018-04-23]
 	 Released.: 3.1.6
