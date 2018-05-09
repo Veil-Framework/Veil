@@ -1,3 +1,7 @@
+[2018-05-09]
+     Released.: 3.1.9
+     Modified.: Fixed bug in golang payloads when using MINPROCS check, thanks to issue #208
+
 [2018-05-08]
      Released.: 3.1.8
      Modified.: Setup script to now support Ubuntu 17 - thanks to @leesoh for the PR
@@ -7,8 +11,8 @@
      Modified.: Setup updated for Debian thanks to @g0tmi1k
 
 [2018-04-23]
-	 Released.: 3.1.6
-	 Modified.: Updated setup (again) thanks to @g0tmi1k!!!
+	Released.: 3.1.6
+	Modified.: Updated setup (again) thanks to @g0tmi1k!!!
 
 [2018-04-05]
      Released.: 3.1.5

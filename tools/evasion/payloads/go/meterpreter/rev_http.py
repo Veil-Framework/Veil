@@ -99,6 +99,8 @@ class PayloadModule:
         # Add in other imports based on checks being performed
         if self.required_options["USERNAME"][0].lower() != "x":
             payload_code += "\"strings\"\n\"os/user\"\n"
+        if self.required_options["MINPROCS"][0].lower() != "x":
+            payload_code += "\"os\"\n"
         if self.required_options["HOSTNAME"][0].lower() != "x" or self.required_options["PROCCHECK"][0].lower() != 'false':
             if "strings" not in payload_code:
                 payload_code += "\"strings\"\n"
