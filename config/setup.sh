@@ -1,4 +1,4 @@
-t#!/bin/bash
+#!/bin/bash
 ## Can be called by doing: "Veil.py --setup"
 
 ## Global variables
