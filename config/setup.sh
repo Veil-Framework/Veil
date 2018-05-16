@@ -11,6 +11,7 @@ if [ "${os}" == "arch" ] \
 || [ "${os}" == "elementary" ] \
 || [ "${os}" == "kali" ] \
 || [ "${os}" == "linuxmint" ] \
+|| [ "${os}" == "\"void\"" ] \
 || [ "${os}" == "ubuntu" ]; then
   trueuser="$( who | tr -d '\n' | cut -d' ' -f1 )"
 else
@@ -31,8 +32,16 @@ fi
 
 userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
-osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
-osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
+if [ "${os}" == "\"void\"" ]; then
+  osversion="$(uname -r)"
+else
+  osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
+fi
+if [ "${os}" == "\"void\"" ]; then
+  osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
+else
+  osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
+fi
 veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
@@ -227,7 +236,8 @@ func_package_deps(){
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
   || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ]; then
+  || [ "${os}" == "ubuntu" ] \
+  || [ "${os}" == "\"void\"" ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
       && arg=" DEBIAN_FRONTEND=noninteractive" \
@@ -886,7 +896,9 @@ fi
 
 
 ## Check OS
-if [ "${os}" == "kali" ]; then
+if [ "${os}" == "\"void\"" ]; then
+  echo -e " [I] ${YELLOW}Void Linux ${osversion} ${arch} detected...${RESET}\n"
+elif [ "${os}" == "kali" ]; then
   echo -e " [I] ${YELLOW}Kali Linux ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "parrot" ]; then
   echo -e " [I] ${YELLOW}Parrot Security ${osversion} ${arch} detected...${RESET}\n"
