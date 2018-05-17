@@ -1,3 +1,7 @@
+[2018-05-17]
+     Released.: 3.1.11
+     Modified.: Golang/meterpreter/* payloads have big fixed when injection via heap. Thanks to Carlos for pointing this out
+
 [2018-05-16]
      Released.: 3.1.10
      Modified.: Setup script now in compatible with void thanks to PR #212
