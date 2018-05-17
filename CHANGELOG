@@ -1,3 +1,7 @@
+[2018-05-16]
+     Released.: 3.1.10
+     Modified.: Setup script now in compatible with void thanks to PR #212
+
 [2018-05-09]
      Released.: 3.1.9
      Modified.: Fixed bug in golang payloads when using MINPROCS check, thanks to issue #208
