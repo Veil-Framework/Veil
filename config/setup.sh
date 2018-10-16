@@ -236,8 +236,7 @@ func_package_deps(){
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
   || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ] \
-  || [ "${os}" == "\"void\"" ]; then
+  || [ "${os}" == "ubuntu" ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
       && arg=" DEBIAN_FRONTEND=noninteractive" \
@@ -252,7 +251,7 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-# sudo                   - its everywhere
+    # sudo                   - its everywhere
     # unzip                  - used for de-compressing files during setup
     # git                    - used for setup and keeping up-to-date
     # mingw-w64              - cross compiling c payloads
@@ -296,6 +295,45 @@ func_package_deps(){
         echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
       fi
     fi
+
+  elif [ "${os}" == '"void"' ]; then
+    ## Update XBPS
+    echo -e " [*] ${YELLOW}Updating XBPS${RESET}\n"
+    sudo xbps-install -Suy
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with xbps-install -Suy (1): $?"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+    sudo xbps-install -uy sudo \
+      unzip \
+      git \
+      ruby \
+      python3
+    if [[ "$?" -ne "0" && "$?" -ne "6" ]]; then
+      if grep -v "up to date"; then
+        msg="Failed with installing dependencies (1): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    fi
+    echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via pip3)...${RESET}\n"
+    sudo xbps-install -uy python3-pip
+    if [[ "$?" -ne "0" && "$?" -ne "6" ]]; then
+      if grep -v "up to date"; then
+        msg="Failed with installing dependencies (8): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    fi
+    sudo pip3 install pycrypto
+    if [[ "$?" -ne "0" ]]; then
+      if grep -vq "already satisfied"; then
+        msg="Failed with installing pip3 (1): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    fi
+
   elif [ "${os}" == '"elementary"' ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
@@ -314,7 +352,7 @@ func_package_deps(){
     sudo ${arg} apt-get install -y mingw-w64 monodevelop mono-mcs unzip ruby golang wget git \
       python python-crypto python-pefile python-pip ca-certificates python3-pip winbind python3-crypto
     if [[ "$?" -ne "0" ]]; then
-      msg="Failed with installing dependencies (2: $?"
+      msg="Failed with installing dependencies (2): $?"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
@@ -433,14 +471,14 @@ func_package_deps(){
       echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries (via APT)${RESET}\n"
       if [ "${os}" == "ubuntu" ] \
       || [ "${os}" == "linuxmint" ]; then
-        ## Special urghbuntu derivative snowflakes. Now with even *more* special.   
+        ## Special urghbuntu derivative snowflakes. Now with even *more* special.
         if [ "${osmajversion}" -ge "17" ] \
         && [ "${os}" == "ubuntu" ]; then
           # Wine package was renamed in Arty
-          sudo ${arg} apt-get -y -qq install wine-stable        
-		    else
+          sudo ${arg} apt-get -y -qq install wine-stable
+                    else
           sudo ${arg} apt-get -y -qq install wine wine1.6 wine1.6-i386
-		    fi
+                    fi
         if [[ "$?" -ne "0" ]]; then
           msg="Failed with installing wine (1): $?"
           errors="${errors}\n${msg}"
@@ -510,7 +548,19 @@ func_package_deps(){
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
+
+  ## Void Linux
+  elif [ "${os}" == '"void"' ]; then
+    sudo xbps-install -uy wine-32bit wine-mono wine-gecko
+    if [[ "$?" -ne "0" ]]; then
+      if grep -v "up to date"; then
+        msg="Failed with installing wine (7): $?"
+        errors="${errors}\n${msg}"
+        echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+      fi
+    fi
   fi
+
   ## </wine>
 
 
@@ -583,7 +633,6 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
   fi
-
 
   ## Function done
   echo -e "\n\n [*] ${YELLOW}Finished package installation${RESET}\n"
