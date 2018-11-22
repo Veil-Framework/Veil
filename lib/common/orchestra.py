@@ -201,7 +201,7 @@ class Conductor:
         print( " [i] Veil configuration file: /etc/veil/settings.py" )
         for i in dir(settings):
             if i.startswith('_'): continue
-            print( " [i] {0}: {1}".format( i , exec( "print ( settings." + i + " )" ) ), end='', flush=True)
+            print( " [i] {0}: {1}".format( i , eval( 'settings.' + str(i) )))
         input( '\n\nOptions shown. Press enter to continue' )
         return
 
