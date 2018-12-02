@@ -369,14 +369,67 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-  elif [ "${os}" ==  "arch" ] \
-  || [ "${os}" == "blackarch" ]; then
+  elif [ "${os}" == "blackarch" ]; then
     sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
       mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python-pip krb5 samba
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (4): $?"
       errors="${errors}\n${msg}"
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+    ## Install pefile for python2 using pip, rather than via AUR as the package is currently broken.
+    sudo pip2 install pefile
+    if [[ "$?" -ne "0" ]]; then
+      msg="Failed with pip2 install (1): $?"
+      errors="${errors}\n${msg}"
+      echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
+    fi
+
+  elif [ "${os}" == "arch" ]; then
+    AUR_packages()
+    {
+      if [ $1 == 'yay' ]; then
+        if [ "${silent}" == true ]; then
+          yay -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads --noconfirm
+        else
+          yay -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads
+        fi
+      elif [ $1 == 'yaourt' ]; then
+        if [ "${silent}" == true ]; then
+          yaourt -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads --noconfirm
+        else
+          yaourt -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads
+        fi
+      fi
+    }
+    sudo pacman -Sy ${arg} --needed mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python-pip krb5 samba
+    if [ $(id -u) -eq 0 ]; then
+      echo "\n\n Insert your non-root user:\n"
+      read $nonrootuser
+      su - $nonrootuser
+    fi
+    if pacman -Qs yay > /dev/null ; then
+      AUR_packages "yay"
+    elif pacman -Qs yaourt > /dev/null ; then
+      AUR_packages "yaourt"
+    else
+      git clone https://aur.archlinux.org/yay.git ~/Downloads/yay
+      makepkg -si ~/Downloads/yay
+      rm -rf ~/Downloads/yay
+      sudo pacman -Syyu
+      AUR_packages "yay"
+      echo -e "\n\n [?] ${BOLD}Yay has been installed to install some dependencies.${RESET}\n"
+      echo -en "     Do you want to keep yay installed? ([${BOLD}y${RESET}]es/[${BOLD}s${RESET}]ilent/[${BOLD}N${RESET}]o): "
+      
+      if [ "${keepyay} == 'y'" ] \
+      || [ "${keepyay} == 'yes'" ]; then
+        echo -e "\n\n ${GREN}yay will remain installed on your system. \n"
+      elif [ "${install}" == 'n' ] \
+      || [ "${install}" == 'no' ]; then
+        echo -e "\n\n ${RED}yay will be removed from your system.\n"
+        sudo pacman -Rns yay
+      fi
     fi
 
     ## Install pefile for python2 using pip, rather than via AUR as the package is currently broken.
