@@ -391,15 +391,15 @@ func_package_deps(){
     {
       if [ $1 == 'yay' ]; then
         if [ "${silent}" == true ]; then
-          yay -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads --noconfirm
+          yay -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads --noconfirm
         else
-          yay -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads
+          yay -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads
         fi
       elif [ $1 == 'yaourt' ]; then
         if [ "${silent}" == true ]; then
-          yaourt -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads --noconfirm
+          yaourt -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads --noconfirm
         else
-          yaourt -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-gcc-base mingw-w64-winpthreads
+          yaourt -S mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads
         fi
       fi
     }
