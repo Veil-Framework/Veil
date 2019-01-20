@@ -39,7 +39,7 @@ apt -y install veil
 
 **NOTE**:
 - Installation must be done with superuser privileges. If you are not using the root account (as default with Kali Linux), prepend commands with `sudo` or change to the root user before beginning.
-- Your package manager may be different to `apt`.
+- Your package manager may be different to `apt`. You will also need an X server running, either on the system itself, or on your local system.
 
 ```bash
 sudo apt-get -y install git
