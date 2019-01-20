@@ -296,7 +296,7 @@ func_package_deps(){
       fi
     fi
 
-  elif [ "${os}" == '"void"' ]; then
+  elif [ "${os}" == "void" ]; then
     ## Update XBPS
     echo -e " [*] ${YELLOW}Updating XBPS${RESET}\n"
     sudo xbps-install -Suy
@@ -334,7 +334,7 @@ func_package_deps(){
       fi
     fi
 
-  elif [ "${os}" == '"elementary"' ]; then
+  elif [ "${os}" == "elementary" ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
       && arg=" DEBIAN_FRONTEND=noninteractive" \
