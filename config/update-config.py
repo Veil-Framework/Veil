@@ -193,7 +193,7 @@ if __name__ == '__main__':
         options["PAYLOAD_SOURCE_PATH"] = "/var/lib/veil/output/source/"
 
         # Kali
-        if issue.startswith( "Kali" ):
+        if issue.startswith( ("Kali", "Parrot") ):
             options["OPERATING_SYSTEM"] = "Kali"
             options["METASPLOIT_PATH"] = "/usr/share/metasploit-framework/"
             options["MSFVENOM_PATH"] = "/usr/bin/"
