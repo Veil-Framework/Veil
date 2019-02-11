@@ -25,6 +25,7 @@ The following OSs are likely able to run Veil:
 - Linux Mint
 - Parrot Security
 - Ubuntu 15.10+
+- Void Linux
 
 ## Setup
 
