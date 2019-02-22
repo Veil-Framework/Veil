@@ -1027,6 +1027,7 @@ elif [ "${os}" == "debian" ]; then
   fi
 elif [ "${os}" == "fedora" ]; then
   echo -e " [I] ${YELLOW}Fedora ${osversion} ${arch} detected...${RESET}\n"
+  [[ -z "$osmajversion" ]] && osmajversion=$osversion
   if [[ "${osmajversion}" -lt "22" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported on Fedora 22 or higher!${RESET}\n"
     exit 1
