@@ -1,3 +1,7 @@
+[2019-06-17]
+     Released.: 3.1.12
+     Fixed....: Pyherion including tabs in imports could cause syntax errors, tabs are now stripped only for imports
+
 [2018-05-17]
      Released.: 3.1.11
      Modified.: Golang/meterpreter/* payloads have big fixed when injection via heap. Thanks to Carlos for pointing this out

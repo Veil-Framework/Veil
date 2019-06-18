@@ -201,7 +201,7 @@ def pyherion(code):
     for line in code.split("\n"):
         if not line.startswith("#"): # ignore commented imports...
             if "import" in line:
-                imports.append(line)
+                imports.append(line.strip('\t'))
             else:
                 codebase.append(line)
 

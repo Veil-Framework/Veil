@@ -15,7 +15,7 @@ except ImportError:
     sys.exit()
 
 # Current version of Veil
-veil_version = "3.1.11"
+veil_version = "3.1.12"
 
 
 def title_screen():
