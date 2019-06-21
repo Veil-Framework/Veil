@@ -97,7 +97,7 @@ class MainMenuCompleter(object):
                 parts = name.split("/")
 
                 # iterate down the split parts so we can handle the nested payload structure
-                for x in xrange(len(parts)):
+                for x in range(len(parts)):
 
                     # if the first part of the iterated payload matches the language, append it
                     if parts[x] == lang:
@@ -107,7 +107,7 @@ class MainMenuCompleter(object):
 
         return res
 
-    def complete(self, text, state):
+    def complete(self, state):
 
         "Generic readline completion entry point."
         buffer = readline.get_line_buffer()
@@ -196,9 +196,10 @@ class PayloadCompleter(object):
             if args[0] != '':
                 if args[0].strip() == "LHOST":
                     # autocomplete the IP for LHOST
+
                     if settings.DISTRO == 'Debian':
                         ip_output = subprocess.getoutput("ip a").split("\n")[8][9:].split('/')[0]
-                    ip_output = subprocess.getoutput("/sbin/ifconfig eth0").split("\n")[1].split()[1]
+
                     if 'addr' in ip_output:
                         ip_output = ip_output[5:]
                     res = [ip_output] + [None]
@@ -223,7 +224,7 @@ class PayloadCompleter(object):
 
         return res
 
-    def complete(self, text, state):
+    def complete(self, state):
         """
         Generic readline completion entry point.
         """
@@ -266,7 +267,7 @@ class MSFCompleter(object):
     def __init__(self, payloadTree):
         self.payloadTree = payloadTree
 
-    def complete(self, text, state):
+    def complete(self, state):
 
         buffer = readline.get_line_buffer()
         line = readline.get_line_buffer().split()
@@ -421,7 +422,7 @@ class PathCompleter(object):
         # treat the last arg as a path and complete it
         return self._complete_path(args[-1])
 
-    def complete(self, text, state):
+    def complete(self, state):
 
         buffer = readline.get_line_buffer()
         line = readline.get_line_buffer().split()
@@ -517,7 +518,7 @@ class OrdnanceCompleter(object):
 
         return res
 
-    def complete(self, text, state):
+    def complete(self, state):
         """
         Generic readline completion entry point.
         """
@@ -573,7 +574,6 @@ class VeilMainMenuCompleter(object):
             res = [m for m in tools] + [None]
 
         else:
-            tools = []
             for name in self.tools:
                 if name.lower().startswith(args[0].lower()):
                     return [name + ' '] + [None]
@@ -594,14 +594,13 @@ class VeilMainMenuCompleter(object):
             res = [m for m in tools] + [None]
 
         else:
-            tools = []
             for name in self.tools:
                 if name.lower().startswith(args[0].lower()):
                     return [name + ' '] + [None]
 
         return res
 
-    def complete(self, text, state):
+    def complete(self, state):
 
         "Generic readline completion entry point."
         buffer = readline.get_line_buffer()
