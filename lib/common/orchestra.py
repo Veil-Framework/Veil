@@ -17,7 +17,7 @@ try:
     sys.path.append("/etc/veil/")
     import settings
 except ImportError:
-    print("\n [!] ERROR #1-2: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py")))
+    print("\n [!] ERROR #1-2: Can't import /etc/veil/settings.py.   Run: %s\n" % (os.path.abspath("./config/update-config.py")))
     sys.exit()
 
 
@@ -49,7 +49,7 @@ class Conductor:
             print(helpers.color(' [!] ERROR: You did not provide a valid tool name!', warning=True))
             sys.exit()
 
-    def list_tools(self, show_header = True):
+    def list_tools(self, show_header=True):
         # Did we run a command?
         if show_header:
             # show title bar
