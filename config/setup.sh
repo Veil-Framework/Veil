@@ -5,6 +5,7 @@
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
 
 if [ "${os}" == "arch" ] \
+|| [ "${os}" == "manjaro" ]\
 || [ "${os}" == "blackarch" ] \
 || [ "${os}" == "debian" ] \
 || [ "${os}" == "deepin" ] \
@@ -32,12 +33,12 @@ fi
 
 userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
-if [ "${os}" == "\"void\"" ]; then
+if [ "${os}" == "manjaro" ]; then
   osversion="$(uname -r)"
 else
   osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
 fi
-if [ "${os}" == "\"void\"" ]; then
+if [ "${os}" == "manjaro" ]; then
   osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
 else
   osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
@@ -369,8 +370,8 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-  elif [ "${os}" == "blackarch" ]; then
-    sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
+  elif [ "${os}" == "blackarch" ];then
+     sudo pacman -Sy ${arg} --needed mingw-w64-binutils mingw-w64-crt mingw-w64-gcc mingw-w64-headers mingw-w64-winpthreads \
       mono mono-tools mono-addins python2-pip wget unzip ruby python python2 python-crypto gcc-go ca-certificates base-devel python-pip krb5 samba
     if [[ "$?" -ne "0" ]]; then
       msg="Failed with installing dependencies (4): $?"
@@ -386,7 +387,8 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-  elif [ "${os}" == "arch" ]; then
+  elif [ "${os}" == "arch" ] \
+  || [ "${os}" == "manjaro" ]; then
     AUR_packages()
     {
       if [ $1 == 'yay' ]; then
@@ -421,7 +423,7 @@ func_package_deps(){
       AUR_packages "yay"
       echo -e "\n\n [?] ${BOLD}Yay has been installed to install some dependencies.${RESET}\n"
       echo -en "     Do you want to keep yay installed? ([${BOLD}y${RESET}]es/[${BOLD}s${RESET}]ilent/[${BOLD}N${RESET}]o): "
-      
+
       if [ "${keepyay} == 'y'" ] \
       || [ "${keepyay} == 'yes'" ]; then
         echo -e "\n\n ${GREN}yay will remain installed on your system. \n"
@@ -589,7 +591,8 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
   elif [ "${os}" == "arch" ] \
-  || [ "${os}" == "blackarch" ]; then
+  || [ "${os}" == "blackarch" ] \
+  || [ "${os}" == "manjaro" ]; then
     echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via PACMAN)${RESET}\n"
     if grep -Fxq "#[multilib]" /etc/pacman.conf; then
       echo "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
@@ -1036,6 +1039,8 @@ else
   os="$( awk -F '["=]' '/^ID=/ {print $2}' /etc/os-release 2>&- | cut -d'.' -f1 )"
   if [ "${os}" == "arch" ]; then
     echo -e " [I] ${YELLOW}Arch Linux ${arch} detected...${RESET}\n"
+  elif [ "${os}" == "manjaro" ]; then
+    echo -e " [I] ${YELLOW}manjaro Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "blackarch" ]; then
     echo -e " [I] ${YELLOW}BlackArch Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "debian" ]; then
