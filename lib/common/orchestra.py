@@ -80,7 +80,6 @@ class Conductor:
 
     def main_menu(self):
         # default blank command for the main menu loop
-        main_menu_command = ""
         show_header = True
 
         # Try except to catch keyboard interrupts
@@ -128,7 +127,6 @@ class Conductor:
                                 if int(tool_choice) == tool_number:
                                     tool_object.tool_main_menu()
                                 tool_number += 1
-                            show_header = True
 
                         # Else if selecting payload by name
                         else:
@@ -136,7 +134,6 @@ class Conductor:
                                 # if the entered number matches the payload, use that payload
                                 if tool_choice.lower() == tool_object.cli_name.lower():
                                     tool_object.tool_main_menu()
-                                    show_header = True
 
                         # Once done with tool, clear main menu command
                         show_header = True
@@ -198,7 +195,7 @@ class Conductor:
 
     # Show options
     def options_veil(self):
-        print( " [i] Veil configuration file: /etc/veil/settings.py" )
+        print(" [i] Veil configuration file: /etc/veil/settings.py" )
         for i in dir(settings):
             if i.startswith('_'): continue
             print( " [i] {0}: {1}".format( i , eval( 'settings.' + str(i) )))
