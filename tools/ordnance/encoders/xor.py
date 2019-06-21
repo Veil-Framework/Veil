@@ -94,7 +94,7 @@ class EncoderModule:
         # Ensure a key was found... if not, error out
         if self.xor_key == 0x00:
             print(" [!] ERROR: No key found... Stop being so picky and change your bad chars!")
-            exit
+            exit(1)
         else:
             # XOR all the things
             # Justin, your code comments are awesome
