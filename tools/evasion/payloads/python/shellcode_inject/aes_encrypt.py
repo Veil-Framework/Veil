@@ -5,8 +5,6 @@ uses the key within the file to decrypt the shellcode, injects it into memory, a
 Module built by @christruncer
 """
 
-from datetime import date
-from datetime import timedelta
 from tools.evasion.evasion_common import encryption
 from tools.evasion.evasion_common import evasion_helpers
 from tools.evasion.evasion_common import gamemaker
