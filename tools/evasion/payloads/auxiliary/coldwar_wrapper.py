@@ -12,10 +12,7 @@ from lib.common import helpers
 from binascii import hexlify
 import settings
 import zipfile
-import random
-import string
 import os
-import sys
 
 
 class PayloadModule:
