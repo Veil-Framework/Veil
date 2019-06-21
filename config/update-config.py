@@ -231,7 +231,6 @@ if __name__ == '__main__':
         # Check the paths are correct (VEIL_PATH)
         while not os.path.isdir( options["VEIL_PATH"] ):
             print( "\n [i] Can't find Veil's path?   Run: %s --force --silent" % ( os.path.abspath("./config/setup.sh" ) ) )
-            path = str(path)
             path = input( " [>] Please enter the directory to Veil (e.g. /opt/veil/): " )
             options["VEIL_PATH"] = path
         if not options["VEIL_PATH"].endswith('/'):
