@@ -6,7 +6,7 @@ Take an options dictionary and update /etc/veil/settings.py
 Able to call this by doing: Veil.py --config
 """
 
-import platform, os, sys, pwd
+import platform, os, sys
 
 def generateConfig(options):
 
