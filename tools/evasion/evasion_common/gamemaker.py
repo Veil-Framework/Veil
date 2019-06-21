@@ -381,8 +381,6 @@ def senecas_games(evasion_payload):
         if evasion_payload.required_options["USERPROMPT"][0].lower() != 'x':
 
             flags = evasion_helpers.randomString()
-            title_bar_prompt = evasion_helpers.randomString()
-            message_prompt = evasion_helpers.randomString()
             msg_box = evasion_helpers.randomString()
 
             check_code += '\t' * num_tabs_required + 'use Win32;\n'
@@ -762,7 +760,6 @@ def senecas_games(evasion_payload):
         rand_hostname = evasion_helpers.randomString()
         rand_error2 = evasion_helpers.randomString()
         rand_processor = evasion_helpers.randomString()
-        rand_domain = evasion_helpers.randomString()
 
         if evasion_payload.required_options["USERNAME"][0].lower() != "x":
             check_code += rand_username + ", " + rand_error1 + " := user.Current()\n"
@@ -798,7 +795,6 @@ def senecas_games(evasion_payload):
 
         if evasion_payload.required_options["UTCCHECK"][0].lower() != "false":
 
-            tzone_abbrev = evasion_helpers.randomString()
             tzone_offset = evasion_helpers.randomString()
 
             check_code += '_, ' + tzone_offset + ' := time.Now().Zone()\n'
