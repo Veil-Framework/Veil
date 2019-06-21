@@ -83,7 +83,6 @@ class PayloadModule:
 
         # How I'm tracking the number of nested tabs needed
         # to make the payload
-        num_tabs_required = 0
 
         payload_code2, num_tabs_required = gamemaker.senecas_games(self)
         payload_code = payload_code + payload_code2

@@ -60,7 +60,6 @@ class PayloadModule:
 
         # randomly generate out variable names
         ptrName = evasion_helpers.randomString()
-        threadName = evasion_helpers.randomString()
         heap_name = evasion_helpers.randomString()
         valloc_random = evasion_helpers.randomString()
         rtlmove_random = evasion_helpers.randomString()

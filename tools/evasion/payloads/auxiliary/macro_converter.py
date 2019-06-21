@@ -76,7 +76,6 @@ class PayloadModule:
         shell = "Shell(exec)"
         bottom = "End Sub\r\n\r\n"
 
-        PayloadCode = ""
         PayloadCode = top + "\r\n" + payL + "\r\n\r\n" + execStr + "\r\n\r\n" + shell + "\r\n\r\n" + bottom + "\r\n"
 
         # Return
@@ -85,7 +84,6 @@ class PayloadModule:
 
     def formStr(self, varstr, instr):
         holder = []
-        str1 = ""
         str2 = ""
         print(self.required_options['ARCHITECTURE'])
         if varstr == "exec" and self.required_options['ARCHITECTURE'][0] == "x64":

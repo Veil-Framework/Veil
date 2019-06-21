@@ -58,7 +58,6 @@ class PayloadModule:
         kernel32 = evasion_helpers.randomString()
         procVirtualAlloc = evasion_helpers.randomString()
         base64Url = evasion_helpers.randomString()
-        virtualAlloc = evasion_helpers.randomString()
         size = evasion_helpers.randomString()
         allocvarout = evasion_helpers.randomString()
         err = evasion_helpers.randomString()
@@ -88,7 +87,6 @@ class PayloadModule:
         heapallocvariable = evasion_helpers.randomString()
         heapcreateout = evasion_helpers.randomString()
         cust_func = evasion_helpers.randomString()
-        errorvariable = evasion_helpers.randomString()
         errorvariabledos = evasion_helpers.randomString()
 
         # sandbox check code

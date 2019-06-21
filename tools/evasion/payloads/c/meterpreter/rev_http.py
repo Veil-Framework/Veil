@@ -162,11 +162,8 @@ class PayloadModule:
         code += "return %s;}\n" %(my_socket_name)
 
         # build main() code
-        size_name = evasion_helpers.randomString()
         buffer_name = evasion_helpers.randomString()
-        function_name = evasion_helpers.randomString()
         my_socket_name = evasion_helpers.randomString()
-        count_name = evasion_helpers.randomString()
         request_buf_name = evasion_helpers.randomString()
         buf_counter_name = evasion_helpers.randomString()
         bytes_read_name = evasion_helpers.randomString()

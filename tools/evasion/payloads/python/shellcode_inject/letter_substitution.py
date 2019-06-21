@@ -69,7 +69,6 @@ class PayloadModule:
 
         # Generate Random Variable Names
         subbed_shellcode_variable_name = evasion_helpers.randomString()
-        ShellcodeVariableName = evasion_helpers.randomString()
         rand_decoded_letter = evasion_helpers.randomString()
         rand_correct_letter = evasion_helpers.randomString()
         rand_sub_scheme = evasion_helpers.randomString()

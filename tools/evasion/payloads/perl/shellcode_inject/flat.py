@@ -54,7 +54,6 @@ class PayloadModule:
 
         # How I'm tracking the number of nested tabs needed
         # to make the payload
-        num_ends_required = 0
         payload_code = "use Win32::API;\n"
 
         # Generate the shellcode

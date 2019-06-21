@@ -83,9 +83,6 @@ class PayloadModule:
         randctypes = evasion_helpers.randomString()
         rand_virtual_protect = evasion_helpers.randomString()
 
-        num_tabs_required = 0
-        payload_code = ""
-
         payload_code, num_tabs_required = gamemaker.senecas_games(self)
 
         if self.required_options["INJECT_METHOD"][0].lower() == "virtual":

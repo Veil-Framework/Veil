@@ -83,7 +83,6 @@ class PayloadModule:
         heapallocvariable = evasion_helpers.randomString()
         heapcreateout = evasion_helpers.randomString()
         allocvarout = evasion_helpers.randomString()
-        errorvariable = evasion_helpers.randomString()
         errorvariabledos = evasion_helpers.randomString()
         cust_func = evasion_helpers.randomString()
 

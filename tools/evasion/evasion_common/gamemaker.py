@@ -128,7 +128,6 @@ def senecas_games(evasion_payload):
         if evasion_payload.required_options["MINRAM"][0].lower() != "false":
 
             class_name = evasion_helpers.randomString()
-            field_name = evasion_helpers.randomString()
             memory_status = evasion_helpers.randomString()
 
             check_code += '\t' * num_tabs_required + 'import ctypes\n'
@@ -919,7 +918,6 @@ def senecas_games(evasion_payload):
             ret_val = evasion_helpers.randomString()
             exe = evasion_helpers.randomString()
             count_running_procs = evasion_helpers.randomString()
-            wut = evasion_helpers.randomString()
 
             check_code += 'var ' + kernel32 + ' = syscall.NewLazyDLL("kernel32.dll")\n'
             check_code += 'var ' + createtoolhelp + ' = ' + kernel32 + '.NewProc("CreateToolhelp32Snapshot")\n'

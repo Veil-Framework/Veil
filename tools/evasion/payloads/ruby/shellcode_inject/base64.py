@@ -47,14 +47,9 @@ class PayloadModule:
 
         # How I'm tracking the number of nested tabs needed
         # to make the payload
-        num_ends_required = 0
-        payload_code = ""
 
         # randomly generate out variable names
-        payloadName = evasion_helpers.randomString()
-        ptrName = evasion_helpers.randomString()
         threadName = evasion_helpers.randomString()
-        heap_name = evasion_helpers.randomString()
 
         payload_code = "require 'rubygems'\n"
         payload_code += "require 'win32/api'\n"

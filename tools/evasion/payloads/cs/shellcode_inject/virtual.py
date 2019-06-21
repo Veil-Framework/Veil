@@ -79,7 +79,6 @@ class PayloadModule:
         pinfoName = evasion_helpers.randomString()
         rand_bool = evasion_helpers.randomString()
         random_out = evasion_helpers.randomString()
-        num_tabs_required = 0
 
         # get 12 random variables for the API imports
         r = [evasion_helpers.randomString() for x in range(16)]
