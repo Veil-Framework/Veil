@@ -7,7 +7,6 @@ Module built by @harmj0y
 Updated by @ChrisTruncer
 """
 
-from datetime import date
 from tools.evasion.evasion_common import evasion_helpers
 from tools.evasion.evasion_common import gamemaker
 

@@ -9,8 +9,6 @@ import sys
 from lib.common import helpers
 from lib.common import completer
 from tools.ordnance.ordnance_common import ordnance_helpers
-from tools.ordnance.encoders import *
-from tools.ordnance.payloads.x86 import *
 
 
 class Tools:
