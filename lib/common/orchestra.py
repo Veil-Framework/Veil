@@ -195,11 +195,11 @@ class Conductor:
 
     # Show options
     def options_veil(self):
-        print(" [i] Veil configuration file: /etc/veil/settings.py" )
+        print(" [i] Veil configuration file: /etc/veil/settings.py")
         for i in dir(settings):
             if i.startswith('_'): continue
-            print( " [i] {0}: {1}".format( i , eval( 'settings.' + str(i) )))
-        input( '\n\nOptions shown. Press enter to continue' )
+            print(" [i] {0}: {1}".format(i, eval('settings.' + str(i))))
+        input('\n\nOptions shown. Press enter to continue')
         return
 
     # Self update framework
