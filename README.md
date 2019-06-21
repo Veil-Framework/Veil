@@ -51,7 +51,7 @@ cd Veil/
 
 ### ./config/setup.sh // Setup Files
 
-This file is responsible for installing all the dependences of Veil. This includes all the WINE environment, for the Windows side of things. It will install all the necessary Linux packages and GoLang, as well as Python, Ruby and AutoIT for Windows. In addition, it will also run `./config/update-config.py` for your environment.
+This file is responsible for installing all the dependencies of Veil. This includes all the WINE environment, for the Windows side of things. It will install all the necessary Linux packages and GoLang, as well as Python, Ruby and AutoIT for Windows. In addition, it will also run `./config/update-config.py` for your environment.
 
 It includes two optional flags, `--force` and `--silent`:
 ```bash
