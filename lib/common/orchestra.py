@@ -17,7 +17,7 @@ try:
     sys.path.append("/etc/veil/")
     import settings
 except ImportError:
-    print( "\n [!] ERROR #1-2: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath( "./config/update-config.py" ) ) )
+    print("\n [!] ERROR #1-2: Can't import /etc/veil/settings.py.   Run: %s\n" % ( os.path.abspath("./config/update-config.py")))
     sys.exit()
 
 
@@ -214,7 +214,7 @@ class Conductor:
             if os.path.exists("/usr/share/veil/config/setup.sh"):
                 os.system('/usr/share/veil/config/setup.sh -f -s')
             else:
-                print("\n [!] ERROR: Kali is missing %s\n" % ("/usr/share/veil/config/setup.sh"))
+                print("\n [!] ERROR: Kali is missing /usr/share/veil/config/setup.sh\n")
                 os.system('./config/setup.sh -f -s')
         else:
             os.system('./config/setup.sh -f -s')
@@ -227,7 +227,7 @@ class Conductor:
             if os.path.exists("/usr/share/veil/config/update-config.py"):
                 os.system('cd /usr/share/veil/config/; ./update-config.py')
             else:
-                print("\n [!] ERROR: Kali is missing %s\n" % ("/usr/share/veil/config/update-config.py"))
+                print("\n [!] ERROR: Kali is missing /usr/share/veil/config/update-config.py \n")
                 os.system('cd ./config/; ./update-config.py')
         else:
             os.system('cd ./config/; ./update-config.py')
