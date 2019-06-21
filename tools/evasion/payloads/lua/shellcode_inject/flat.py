@@ -5,7 +5,6 @@ Module built by @the_grayhound
 Updated by @ChrisTruncer
 """
 
-from tools.evasion.evasion_common import evasion_helpers
 from tools.evasion.evasion_common import shellcode_help
 
 
