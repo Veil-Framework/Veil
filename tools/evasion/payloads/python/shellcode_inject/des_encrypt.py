@@ -8,8 +8,6 @@ Great examples and code adapted from:
 Module built by @christruncer
 """
 
-from datetime import date
-from datetime import timedelta
 from tools.evasion.evasion_common import encryption
 from tools.evasion.evasion_common import evasion_helpers
 from tools.evasion.evasion_common import gamemaker
