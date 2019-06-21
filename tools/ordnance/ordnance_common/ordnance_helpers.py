@@ -4,11 +4,11 @@ This file contains random helper functions for Veil-Ordnance
 
 import os
 import random
-import re
 import socket
 import string
 import struct
 import sys
+import ipaddress
 from lib.common import helpers
 
 # Try to find and import the settings.py config file
@@ -25,7 +25,7 @@ def check_lhost(lhost_value):
         return True
     else:
         try:
-            lhost_value = socket.gethostbyname(lhost_value)
+            socket.gethostbyname(lhost_value)
             return True
         except socket.gaierror:
             return False
@@ -87,14 +87,9 @@ def title_screen():
 
 
 def validate_ip(val_ip):
-    # This came from (Mult-line link for pep8 compliance)
-    # http://python-iptools.googlecode.com/svn-history/r4
-    # /trunk/iptools/__init__.py
-    ip_re = re.compile(r'^(\d{1,3}\.){0,3}\d{1,3}$')
-    if ip_re.match(val_ip):
-        quads = (int(q) for q in val_ip.split('.'))
-        for q in quads:
-            if q > 255:
-                return False
+    try:
+        ipaddress.IPv4Address(val_ip)
         return True
-    return False
+
+    except ipaddress.AddressValueError:
+        return False
