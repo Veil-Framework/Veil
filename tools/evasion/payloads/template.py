@@ -7,13 +7,13 @@ Module built by @<author>
 """
 
 # framework import to access shellcode generation
-from modules.common import shellcode
+from tools.evasion.evasion_common import shellcode_help as shellcode
 
 # framework import to access common helper methods, including randomization
-from modules.common import helpers
+from lib.common import helpers
 
 # framework import to access encryption and source code obfuscation methods
-from modules.common import encryption
+from tools.evasion.evasion_common import encryption
 
 # the main config file
 import settings
