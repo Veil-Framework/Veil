@@ -94,7 +94,6 @@ def buildAryaLauncher(raw):
     payload_code += "else { %s += t[i]; }} return %s; }\n" % (targetStringName, targetStringName)
 
     base64PayloadName = evasion_helpers.randomString()
-    assemblyName = evasion_helpers.randomString()
 
     # build out Main()
     assemblyName = evasion_helpers.randomString()
