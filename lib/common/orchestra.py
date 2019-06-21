@@ -101,7 +101,8 @@ class Conductor:
                     print("Available Commands:\n")
                     for command in sorted(self.mainmenu_commands.keys()):
                         print("\t" + helpers.color(command) + '\t\t\t' + self.mainmenu_commands[command])
-                    print()
+
+                    print('\n')
                     show_header = False
 
                 main_menu_command = input('Veil>: ').strip()
@@ -157,18 +158,14 @@ class Conductor:
                             for key, tool_object in sorted(self.imported_tools.items()):
                                 # If the entered number matches the tool, use that tool
                                 if int(info_choice) == tool_number:
-                                    print()
-                                    print(helpers.color(tool_object.cli_name) + " => " + tool_object.description)
-                                    print()
+                                    print('\n' + helpers.color(tool_object.cli_name) + " => " + tool_object.description + '\n')
                                 tool_number += 1
 
                         # If the entered name matches the tool, use that tool
                         else:
                             for key, tool_object in sorted(self.imported_tools.items()):
                                 if main_menu_command.split()[1].lower() == tool_object.cli_name.lower():
-                                    print()
-                                    print(helpers.color(tool_object.cli_name) + " => " + tool_object.description)
-                                    print()
+                                    print('\n' + helpers.color(tool_object.cli_name) + " => " + tool_object.description + '\n')
                     else:
                         show_header = True
 
@@ -191,7 +188,7 @@ class Conductor:
 
         except KeyboardInterrupt:
             print("\n\n" + helpers.color("^C.   Quitting...", warning=True))
-            sys.exit()
+            sys.exit(0)
 
     # Show options
     def options_veil(self):
