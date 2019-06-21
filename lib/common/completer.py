@@ -196,10 +196,9 @@ class PayloadCompleter(object):
             if args[0] != '':
                 if args[0].strip() == "LHOST":
                     # autocomplete the IP for LHOST
-
+                    ip_output = subprocess.getoutput("/sbin/ifconfig eth0").split("\n")[1].split()[1]
                     if settings.DISTRO == 'Debian':
                         ip_output = subprocess.getoutput("ip a").split("\n")[8][9:].split('/')[0]
-
                     if 'addr' in ip_output:
                         ip_output = ip_output[5:]
                     res = [ip_output] + [None]
@@ -422,7 +421,7 @@ class PathCompleter(object):
         # treat the last arg as a path and complete it
         return self._complete_path(args[-1])
 
-    def complete(self, state):
+    def complete(self, text, state):
 
         buffer = readline.get_line_buffer()
         line = readline.get_line_buffer().split()
@@ -594,6 +593,7 @@ class VeilMainMenuCompleter(object):
             res = [m for m in tools] + [None]
 
         else:
+            tools = []
             for name in self.tools:
                 if name.lower().startswith(args[0].lower()):
                     return [name + ' '] + [None]
