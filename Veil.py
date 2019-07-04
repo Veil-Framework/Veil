@@ -12,6 +12,8 @@ sys.dont_write_bytecode = True
 
 
 if __name__ == "__main__":
+    import os
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
     parser = argparse.ArgumentParser(
         add_help=False, description="Veil is a framework containing multiple\
