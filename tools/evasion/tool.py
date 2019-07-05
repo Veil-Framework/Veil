@@ -285,18 +285,18 @@ class Tools:
     def return_payload_object(self, user_selection):
         # This function handles returning the selected payload module object
         # to the calling function
-        counter_value = 1
-        for payload_path, payload_module in sorted(self.active_payloads.items()):
-            if user_selection.isdigit() and (0 < int(user_selection) <= len(self.active_payloads)):
-                if int(user_selection) == counter_value:
-                    return payload_module
-            else:
-                if user_selection.strip().lower() == payload_path:
-                    return payload_module
 
-            # Iterate counter for number based selection
-            counter_value += 1
-        return False
+        payloads = sorted(self.active_payloads.items())
+        payload_by_path = [payload for payload in payloads if payload[0] == user_selection.strip().lower()]
+
+        if user_selection.isdigit() and (0 < int(user_selection) <= len(self.active_payloads)):
+            #  minus 1 because menu starts counting at 1 not 0
+            user_selection = int(user_selection) - 1
+            return payloads[user_selection][1]
+        elif payload_by_path:
+            return payload_by_path[0][1]
+        else:
+            return False
 
     def tool_main_menu(self):
         # This is the main function where everything is called from
