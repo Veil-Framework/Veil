@@ -3,7 +3,6 @@ This is the conductor which controls everything
 """
 
 import glob
-import imp
 import os
 import readline
 import sys
@@ -72,9 +71,8 @@ class Conductor:
         # (Evasion, Ordnance, Pillage, etc.)
         for name in glob.glob('tools/*/tool.py'):
             if name.endswith(".py") and ("__init__" not in name):
-                loaded_tool = imp.load_source(
-                    name.replace("/", ".").rstrip('.py'), name)
-                self.imported_tools[name] = loaded_tool.Tools(
+                module = helpers.load_module(name)
+                self.imported_tools[name] = module.Tools(
                     command_line_object)
         return
 

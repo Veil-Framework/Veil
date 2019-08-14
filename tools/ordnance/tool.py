@@ -3,7 +3,6 @@ This is the Veil-Ordnance module
 """
 
 import glob
-import imp
 import readline
 import sys
 from lib.common import helpers
@@ -121,17 +120,15 @@ class Tools:
     def load_encoders(self, cli_args):
         for name in sorted( glob.glob('tools/ordnance/encoders/*.py') ):
             if name.endswith(".py") and ("__init__" not in name):
-                loaded_encoder = imp.load_source(
-                    name.replace("/", ".").rstrip('.py'), name)
-                self.active_encoders[name] = loaded_encoder.EncoderModule(cli_args)
+                module = helpers.load_module(name)
+                self.active_encoders[name] = module.EncoderModule(cli_args)
         return
 
     def load_payloads(self, cli_args):
         for name in sorted( glob.glob('tools/ordnance/payloads/x86/*.py') ):
             if name.endswith(".py") and ("__init__" not in name):
-                loaded_payloads = imp.load_source(
-                    name.replace("/", ".").rstrip('.py'), name)
-                self.active_shellcode[name] = loaded_payloads.ShellcodeModule(cli_args)
+                module = helpers.load_module(name)
+                self.active_shellcode[name] = module.ShellcodeModule(cli_args)
         return
 
     def print_encoders(self):
