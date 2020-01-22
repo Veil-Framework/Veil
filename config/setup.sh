@@ -784,7 +784,7 @@ func_python_deps(){
 
   ## Use wine based pip to install dependencies
   echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's PIP pefile${RESET}\n"
-  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "--upgrade" "pip"
+  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "--upgrade" "pip==19.1.*"
   tmp="$?"
   if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to run (wine) Python pip... Exit code: ${tmp}"
