@@ -36,25 +36,21 @@ arch="$( uname -m )"
 
 if [ "${os}" == "manjaro" ]; then
   osversion="$(uname -r)"
-else
-  osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
-fi
-if [ "${os}" == "manjaro" ]; then
-  osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
-else
-  osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
-fi
-
-if [ "${os}" == "\"void\"" ]; then
+elif [ "${os}" == "\"void\"" ]; then
   osversion="$(uname -r)"
 else
   osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
 fi
-if [ "${os}" == "\"void\"" ]; then
+
+if [ "${os}" == "manjaro" ]; then
+  osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
+elif [ "${os}" == "\"void\"" ]; then
   osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
 else
-  osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
+  osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )" 
 fi
+
+
 veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
@@ -1053,6 +1049,8 @@ else
     echo -e " [I] ${YELLOW}Arch Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "blackarch" ]; then
     echo -e " [I] ${YELLOW}BlackArch Linux ${arch} detected...${RESET}\n"
+  elif [ "${os}" == "manjaro" ]; then
+    echo -e " [I] ${YELLOW}Manjaro Linux ${arch} detected...${RESET}\n"  
   elif [ "${os}" == "debian" ]; then
     echo -e " [!] ${YELLOW}Debian Linux sid/TESTING ${arch} *possibly* detected..."
     echo -e "     If you are not currently running Debian Testing, you should exit this installer!${RESET}\n"
