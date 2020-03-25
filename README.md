@@ -18,6 +18,7 @@ The following OSs are officially supported:
 The following OSs are likely able to run Veil:
 
 - Arch Linux
+- Manjaro Linux
 - BlackArch Linux
 - Deepin 15+
 - Elementary
