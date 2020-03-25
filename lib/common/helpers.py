@@ -8,6 +8,7 @@ import random
 import re
 import string
 import sys
+import importlib.util
 
 
 # Try to find and import the settings.py config file
@@ -160,3 +161,13 @@ def validate_port(port_number):
             return False
     except ValueError:
         return False
+
+
+def load_module(module_path):
+    """
+    Takes module path, return module object
+    """
+    spec = importlib.util.spec_from_file_location(module_path, module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module

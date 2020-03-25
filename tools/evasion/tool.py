@@ -3,7 +3,6 @@ This is the Veil-Evasion module
 """
 
 import glob
-import imp
 import os
 import readline
 import subprocess
@@ -246,9 +245,8 @@ class Tools:
         for x in range(1, 5):
             for name in glob.glob(join("tools/evasion/payloads/" + "*/" * x,'[!_]*.py')):
                 if name.endswith(".py") and ("__init__" not in name):
-                    loaded_payloads = imp.load_source(
-                        name.replace("/", ".").rstrip('.py'), name)
-                    self.active_payloads[name.replace('tools/evasion/payloads/', '')] = loaded_payloads.PayloadModule(cli_args)
+                    module = helpers.load_module(name)
+                    self.active_payloads[name.replace('tools/evasion/payloads/', '')] = module.PayloadModule(cli_args)
         return
 
     def print_options_screen(self, pload_object):
