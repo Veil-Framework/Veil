@@ -5,6 +5,7 @@
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
 
 if [ "${os}" == "arch" ] \
+|| [ "${os}" == "manjaro" ]\
 || [ "${os}" == "blackarch" ] \
 || [ "${os}" == "debian" ] \
 || [ "${os}" == "deepin" ] \
@@ -32,6 +33,18 @@ fi
 
 userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
+
+if [ "${os}" == "manjaro" ]; then
+  osversion="$(uname -r)"
+else
+  osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
+fi
+if [ "${os}" == "manjaro" ]; then
+  osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
+else
+  osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
+fi
+
 if [ "${os}" == "\"void\"" ]; then
   osversion="$(uname -r)"
 else
@@ -386,7 +399,8 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-  elif [ "${os}" == "arch" ]; then
+  elif [ "${os}" == "arch" ] \
+  || [ "${os}" == "manjaro" ]; then
     AUR_packages()
     {
       if [ $1 == 'yay' ]; then
@@ -589,6 +603,7 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
   elif [ "${os}" == "arch" ] \
+  || [ "${os}" == "blackarch" ] \
   || [ "${os}" == "blackarch" ]; then
     echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via PACMAN)${RESET}\n"
     if grep -Fxq "#[multilib]" /etc/pacman.conf; then
