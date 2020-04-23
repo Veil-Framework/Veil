@@ -1,3 +1,7 @@
+[2020-04-22]
+     Released.: 3.1.14
+     Modified.: Fix for #351, it was just superficial and never stopped the tool from running, but changes "is not" to !=
+
 [2020-03-25]
      Released.: 3.1.13
      Modified.: Imports now use new version of imports, and updated setup script (both were pull requests)

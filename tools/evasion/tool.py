@@ -191,7 +191,7 @@ class Tools:
             # -c
             if self.command_options.c is not None:
                 for payload_option in self.command_options.c:
-                    if payload_option is not '':
+                    if payload_option != '':
                         if "=" not in payload_option:
                             print(helpers.color(" [!] Payload option not entered in correct syntax.\n", warning=True))
                             sys.exit()
@@ -415,7 +415,7 @@ class Tools:
                     key = key.upper()
                     if key in selected_payload.required_options:
                         # Validate LHOST value
-                        if key is "LHOST":
+                        if key == "LHOST":
                             if helpers.validate_ip(value):
                                 selected_payload.required_options[key][0] = value
                             else:
@@ -423,7 +423,7 @@ class Tools:
                                 print(helpers.color(" [!] ERROR: You did not provide a valid IP!", warning=True))
                                 print()
                         # Validate LPORT
-                        elif key is "LPORT":
+                        elif key == "LPORT":
                             if helpers.validate_port(value):
                                 selected_payload.required_options[key][0] = value
                             else:

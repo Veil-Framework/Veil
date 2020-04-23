@@ -98,7 +98,7 @@ class Tools:
                 payload.cli_gen_shellcode()
                 self.final_shellcode = payload.customized_shellcode
                 # Check if an encoder is being called by the user
-                if self.command_options.encoder is not None:
+                if self.command_options.encoder != None:
                     encoder_found_here = False
                     if "BadChars" in payload.required_options:
                         payload.required_options["BadChars"][0] = self.command_options.bad_chars
@@ -376,7 +376,7 @@ class Tools:
                                 self.payload_options['RHOST'] = rhost_out
 
                             # Check if encoder is needed
-                            if payload.required_options["Encoder"][0] is not "None":
+                            if payload.required_options["Encoder"][0] != "None":
                                 self.use_encoder(payload)
                                 self.final_shellcode = payload.customized_shellcode
 
