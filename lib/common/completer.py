@@ -97,7 +97,7 @@ class MainMenuCompleter(object):
                 parts = name.split("/")
 
                 # iterate down the split parts so we can handle the nested payload structure
-                for x in xrange(len(parts)):
+                for x in range(len(parts)):
 
                     # if the first part of the iterated payload matches the language, append it
                     if parts[x] == lang:
