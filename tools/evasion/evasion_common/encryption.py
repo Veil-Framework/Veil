@@ -18,7 +18,7 @@ def aes_encryption(incoming_shellcode, encryption_pad=4):
     # return encrypted -> encoded shellcode and key
     random_aes_key = helpers.randomKey()
     iv = helpers.randomString(16)
-    aes_cipher_object = AES.new(random_aes_key, AES.MODE_CBC, iv)
+    aes_cipher_object = AES.new(random_aes_key.encode('utf8'), AES.MODE_CBC, iv.encode('utf8'))
     padded_shellcode = encryption_padding(incoming_shellcode, encryption_pad)
     encrypted_shellcode = aes_cipher_object.encrypt(padded_shellcode)
     encoded_ciphertext = base64.b64encode(encrypted_shellcode)
