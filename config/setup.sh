@@ -5,6 +5,7 @@
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
 
 if [ "${os}" == "arch" ] \
+|| [ "${os}" == "manjaro" ]\
 || [ "${os}" == "blackarch" ] \
 || [ "${os}" == "debian" ] \
 || [ "${os}" == "deepin" ] \
@@ -32,16 +33,24 @@ fi
 
 userprimarygroup="$( id -Gn "${trueuser}" | cut -d' ' -f1 )"
 arch="$( uname -m )"
-if [ "${os}" == "\"void\"" ]; then
+
+if [ "${os}" == "manjaro" ]; then
+  osversion="$(uname -r)"
+elif [ "${os}" == "\"void\"" ]; then
   osversion="$(uname -r)"
 else
   osversion="$( awk -F '=' '/^VERSION_ID=/ {print $2}' /etc/os-release 2>&- | sed 's/"//g' )"
 fi
-if [ "${os}" == "\"void\"" ]; then
+
+if [ "${os}" == "manjaro" ]; then
+  osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
+elif [ "${os}" == "\"void\"" ]; then
   osmajversion="$(uname -a | cut -f3 -d\ | cut -f-2 -d.)"
 else
-  osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )"
+  osmajversion="$( awk -F '["=]' '/^VERSION_ID=/ {print $3}' /etc/os-release 2>&- | cut -d'.' -f1 )" 
 fi
+
+
 veildir="/var/lib/veil"
 outputdir="${veildir}/output"
 dependenciesdir="${veildir}/setup-dependencies"
@@ -386,7 +395,8 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
 
-  elif [ "${os}" == "arch" ]; then
+  elif [ "${os}" == "arch" ] \
+  || [ "${os}" == "manjaro" ]; then
     AUR_packages()
     {
       if [ $1 == 'yay' ]; then
@@ -589,6 +599,7 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
   elif [ "${os}" == "arch" ] \
+  || [ "${os}" == "blackarch" ] \
   || [ "${os}" == "blackarch" ]; then
     echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via PACMAN)${RESET}\n"
     if grep -Fxq "#[multilib]" /etc/pacman.conf; then
@@ -784,7 +795,7 @@ func_python_deps(){
 
   ## Use wine based pip to install dependencies
   echo -e "\n\n [*] ${YELLOW}Installing (Wine) Python's PIP pefile${RESET}\n"
-  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "--upgrade" "pip"
+  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "--upgrade" "pip==19.1.*"
   tmp="$?"
   if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to run (wine) Python pip... Exit code: ${tmp}"
@@ -1038,6 +1049,8 @@ else
     echo -e " [I] ${YELLOW}Arch Linux ${arch} detected...${RESET}\n"
   elif [ "${os}" == "blackarch" ]; then
     echo -e " [I] ${YELLOW}BlackArch Linux ${arch} detected...${RESET}\n"
+  elif [ "${os}" == "manjaro" ]; then
+    echo -e " [I] ${YELLOW}Manjaro Linux ${arch} detected...${RESET}\n"  
   elif [ "${os}" == "debian" ]; then
     echo -e " [!] ${YELLOW}Debian Linux sid/TESTING ${arch} *possibly* detected..."
     echo -e "     If you are not currently running Debian Testing, you should exit this installer!${RESET}\n"

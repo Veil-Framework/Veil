@@ -49,7 +49,7 @@ def compiler(payload_object, invoked=False, cli_object=None):
         # Used when outputting exe files, go figure
         executable_filepath = settings.PAYLOAD_COMPILED_PATH + file_name + ".exe"
 
-        if payload_object.language is not "native" and payload_object.extension is not "war":
+        if payload_object.language != "native" and payload_object.extension != "war":
             with open(source_code_filepath, 'w') as source_file:
                 source_file.write(payload_object.payload_source_code)
 

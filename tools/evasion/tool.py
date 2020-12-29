@@ -3,7 +3,6 @@ This is the Veil-Evasion module
 """
 
 import glob
-import imp
 import os
 import readline
 import subprocess
@@ -192,7 +191,7 @@ class Tools:
             # -c
             if self.command_options.c is not None:
                 for payload_option in self.command_options.c:
-                    if payload_option is not '':
+                    if payload_option != '':
                         if "=" not in payload_option:
                             print(helpers.color(" [!] Payload option not entered in correct syntax.\n", warning=True))
                             sys.exit()
@@ -246,9 +245,8 @@ class Tools:
         for x in range(1, 5):
             for name in glob.glob(join("tools/evasion/payloads/" + "*/" * x,'[!_]*.py')):
                 if name.endswith(".py") and ("__init__" not in name):
-                    loaded_payloads = imp.load_source(
-                        name.replace("/", ".").rstrip('.py'), name)
-                    self.active_payloads[name.replace('tools/evasion/payloads/', '')] = loaded_payloads.PayloadModule(cli_args)
+                    module = helpers.load_module(name)
+                    self.active_payloads[name.replace('tools/evasion/payloads/', '')] = module.PayloadModule(cli_args)
         return
 
     def print_options_screen(self, pload_object):
@@ -285,18 +283,18 @@ class Tools:
     def return_payload_object(self, user_selection):
         # This function handles returning the selected payload module object
         # to the calling function
-        counter_value = 1
-        for payload_path, payload_module in sorted(self.active_payloads.items()):
-            if user_selection.isdigit() and (0 < int(user_selection) <= len(self.active_payloads)):
-                if int(user_selection) == counter_value:
-                    return payload_module
-            else:
-                if user_selection.strip().lower() == payload_path:
-                    return payload_module
 
-            # Iterate counter for number based selection
-            counter_value += 1
-        return False
+        payloads = sorted(self.active_payloads.items())
+        payload_by_path = [payload for payload in payloads if payload[0] == user_selection.strip().lower()]
+
+        if user_selection.isdigit() and (0 < int(user_selection) <= len(self.active_payloads)):
+            #  minus 1 because menu starts counting at 1 not 0
+            user_selection = int(user_selection) - 1
+            return payloads[user_selection][1]
+        elif payload_by_path:
+            return payload_by_path[0][1]
+        else:
+            return False
 
     def tool_main_menu(self):
         # This is the main function where everything is called from
@@ -417,7 +415,7 @@ class Tools:
                     key = key.upper()
                     if key in selected_payload.required_options:
                         # Validate LHOST value
-                        if key is "LHOST":
+                        if key == "LHOST":
                             if helpers.validate_ip(value):
                                 selected_payload.required_options[key][0] = value
                             else:
@@ -425,7 +423,7 @@ class Tools:
                                 print(helpers.color(" [!] ERROR: You did not provide a valid IP!", warning=True))
                                 print()
                         # Validate LPORT
-                        elif key is "LPORT":
+                        elif key == "LPORT":
                             if helpers.validate_port(value):
                                 selected_payload.required_options[key][0] = value
                             else:

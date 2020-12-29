@@ -457,7 +457,7 @@ class Shellcode:
                     if selection != '':
                         num_extra_options = selection.split(' ')
                         for xtra_opt in num_extra_options:
-                            if xtra_opt is not '':
+                            if xtra_opt != '':
                                 if "=" not in xtra_opt:
                                     print(helpers.color(" [!] Parameter not entered in correct syntax.\n", warning=True))
                                     continue
@@ -547,7 +547,7 @@ def cli_msf_shellcode_gen(command_line_args):
     if command_line_args.msfoptions is not None:
         num_extra_options = command_line_args.msfoptions.split(' ')
         for xtra_opt in num_extra_options:
-            if xtra_opt is not '':
+            if xtra_opt != '':
                 if "=" not in xtra_opt:
                     print(helpers.color(" [!] Parameter not entered in correct syntax.\n", warning=True))
                     sys.exit()
