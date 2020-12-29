@@ -111,14 +111,14 @@ def randomString(length=-1):
     if length == -1:
         length = random.randrange(6, 16)
     random_string = ''.join(random.choice(string.ascii_letters) for x in range(length))
-    return random_string
+    return random_string.encode('utf-8')
 
 
 def randomKey(b=32):
     """
     Returns a random string/key of "b" characters in length, defaults to 32
     """
-    return ''.join(random.choice(string.ascii_letters + string.digits + "{}!@#$^&()*&[]|,./?") for x in range(b))
+    return ''.join(random.choice(string.ascii_letters + string.digits + "{}!@#$^&()*&[]|,./?") for x in range(b)).encode('utf-8')
 
 
 def randomNumbers(b=7):
