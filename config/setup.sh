@@ -13,7 +13,7 @@ if [ "${os}" == "arch" ] \
 || [ "${os}" == "kali" ] \
 || [ "${os}" == "linuxmint" ] \
 || [ "${os}" == "\"void\"" ] \
-|| [ "${os}" == "ubuntu" ]; then
+|| [ "${os}" == "pop" ]; then
   trueuser="$( who | tr -d '\n' | cut -d' ' -f1 )"
 else
   ## If this is blank, we're actually root
@@ -245,7 +245,7 @@ func_package_deps(){
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
   || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ]; then
+  || [ "${os}" == "pop" ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
       && arg=" DEBIAN_FRONTEND=noninteractive" \
@@ -505,7 +505,7 @@ func_package_deps(){
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
   || [ "${os}" == "parrot" ] \
-  || [ "${os}" == "ubuntu" ]; then
+  || [ "${os}" == "pop" ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
       && arg=" DEBIAN_FRONTEND=noninteractive" \
@@ -532,11 +532,11 @@ func_package_deps(){
           echo -e " [*] ${YELLOW}Already have x86 architecture added...${RESET}\n"
         fi
       echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries (via APT)${RESET}\n"
-      if [ "${os}" == "ubuntu" ] \
+      if [ "${os}" == "pop" ] \
       || [ "${os}" == "linuxmint" ]; then
         ## Special urghbuntu derivative snowflakes. Now with even *more* special.
         if [ "${osmajversion}" -ge "17" ] \
-        && [ "${os}" == "ubuntu" ]; then
+        && [ "${os}" == "pop" ]; then
           # Wine package was renamed in Arty
           sudo ${arg} apt-get -y -qq install wine-stable
                     else
@@ -1014,7 +1014,7 @@ elif [ "${os}" == "kali" ]; then
   echo -e " [I] ${YELLOW}Kali Linux ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "parrot" ]; then
   echo -e " [I] ${YELLOW}Parrot Security ${osversion} ${arch} detected...${RESET}\n"
-elif [ "${os}" == "ubuntu" ]; then
+elif [ "${os}" == "pop" ]; then
   echo -e " [I] ${YELLOW}Ubuntu ${osversion} ${arch} detected...${RESET}\n"
   if [[ "${osmajversion}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Ubuntu 15.10 or higher!${RESET}\n"
