@@ -13,6 +13,7 @@ if [ "${os}" == "arch" ] \
 || [ "${os}" == "kali" ] \
 || [ "${os}" == "linuxmint" ] \
 || [ "${os}" == "\"void\"" ] \
+|| [ "${os}" == "ubuntu" ] \
 || [ "${os}" == "pop" ]; then
   trueuser="$( who | tr -d '\n' | cut -d' ' -f1 )"
 else
@@ -245,6 +246,7 @@ func_package_deps(){
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
   || [ "${os}" == "parrot" ] \
+  || [ "${os}" == "ubuntu" ] \ 
   || [ "${os}" == "pop" ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
@@ -505,6 +507,7 @@ func_package_deps(){
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
   || [ "${os}" == "parrot" ] \
+  || [ "${os}" == "ubuntu" ] \
   || [ "${os}" == "pop" ]; then
     ## Silent mode?
     [ "${silent}" == "true" ] \
@@ -532,11 +535,13 @@ func_package_deps(){
           echo -e " [*] ${YELLOW}Already have x86 architecture added...${RESET}\n"
         fi
       echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit and 64-bit binaries (via APT)${RESET}\n"
-      if [ "${os}" == "pop" ] \
+      if [ "${os}" == "ubuntu" ] \
+      || [ "${os}" == "pop" ] \
       || [ "${os}" == "linuxmint" ]; then
         ## Special urghbuntu derivative snowflakes. Now with even *more* special.
         if [ "${osmajversion}" -ge "17" ] \
-        && [ "${os}" == "pop" ]; then
+        || [ "${os}" == "pop" ] \
+	|| [ "${os}" == "ubuntu" ]; then
           # Wine package was renamed in Arty
           sudo ${arg} apt-get -y -qq install wine-stable
                     else
@@ -1014,8 +1019,11 @@ elif [ "${os}" == "kali" ]; then
   echo -e " [I] ${YELLOW}Kali Linux ${osversion} ${arch} detected...${RESET}\n"
 elif [ "${os}" == "parrot" ]; then
   echo -e " [I] ${YELLOW}Parrot Security ${osversion} ${arch} detected...${RESET}\n"
-elif [ "${os}" == "pop" ]; then
+elif [ "${os}" == "ubuntu" ]; then
   echo -e " [I] ${YELLOW}Ubuntu ${osversion} ${arch} detected...${RESET}\n"
+elif [ "${os}" == "pop" ]; then
+  echo -e " [I] ${YELLOW}Pop OS ${osversion} ${arch} detected...${RESET}\n"
+ 
   if [[ "${osmajversion}" -lt "15" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported On Ubuntu 15.10 or higher!${RESET}\n"
     exit 1
