@@ -282,7 +282,7 @@ func_package_deps(){
     || [ "${os}" == "kali" ] \
     || [ "${os}" == "parrot" ]; then
       echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via apt)...${RESET}\n"
-      sudo ${arg} apt-get install -y python3-crypto
+      sudo $ {arg} apt-get install -y python3-cryptography
       if [[ "$?" -ne "0" ]]; then
         msg="Failed with installing dependencies (6): $?"
         errors="${errors}\n${msg}"
