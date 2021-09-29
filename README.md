@@ -24,6 +24,7 @@ The following OSs are likely able to run Veil:
 - Elementary
 - Fedora 22+
 - Linux Mint
+- Pardus 19+
 - Parrot Security
 - Ubuntu 15.10+
 - Void Linux
