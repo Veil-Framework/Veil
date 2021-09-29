@@ -12,6 +12,7 @@ if [ "${os}" == "arch" ] \
 || [ "${os}" == "elementary" ] \
 || [ "${os}" == "kali" ] \
 || [ "${os}" == "linuxmint" ] \
+|| [ "${os}" == "pardus" ] \
 || [ "${os}" == "\"void\"" ] \
 || [ "${os}" == "ubuntu" ]; then
   trueuser="$( who | tr -d '\n' | cut -d' ' -f1 )"
@@ -244,6 +245,7 @@ func_package_deps(){
   || [ "${os}" == "deepin" ] \
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
+  || [ "${os}" == "pardus" ] \
   || [ "${os}" == "parrot" ] \
   || [ "${os}" == "ubuntu" ]; then
     ## Silent mode?
@@ -280,6 +282,7 @@ func_package_deps(){
 
     if [ "${os}" == "debian" ] \
     || [ "${os}" == "kali" ] \
+    || [ "${os}" == "pardus" ] \
     || [ "${os}" == "parrot" ]; then
       echo -e "\n\n [*] ${YELLOW}Installing Python's pycrypto (via apt)...${RESET}\n"
       sudo ${arg} apt-get install -y python3-crypto
@@ -504,6 +507,7 @@ func_package_deps(){
   || [ "${os}" == "deepin" ] \
   || [ "${os}" == "kali" ] \
   || [ "${os}" == "linuxmint" ] \
+  || [ "${os}" == "pardus" ] \
   || [ "${os}" == "parrot" ] \
   || [ "${os}" == "ubuntu" ]; then
     ## Silent mode?
@@ -1040,6 +1044,11 @@ elif [ "${os}" == "fedora" ]; then
   [[ -z "$osmajversion" ]] && osmajversion=$osversion
   if [[ "${osmajversion}" -lt "22" ]]; then
     echo -e " ${RED}[ERROR]: Veil is only supported on Fedora 22 or higher!${RESET}\n"
+    exit 1
+  fi
+elif [ "${os}" == "pardus" ]; then
+  if [[ "${osmajversion}" -lt "17" ]]; then
+    echo -e " ${RED}[ERROR]: Veil is only supported on Pardus 17 or higher!${RESET}\n"
     exit 1
   fi
 else
