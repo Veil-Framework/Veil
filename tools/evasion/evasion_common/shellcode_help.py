@@ -545,8 +545,7 @@ def cli_msf_shellcode_gen(command_line_args):
     # Parse extra flags to be included in msfvenom command
     extra_options = ""
     if command_line_args.msfoptions is not None:
-        num_extra_options = command_line_args.msfoptions.split(' ')
-        for xtra_opt in num_extra_options:
+        for xtra_opt in command_line_args.msfoptions:
             if xtra_opt != '':
                 if "=" not in xtra_opt:
                     print(helpers.color(" [!] Parameter not entered in correct syntax.\n", warning=True))
