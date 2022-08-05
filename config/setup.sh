@@ -599,7 +599,8 @@ func_package_deps(){
       echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
     fi
   elif [ "${os}" == "arch" ] \
-  || [ "${os}" == "blackarch" ]; then
+  || [ "${os}" == "blackarch" ] \
+  || [ "${os}" == "manjaro" ]; then
     echo -e "\n\n [*] ${YELLOW}Installing Wine 32-bit on x86_64 System (via PACMAN)${RESET}\n"
     if grep -Fxq "#[multilib]" /etc/pacman.conf; then
       echo "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
