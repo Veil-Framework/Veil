@@ -811,7 +811,7 @@ func_python_deps(){
     echo -e " ${RED}[ERROR] ${msg}${RESET}\n"
   fi
 
-  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "pefile"
+  sudo -u "${trueuser}" WINEPREFIX="${winedir}" wine "${winedir}/drive_c/Python34/python.exe" "-m" "pip" "install" "-Iv" "pefile==2019.4.18"
   tmp="$?"
   if [[ "${tmp}" -ne "0" ]]; then
     msg="Failed to run (wine) Python pip pefile... Exit code: ${tmp}"
