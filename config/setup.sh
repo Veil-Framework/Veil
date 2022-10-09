@@ -4,7 +4,7 @@
 ## Global variables
 os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
 
-if [ "${os}" == "arch" ] \
+if [ "${os}" == "aarch64" ] \
 || [ "${os}" == "manjaro" ]\
 || [ "${os}" == "blackarch" ] \
 || [ "${os}" == "debian" ] \
@@ -90,7 +90,7 @@ func_title(){
   echo "                 os = ${os}"
   echo "          osversion = ${osversion}"
   echo "       osmajversion = ${osmajversion}"
-  echo "               arch = ${arch}"
+  echo "            aarch64 = ${aarch64}"
   echo "           trueuser = ${trueuser}"
   echo "   userprimarygroup = ${userprimarygroup}"
   echo "        userhomedir = ${userhomedir}"
