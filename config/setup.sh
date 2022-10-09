@@ -90,7 +90,7 @@ func_title(){
   echo "                 os = ${os}"
   echo "          osversion = ${osversion}"
   echo "       osmajversion = ${osmajversion}"
-  echo "               arch = ${arch}"
+  echo "               arch = ${aarch64}"
   echo "           trueuser = ${trueuser}"
   echo "   userprimarygroup = ${userprimarygroup}"
   echo "        userhomedir = ${userhomedir}"
