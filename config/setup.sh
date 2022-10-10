@@ -90,7 +90,7 @@ func_title(){
   echo "                 os = ${os}"
   echo "          osversion = ${osversion}"
   echo "       osmajversion = ${osmajversion}"
-  echo "               arch = ${arch}"
+  echo "               arch = ${aarch64}"
   echo "           trueuser = ${trueuser}"
   echo "   userprimarygroup = ${userprimarygroup}"
   echo "        userhomedir = ${userhomedir}"
@@ -511,7 +511,7 @@ func_package_deps(){
       && arg=" DEBIAN_FRONTEND=noninteractive" \
       || arg=""
 
-      if [ "${arch}" == "x86_64" ]; then
+      if [ "${arch}" == "aarch64" ]; then
         ## Check to see if we already have i386
         tmp="$( dpkg --print-foreign-architectures | grep '^i386$' )"
 
@@ -674,7 +674,7 @@ func_package_deps(){
 
     echo -e " [*] ${YELLOW}Initializing Veil's Wine environment...${RESET}\n"
     ## x64
-    if [ "${arch}" == "x86_64" ]; then
+    if [ "${arch}" == "aarch64" ]; then
       ## First time running wine, need to run a dummy file to create files
       [ "${winebootexists}" == "true" ] \
         && sudo -u "${trueuser}" WINEARCH=win32 WINEPREFIX="${winedir}" wineboot -u \
@@ -1002,7 +1002,7 @@ func_title
 ## Check architecture
 if [ "${arch}" != "x86" ] \
 && [ "${arch}" != "i686" ] \
-&& [ "${arch}" != "x86_64" ]; then
+&& [ "${arch}" != "aarch64" ]; then
   echo -e " ${RED}[ERROR] Your architecture ${arch} is not supported!${RESET}\n\n"
   exit 1
 fi
