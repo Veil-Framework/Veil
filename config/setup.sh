@@ -2,7 +2,11 @@
 ## Can be called by doing: "Veil.py --setup"
 
 ## Global variables
-os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
+if [ "$( awk -F '=' '/^NAME=/ {print $2}' /etc/os-release 2>&- )" == "\"Parrot OS\"" ]; then
+  os="parrot"
+else
+  os="$( awk -F '=' '/^ID=/ {print $2}' /etc/os-release 2>&- )"
+fi
 
 if [ "${os}" == "aarch64" ] \
 || [ "${os}" == "manjaro" ]\
