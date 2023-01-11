@@ -317,7 +317,8 @@ func_package_deps(){
       unzip \
       git \
       ruby \
-      python3
+      python3 \
+      python3-pycryptodome
     if [[ "$?" -ne "0" && "$?" -ne "6" ]]; then
       if grep -v "up to date"; then
         msg="Failed with installing dependencies (1): $?"
