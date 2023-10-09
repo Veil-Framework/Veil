@@ -5,9 +5,9 @@ Evasion Encryption Routines
 import base64
 import random
 import string
-from Crypto.Cipher import ARC4
-from Crypto.Cipher import AES
-from Crypto.Cipher import DES
+from Cryptodome.Cipher import ARC4
+from Cryptodome.Cipher import AES
+from Cryptodome.Cipher import DES
 from lib.common import helpers
 from tools.evasion.evasion_common import evasion_helpers
 
@@ -215,7 +215,7 @@ def pyherion(code):
 
     # randomize our base64 and AES importing variable
     imports.append("from base64 import b64decode as " + b64var)
-    imports.append("from Crypto.Cipher import AES as " + aesvar)
+    imports.append("from Cryptodome.Cipher import AES as " + aesvar)
 
     # shuffle up our imports
     random.shuffle(imports)
